@@ -7,10 +7,13 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * <p>
@@ -33,6 +36,8 @@ public class Resume implements Serializable {
     @ApiModelProperty(value = "姓名")
     private String realName;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @ApiModelProperty("出生日期 yyyy-MM-dd")
     private Date birthday;
 
     private Long provinceId;
@@ -54,6 +59,13 @@ public class Resume implements Serializable {
     @ApiModelProperty(value = "当前职务")
     private String job;
 
+    @ApiModelProperty(value = "照片")
+    private String photoUrl;
+
+    @ApiModelProperty(value = "现在状态")
+    private String currentStatus;
+
+    @JsonIgnore
     @TableLogic
     private Integer deleted;
 

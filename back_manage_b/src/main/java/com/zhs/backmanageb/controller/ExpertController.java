@@ -45,6 +45,7 @@ public class ExpertController {
     }
 
     @PostMapping("query")
+    @ApiOperation("获取详情")
     @ApiImplicitParam(name = "id",value = "编号",required = true)
     public Result<Expert> queryById(@RequestParam Long id){
         Expert expert = expertService.getById(id);
@@ -54,6 +55,13 @@ public class ExpertController {
     @ApiOperation("更新方法，部分属性不用填（没有的或者不需要更新的都不需要），id必填，所有更新同理")
     public Result<Boolean> update(Expert expert){
         return Result.success(expertService.updateById(expert));
+    }
+
+    @ApiOperation("根据id删除")
+    @ApiImplicitParam(name = "id",value = "编号",required = true)
+    @PostMapping("delete")
+    public Result<Boolean> deleteById(@RequestParam Long id){
+        return Result.success(expertService.removeById(id));
     }
 }
 

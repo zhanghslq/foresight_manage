@@ -1,6 +1,6 @@
 package com.zhs.backmanageb;
 
-import com.zhs.backmanageb.dao.AdminMapper;
+import com.zhs.backmanageb.mapper.AdminMapper;
 import com.zhs.backmanageb.entity.Admin;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

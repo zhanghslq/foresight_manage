@@ -37,7 +37,7 @@ public class CORSAuthenticationFilter extends FormAuthenticationFilter {
         res.setCharacterEncoding("UTF-8");
         PrintWriter writer = res.getWriter();
         Map<String, Object> map= new HashMap<>();
-        map.put("code", 702);
+        map.put("code", 401);
         map.put("msg", "未登录");
         writer.write(JSON.toJSONString(map));
         writer.close();

@@ -1,4 +1,4 @@
-package com.zhs.backmanageb.dao;
+package com.zhs.backmanageb.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zhs.backmanageb.entity.Admin;

@@ -24,7 +24,7 @@ public class MyCode {
         //配置策略
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
-        gc.setOutputDir(projectPath+"/src/main/java");
+        gc.setOutputDir(projectPath+"/back_manage_b/src/main/java");
         gc.setAuthor("zhs");
         gc.setOpen(false);
         gc.setFileOverride(false);// 是否覆盖
@@ -36,10 +36,10 @@ public class MyCode {
 
         //2. 设置数据源
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://localhost:3306/test?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8");
+        dsc.setUrl("jdbc:mysql://39.106.39.48:3306/manage?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("root");
+        dsc.setPassword("yj@20200630!YJ");
 
         mpg.setDataSource(dsc);
 
@@ -58,7 +58,8 @@ public class MyCode {
         //4.策略配置
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
-        strategy.setInclude("user","");// 设置要映射的表名
+        //strategy.setInclude("resume","leader","organization","common_data","company","concat_record","contacts","experience_record","expert");// 设置要映射的表名
+        strategy.setInclude("organization_type");// 设置要映射的表名
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true);

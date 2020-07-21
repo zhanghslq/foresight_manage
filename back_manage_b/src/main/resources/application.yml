@@ -1,3 +1,4 @@
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -24,4 +25,5 @@ knife4j:
     username: foresight
     ## Basic认证密码
     password: foresight
-
+server:
+  port: 8080

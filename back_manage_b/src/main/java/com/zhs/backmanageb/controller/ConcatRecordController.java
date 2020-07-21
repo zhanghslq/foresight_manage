@@ -2,6 +2,7 @@ package com.zhs.backmanageb.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.ConcatRecord;
 import com.zhs.backmanageb.entity.Contacts;
@@ -64,6 +65,13 @@ public class ConcatRecordController {
     @ApiOperation("修改联系记录")
     public Result<Boolean> update(ConcatRecord concatRecord){
         return Result.success(concatRecordService.updateById(concatRecord));
+    }
+    @PostMapping("insert")
+    @ApiOperation("插入联系记录")
+    @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
+    public Result<Boolean> insert(ConcatRecord concatRecord){
+        concatRecordService.save(concatRecord);
+        return Result.success(true);
     }
 
 }

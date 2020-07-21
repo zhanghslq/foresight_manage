@@ -1,9 +1,12 @@
 package com.zhs.backmanageb.model.vo;
 
+import com.zhs.backmanageb.entity.CommonData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.util.List;
 
 /**
  * @author: zhs
@@ -17,4 +20,6 @@ public class CommonTypeVO {
     private Long id;
     @ApiModelProperty("名字")
     private String name;
+
+    private List<CommonData> children;
 }

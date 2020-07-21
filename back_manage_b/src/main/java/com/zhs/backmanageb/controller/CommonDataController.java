@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -50,11 +52,15 @@ public class CommonDataController {
     @ApiOperation("所有维护的下拉框列表，以及对应的id就是type,用于人工看，系统暂时不会用到，可直接写死，有变动会通知")
     public Result<List<CommonTypeVO>> listAllType(){
         List<CommonTypeVO> result = new ArrayList<>();
+        List<CommonData> list = commonDataService.list();
+        Map<Integer, List<CommonData>> map = list.stream().collect(Collectors.groupingBy(CommonData::getType));
         DropDownBoxTypeEnum[] values = DropDownBoxTypeEnum.values();
         for (DropDownBoxTypeEnum value : values) {
             CommonTypeVO commonTypeVO = new CommonTypeVO();
             commonTypeVO.setId(Long.valueOf(value.getId()));
             commonTypeVO.setName(value.getName());
+            List<CommonData> commonData = map.get(value.getId());
+            commonTypeVO.setChildren(commonData);
             result.add(commonTypeVO);
         }
         return Result.success(result);

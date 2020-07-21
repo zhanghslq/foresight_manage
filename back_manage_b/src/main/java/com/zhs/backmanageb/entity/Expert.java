@@ -58,6 +58,9 @@ public class Expert implements Serializable {
     private String workArea;
 
     @JsonIgnore
+    private Integer pushed;
+
+    @JsonIgnore
     @TableLogic
     private Integer deleted;
 

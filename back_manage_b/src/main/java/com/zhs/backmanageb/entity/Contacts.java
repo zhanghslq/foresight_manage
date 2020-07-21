@@ -66,6 +66,9 @@ public class Contacts implements Serializable {
     private String channel;
 
     @JsonIgnore
+    private Integer pushed;
+
+    @JsonIgnore
     @ApiModelProperty(value = "删除标志")
     @TableLogic
     private Integer deleted;

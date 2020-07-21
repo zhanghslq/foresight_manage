@@ -32,6 +32,7 @@ public class MyCode {
         gc.setIdType(IdType.AUTO);
         gc.setDateType(DateType.ONLY_DATE);
         gc.setSwagger2(true);
+        gc.setFileOverride(true);
         mpg.setGlobalConfig(gc);
 
         //2. 设置数据源
@@ -59,7 +60,7 @@ public class MyCode {
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
         //strategy.setInclude("resume","leader","organization","common_data","company","concat_record","contacts","experience_record","expert");// 设置要映射的表名
-        strategy.setInclude("organization_type");// 设置要映射的表名
+        strategy.setInclude("experience_record");// 设置要映射的表名
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true);

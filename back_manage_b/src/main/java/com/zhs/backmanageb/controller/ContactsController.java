@@ -61,6 +61,12 @@ public class ContactsController {
         Contacts contacts = contactsService.getById(id);
         return Result.success(contacts);
     }
+    @PostMapping("insert")
+    @ApiOperation("插入")
+    @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
+    public Result<Boolean> insert(Contacts contacts){
+        return Result.success(contactsService.save(contacts));
+    }
 
 
     // 插入联系人用的是导入文件模板的形式

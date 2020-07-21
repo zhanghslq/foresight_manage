@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author zhs
- * @since 2020-07-11
+ * @since 2020-07-21
  */
 public interface ExperienceRecordMapper extends BaseMapper<ExperienceRecord> {
 

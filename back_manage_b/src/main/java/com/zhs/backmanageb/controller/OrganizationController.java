@@ -3,6 +3,7 @@ package com.zhs.backmanageb.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Organization;
 import com.zhs.backmanageb.service.OrganizationService;
@@ -49,6 +50,18 @@ public class OrganizationController {
         Page<Organization> page = organizationService.page(organizationPage, organizationQueryWrapper);
         return Result.success(page);
     }
+    @PostMapping("insert")
+    @ApiOperation("插入")
+    @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
+    public Result<Boolean> insert(Organization organization){
+        return Result.success(organizationService.save(organization));
+    }
 
+    @PostMapping("update")
+    @ApiOperation("修改")
+    @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
+    public Result<Boolean> update(Organization organization){
+        return Result.success(organizationService.updateById(organization));
+    }
 }
 

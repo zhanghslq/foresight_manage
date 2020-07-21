@@ -72,6 +72,7 @@ public class Resume implements Serializable {
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
+    @JsonIgnore
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 

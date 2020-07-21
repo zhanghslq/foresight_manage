@@ -2,6 +2,7 @@ package com.zhs.backmanageb.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Resume;
 import com.zhs.backmanageb.service.ResumeService;
@@ -42,6 +43,26 @@ public class ResumeController {
     public Result<Page<Resume>> list(@RequestParam Integer current,@RequestParam Integer size){
         Page<Resume> resumePage = new Page<>(current, size);
         return Result.success(resumeService.page(resumePage));
+    }
+    @ApiOperation("插入")
+    @PostMapping("insert")
+    @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
+    public Result<Boolean> insert(Resume resume){
+        boolean save = resumeService.save(resume);
+        return Result.success(save);
+    }
+
+    @PostMapping("update")
+    @ApiOperation("修改")
+    @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
+    public Result<Boolean> update(Resume resume) {
+        return Result.success(resumeService.updateById(resume));
+    }
+    @PostMapping("queryById")
+    @ApiOperation("查询详情")
+    @ApiImplicitParam(name = "id",value = "编号",required = true)
+    public Result<Resume> queryById(@RequestParam Long id){
+        return Result.success(resumeService.getById(id));
     }
 
 

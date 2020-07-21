@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -45,6 +47,7 @@ public class Leader implements Serializable {
     @ApiModelProperty(value = "领导姓名")
     private String realName;
 
+    @JsonIgnore
     @ApiModelProperty(value = "删除标志")
     @TableLogic
     private Integer deleted;
@@ -52,6 +55,7 @@ public class Leader implements Serializable {
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
+    @JsonIgnore
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 

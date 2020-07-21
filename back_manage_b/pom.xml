@@ -11,7 +11,6 @@
     <artifactId>back_manage_b</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>back_manage_b</name>
-
     <description>远见后台管理</description>
 
     <properties>

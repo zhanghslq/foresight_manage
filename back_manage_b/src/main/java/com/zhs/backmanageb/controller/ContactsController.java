@@ -2,6 +2,7 @@ package com.zhs.backmanageb.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Contacts;
 import com.zhs.backmanageb.service.ContactsService;
@@ -46,6 +47,7 @@ public class ContactsController {
     }
 
     @PostMapping("update")
+    @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     @ApiOperation("修改联系人")
     public Result<Boolean> update(Contacts contacts){
         // 这样更改会显得属性有点多，后面可以针对性的进行精简

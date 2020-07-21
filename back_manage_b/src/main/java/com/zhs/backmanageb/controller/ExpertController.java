@@ -2,6 +2,7 @@ package com.zhs.backmanageb.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Expert;
 import com.zhs.backmanageb.service.ExpertService;
@@ -52,6 +53,7 @@ public class ExpertController {
         return Result.success(expert);
     }
     @PostMapping("update")
+    @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     @ApiOperation("更新方法，部分属性不用填（没有的或者不需要更新的都不需要），id必填，所有更新同理")
     public Result<Boolean> update(Expert expert){
         return Result.success(expertService.updateById(expert));

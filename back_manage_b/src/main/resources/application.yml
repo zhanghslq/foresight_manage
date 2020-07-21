@@ -16,3 +16,12 @@ mybatis-plus:
       logic-not-delete-value: 0
   mapper-locations: classpath*:mapper/*.xml
 
+## 开启Swagger的Basic认证功能,默认是false
+knife4j:
+  basic:
+    enable: true
+    ## Basic认证用户名
+    username: foresight
+    ## Basic认证密码
+    password: foresight
+

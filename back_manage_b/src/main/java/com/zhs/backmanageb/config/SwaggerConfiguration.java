@@ -54,7 +54,7 @@ public class SwaggerConfiguration {
         return new ApiInfoBuilder()
                 .title("远见后台管理的接口文档")
                 .description("远见后台管理的接口文档")
-                .termsOfServiceUrl("http://localhost:8080/")
+                //.termsOfServiceUrl("http://localhost:8081/")
                 .version("1.0")
                 .build();
     }

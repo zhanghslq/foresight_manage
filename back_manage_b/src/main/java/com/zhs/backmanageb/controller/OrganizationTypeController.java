@@ -1,6 +1,7 @@
 package com.zhs.backmanageb.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.OrganizationType;
 import com.zhs.backmanageb.model.vo.CommonTypeVO;
@@ -63,6 +64,23 @@ public class OrganizationTypeController {
         List<CommonTypeVO> commonTypeVOS = organizationTypeService.listType();
         return Result.success(commonTypeVOS);
     }
+    @PostMapping("list/byParentId")
+    @ApiOperation("根据id，查找直系下属的组织，查最顶级的传0")
+    public Result<List<OrganizationType>> listByParentId(@RequestParam Long parentId){
+        QueryWrapper<OrganizationType> wrapper = new QueryWrapper<>();
+        wrapper.eq("parent_id",parentId);
+        List<OrganizationType> list = organizationTypeService.list(wrapper);
+        return Result.success(list);
+    }
+
+    /*@PostMapping("")
+    @ApiOperation("根据id，查找全部下属的组织树，查最顶级的传0")
+    public Result<List<OrganizationType>> listAllChildrenByParentId(@RequestParam Long parentId){
+        QueryWrapper<OrganizationType> wrapper = new QueryWrapper<>();
+
+        List<OrganizationType> list = organizationTypeService.list(wrapper);
+        return Result.success(list);
+    }*/
 
 }
 

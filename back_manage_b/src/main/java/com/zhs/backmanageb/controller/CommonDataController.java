@@ -68,7 +68,7 @@ public class CommonDataController {
         }
         return Result.success(result);
     }
-    @ApiOperation("插入下拉框数据，id，time，deleted等值不需要考虑，不用传，传name,type就行，其他接口类似")
+    @ApiOperation("插入下拉框数据")
     @PostMapping("insert")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(CommonData commonData){
@@ -93,6 +93,11 @@ public class CommonDataController {
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     public Result<Boolean> update(CommonData commonData){
         return Result.success(commonDataService.updateById(commonData));
+    }
+    @ApiOperation("删除")
+    @PostMapping("delete")
+    public Result<Boolean> delete(@RequestParam Long id){
+        return Result.success(commonDataService.removeById(id));
     }
 }
 

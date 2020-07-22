@@ -69,6 +69,7 @@ public class CommonDataController {
     }
     @ApiOperation("插入下拉框数据，id，time，deleted等值不需要考虑，不用传，传name,type就行，其他接口类似")
     @PostMapping("insert")
+    @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(CommonData commonData){
         Assert.notNull(commonData.getName(),"名字不允许为空");
         Assert.notNull(commonData.getType(),"类型不允许为空");

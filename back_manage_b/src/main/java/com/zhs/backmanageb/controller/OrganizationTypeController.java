@@ -60,7 +60,7 @@ public class OrganizationTypeController {
     }
     @PostMapping("/listData/byType")
     @ApiOperation("根据组织类别查询下面所有组织")
-    @ApiImplicitParam(value = "类别",required = true)
+    @ApiImplicitParam(name = "type",value = "类别",required = true)
     public Result<List<OrganizationType>> list(@RequestParam Integer type){
         QueryWrapper<OrganizationType> wrapper = new QueryWrapper<>();
         wrapper.eq("type",type);

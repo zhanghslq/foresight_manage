@@ -10,6 +10,7 @@ import com.zhs.backmanageb.model.vo.CommonTypeVO;
 import com.zhs.backmanageb.service.CommonDataService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -76,8 +77,18 @@ public class CommonDataController {
 
         return Result.success(commonDataService.save(commonData));
     }
+    @PostMapping("insertBatch")
+    @ApiOperation("批量添加")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "content",value = "文本域内容",required = true),
+            @ApiImplicitParam(name = "type",value = "类型",required = true),
+    })
+    public Result<Boolean> insertBatch(@RequestParam String content,@RequestParam Integer type){
+        commonDataService.insertBatch(content,type);
+        return Result.success(true);
+    }
 
-    @ApiOperation("同插入，需要修改的参数传了就行，但是id必须穿")
+    @ApiOperation("修改")
     @PostMapping("update")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     public Result<Boolean> update(CommonData commonData){

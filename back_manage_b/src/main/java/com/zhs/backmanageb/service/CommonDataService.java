@@ -13,4 +13,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface CommonDataService extends IService<CommonData> {
 
+    /**
+     * @param content 文本域内容
+     * @param type 类型
+     */
+    void insertBatch(String content, Integer type);
 }

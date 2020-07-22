@@ -58,6 +58,15 @@ public class OrganizationTypeController {
         List<OrganizationType> list = organizationTypeService.list();
         return Result.success(list);
     }
+    @PostMapping("/listData/byType")
+    @ApiOperation("根据组织类别查询下面所有组织")
+    @ApiImplicitParam(value = "类别",required = true)
+    public Result<List<OrganizationType>> list(@RequestParam Integer type){
+        QueryWrapper<OrganizationType> wrapper = new QueryWrapper<>();
+        wrapper.eq("type",type);
+        List<OrganizationType> list = organizationTypeService.list(wrapper);
+        return Result.success(list);
+    }
     @PostMapping("/list/type")
     @ApiOperation("军，政，法，等以及对应的编号")
     public Result<List<CommonTypeVO>> listType(){

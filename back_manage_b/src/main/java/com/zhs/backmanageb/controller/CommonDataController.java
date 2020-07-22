@@ -2,6 +2,7 @@ package com.zhs.backmanageb.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
 import com.zhs.backmanageb.entity.CommonData;
@@ -10,6 +11,7 @@ import com.zhs.backmanageb.service.CommonDataService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -68,11 +70,15 @@ public class CommonDataController {
     @ApiOperation("插入下拉框数据，id，time，deleted等值不需要考虑，不用传，传name,type就行，其他接口类似")
     @PostMapping("insert")
     public Result<Boolean> insert(CommonData commonData){
+        Assert.notNull(commonData.getName(),"名字不允许为空");
+        Assert.notNull(commonData.getType(),"类型不允许为空");
+
         return Result.success(commonDataService.save(commonData));
     }
 
     @ApiOperation("同插入，需要修改的参数传了就行，但是id必须穿")
     @PostMapping("update")
+    @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     public Result<Boolean> update(CommonData commonData){
         return Result.success(commonDataService.updateById(commonData));
     }

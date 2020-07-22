@@ -24,4 +24,6 @@ public interface OrganizationTypeService extends IService<OrganizationType> {
      */
     List<CommonTypeVO> listType();
 
+    List<CommonTypeVO> listAll();
+
 }

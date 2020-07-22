@@ -73,6 +73,12 @@ public class OrganizationTypeController {
         List<CommonTypeVO> commonTypeVOS = organizationTypeService.listType();
         return Result.success(commonTypeVOS);
     }
+    @PostMapping("/list/all")
+    @ApiOperation("拿到所有数据，体系以及体系下的组织")
+    public Result<List<CommonTypeVO>> listAll(){
+        List<CommonTypeVO> commonTypeVOS =organizationTypeService.listAll();
+        return Result.success(commonTypeVOS);
+    }
     @PostMapping("list/byParentId")
     @ApiOperation("根据id，查找直系下属的组织，查最顶级的传0")
     public Result<List<OrganizationType>> listByParentId(@RequestParam Long parentId){

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -32,5 +34,16 @@ public class OrganizationTypeServiceImpl extends ServiceImpl<OrganizationTypeMap
             result.add(commonTypeVO);
         }
         return result;
+    }
+
+    @Override
+    public List<CommonTypeVO> listAll() {
+        List<CommonTypeVO> commonTypeVOS = listType();
+        List<OrganizationType> list = list();
+        Map<Integer, List<OrganizationType>> map = list.stream().collect(Collectors.groupingBy(OrganizationType::getType));
+        for (CommonTypeVO commonTypeVO : commonTypeVOS) {
+            commonTypeVO.setOrganizationTypeList(map.get(commonTypeVO.getId().intValue()));
+        }
+        return commonTypeVOS;
     }
 }

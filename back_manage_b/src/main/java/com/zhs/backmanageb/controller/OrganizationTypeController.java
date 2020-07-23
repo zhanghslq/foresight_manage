@@ -4,6 +4,7 @@ package com.zhs.backmanageb.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.OrganizationType;
+import com.zhs.backmanageb.model.bo.OrganizationTypeBO;
 import com.zhs.backmanageb.model.vo.CommonTypeVO;
 import com.zhs.backmanageb.model.vo.OrganizationTypeInsertVO;
 import com.zhs.backmanageb.service.OrganizationTypeService;
@@ -53,7 +54,7 @@ public class OrganizationTypeController {
         return Result.success(true);
     }
     @PostMapping("/list")
-    @ApiOperation("全部组织类别")
+    @ApiOperation("全部组织")
     public Result<List<OrganizationType>> list(){
         List<OrganizationType> list = organizationTypeService.list();
         return Result.success(list);
@@ -74,9 +75,16 @@ public class OrganizationTypeController {
         return Result.success(commonTypeVOS);
     }
     @PostMapping("/list/all")
-    @ApiOperation("拿到所有数据，体系以及体系下的组织")
-    public Result<List<CommonTypeVO>> listAll(){
-        List<CommonTypeVO> commonTypeVOS =organizationTypeService.listAll();
+    @ApiOperation("拿到所有数据，体系以及体系下的组织(平铺结构)")
+    public Result<List<OrganizationTypeBO>> listAll(){
+        List<OrganizationTypeBO> commonTypeVOS =organizationTypeService.listAll();
+        return Result.success(commonTypeVOS);
+    }
+
+    @PostMapping("/list/allTree")
+    @ApiOperation("拿到所有数据，体系以及体系下的组织(树状结构)")
+    public Result<List<CommonTypeVO>> listAllTree(){
+        List<CommonTypeVO> commonTypeVOS =organizationTypeService.listAllTree();
         return Result.success(commonTypeVOS);
     }
     @PostMapping("list/byParentId")

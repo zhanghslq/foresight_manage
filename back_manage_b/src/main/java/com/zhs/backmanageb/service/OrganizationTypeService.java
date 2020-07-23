@@ -3,6 +3,7 @@ package com.zhs.backmanageb.service;
 import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.OrganizationType;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zhs.backmanageb.model.bo.OrganizationTypeBO;
 import com.zhs.backmanageb.model.vo.CommonTypeVO;
 
 import java.util.List;
@@ -24,6 +25,12 @@ public interface OrganizationTypeService extends IService<OrganizationType> {
      */
     List<CommonTypeVO> listType();
 
-    List<CommonTypeVO> listAll();
+    List<OrganizationTypeBO> listAll();
+
+    /**
+     * 查询所有组织，树状结构
+     * @return
+     */
+    List<CommonTypeVO> listAllTree();
 
 }

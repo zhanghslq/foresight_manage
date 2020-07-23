@@ -2,6 +2,7 @@ package com.zhs.backmanageb.model.vo;
 
 import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.OrganizationType;
+import com.zhs.backmanageb.model.bo.OrganizationTypeBO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -23,6 +24,6 @@ public class CommonTypeVO {
     private String name;
 
     private List<CommonData> children;
-
     private List<OrganizationType> organizationTypeList;
+    private List<OrganizationTypeBO> organizationTypeListTree;
 }

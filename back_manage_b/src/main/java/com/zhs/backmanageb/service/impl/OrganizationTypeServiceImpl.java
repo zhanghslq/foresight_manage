@@ -1,12 +1,15 @@
 package com.zhs.backmanageb.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.backmanageb.common.constant.CommonTypeEnum;
 import com.zhs.backmanageb.common.constant.RootTypeEnum;
 import com.zhs.backmanageb.entity.OrganizationType;
 import com.zhs.backmanageb.mapper.OrganizationTypeMapper;
+import com.zhs.backmanageb.model.bo.OrganizationTypeBO;
 import com.zhs.backmanageb.model.vo.CommonTypeVO;
 import com.zhs.backmanageb.service.OrganizationTypeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +27,9 @@ import java.util.stream.Collectors;
  */
 @Service
 public class OrganizationTypeServiceImpl extends ServiceImpl<OrganizationTypeMapper, OrganizationType> implements OrganizationTypeService {
+    @Autowired
+    private OrganizationTypeMapper organizationTypeMapper;
+
     @Override
     public List<CommonTypeVO> listType() {
         List<CommonTypeVO> result = new ArrayList<>();
@@ -37,12 +43,44 @@ public class OrganizationTypeServiceImpl extends ServiceImpl<OrganizationTypeMap
     }
 
     @Override
-    public List<CommonTypeVO> listAll() {
+    public List<OrganizationTypeBO> listAll() {
         List<CommonTypeVO> commonTypeVOS = listType();
-        List<OrganizationType> list = list();
-        Map<Integer, List<OrganizationType>> map = list.stream().collect(Collectors.groupingBy(OrganizationType::getType));
+        List<OrganizationTypeBO> result = new ArrayList<>();
+
+        // 查所有带子类的,parentId不为0的
+        List<Long> parentIds = organizationTypeMapper.selectAllIdHasChild();
+
+        List<OrganizationTypeBO> hasChild;
+        if(parentIds.size()!=0){
+
+            hasChild = organizationTypeMapper.selectAllHasChild(parentIds);
+        }else {
+            hasChild=new ArrayList<>();
+        }
+
+        // 最顶级的，parentId为0 的
+
+        List<OrganizationTypeBO> firstList =organizationTypeMapper.listByParentIdZero();
+
+        Map<Integer, List<OrganizationTypeBO>> map = firstList.stream().collect(Collectors.groupingBy(OrganizationTypeBO::getType));
         for (CommonTypeVO commonTypeVO : commonTypeVOS) {
-            commonTypeVO.setOrganizationTypeList(map.get(commonTypeVO.getId().intValue()));
+            OrganizationTypeBO organizationTypeBO = new OrganizationTypeBO();
+            organizationTypeBO.setId(commonTypeVO.getId());
+            organizationTypeBO.setName(commonTypeVO.getName());
+            organizationTypeBO.setChildren(map.get(commonTypeVO.getId().intValue()));
+            result.add(organizationTypeBO);
+        }
+        result.addAll(hasChild);
+        return result;
+    }
+
+    @Override
+    public List<CommonTypeVO> listAllTree() {
+        List<CommonTypeVO> commonTypeVOS = listType();
+        List<OrganizationTypeBO> organizationTypeBOS = organizationTypeMapper.selectAllTree();
+        Map<Integer, List<OrganizationTypeBO>> map = organizationTypeBOS.stream().collect(Collectors.groupingBy(OrganizationTypeBO::getType));
+        for (CommonTypeVO commonTypeVO : commonTypeVOS) {
+            commonTypeVO.setOrganizationTypeListTree(map.get(commonTypeVO.getId().intValue()));
         }
         return commonTypeVOS;
     }

@@ -81,11 +81,12 @@ public class OrganizationTypeController {
         return Result.success(list);
     }
     @PostMapping("/listData/byType")
-    @ApiOperation("根据组织类别查询下面所有组织")
+    @ApiOperation("根据组织类别查询一级类别")
     @ApiImplicitParam(name = "type",value = "类别",required = true)
     public Result<List<OrganizationType>> list(@RequestParam Integer type){
         QueryWrapper<OrganizationType> wrapper = new QueryWrapper<>();
         wrapper.eq("type",type);
+        wrapper.eq("parent_id",0);
         List<OrganizationType> list = organizationTypeService.list(wrapper);
         return Result.success(list);
     }

@@ -33,4 +33,12 @@ public interface OrganizationTypeService extends IService<OrganizationType> {
      */
     List<CommonTypeVO> listAllTree();
 
+    /**
+     * 批量添加
+     * @param content
+     * @param type
+     * @param parentId
+     */
+    void insertBatch(String content, Integer type,Long parentId);
+
 }

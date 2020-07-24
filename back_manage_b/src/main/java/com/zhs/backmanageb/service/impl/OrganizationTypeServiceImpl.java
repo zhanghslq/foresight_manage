@@ -3,7 +3,9 @@ package com.zhs.backmanageb.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.backmanageb.common.constant.CommonTypeEnum;
 import com.zhs.backmanageb.common.constant.RootTypeEnum;
+import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.OrganizationType;
+import com.zhs.backmanageb.exception.MyException;
 import com.zhs.backmanageb.mapper.OrganizationTypeMapper;
 import com.zhs.backmanageb.model.bo.OrganizationTypeBO;
 import com.zhs.backmanageb.model.vo.CommonTypeVO;
@@ -11,6 +13,7 @@ import com.zhs.backmanageb.service.OrganizationTypeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,5 +86,22 @@ public class OrganizationTypeServiceImpl extends ServiceImpl<OrganizationTypeMap
             commonTypeVO.setOrganizationTypeListTree(map.get(commonTypeVO.getId().intValue()));
         }
         return commonTypeVOS;
+    }
+
+    @Override
+    public void insertBatch(String content, Integer type,Long parentId) {
+        ArrayList<OrganizationType> organizationTypeArrayList = new ArrayList<>();
+        if(StringUtils.isEmpty(content)){
+            throw new MyException("内容不能为空");
+        }
+        String[] names = content.split("\n");
+        for (String name : names) {
+            OrganizationType organizationType = new OrganizationType();
+            organizationType.setName(name.trim());
+            organizationType.setType(type);
+            organizationType.setParentId(parentId);
+            organizationTypeArrayList.add(organizationType);
+        }
+        saveBatch(organizationTypeArrayList);
     }
 }

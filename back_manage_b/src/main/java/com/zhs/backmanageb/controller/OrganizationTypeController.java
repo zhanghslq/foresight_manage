@@ -12,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -39,12 +40,12 @@ public class OrganizationTypeController {
     @ApiOperation("添加组织类别")
     @PostMapping("/insert")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "detail",value = "分类组织详情",required = true),
+            @ApiImplicitParam(name = "detail",value = "分类组织备注",required = false),
             @ApiImplicitParam(name = "name",value = "组织分类名称",required = true),
             @ApiImplicitParam(name = "parentId",value = "上级分类id",required = true),
             @ApiImplicitParam(name = "type",value = "所属分类（军，政，等）",required = true),
     })
-    public Result<Boolean> insert(@RequestParam String detail,@RequestParam String name,@RequestParam Long parentId,@RequestParam Integer type){
+    public Result<Boolean> insert(String detail,@RequestParam String name,@RequestParam Long parentId,@RequestParam Integer type){
         OrganizationType organizationType = new OrganizationType();
         organizationType.setDetail(detail);
         organizationType.setName(name);
@@ -53,6 +54,26 @@ public class OrganizationTypeController {
         organizationTypeService.save(organizationType);
         return Result.success(true);
     }
+    @ApiOperation("添加组织类别并批量添加子类别")
+    @PostMapping("/insertBatch")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "content",value = "分类组织详情，用于批量添加子类别，一行一个",required = false),
+            @ApiImplicitParam(name = "name",value = "组织分类名称",required = true),
+            @ApiImplicitParam(name = "parentId",value = "上级分类id",required = true),
+            @ApiImplicitParam(name = "type",value = "所属分类（军，政，等）",required = true),
+    })
+    public Result<Boolean> insertBatch(String content,@RequestParam String name,@RequestParam Long parentId,@RequestParam Integer type){
+        OrganizationType organizationType = new OrganizationType();
+        organizationType.setName(name);
+        organizationType.setParentId(parentId);
+        organizationType.setType(type);
+        organizationTypeService.save(organizationType);
+        if(!StringUtils.isEmpty(content)){
+            organizationTypeService.insertBatch(content,type,organizationType.getId());
+        }
+        return Result.success(true);
+    }
+
     @PostMapping("/list")
     @ApiOperation("全部组织")
     public Result<List<OrganizationType>> list(){

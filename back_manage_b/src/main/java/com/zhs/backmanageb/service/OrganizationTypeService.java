@@ -1,6 +1,5 @@
 package com.zhs.backmanageb.service;
 
-import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.OrganizationType;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhs.backmanageb.model.bo.OrganizationTypeBO;
@@ -38,7 +37,11 @@ public interface OrganizationTypeService extends IService<OrganizationType> {
      * @param content
      * @param type
      * @param parentId
+     * @param hasLocation
      */
-    void insertBatch(String content, Integer type,Long parentId);
+    void insertBatch(String content, Integer type, Long parentId, Integer hasLocation);
+
+
+    List<OrganizationTypeBO> listAllTreeByType(Integer type);
 
 }

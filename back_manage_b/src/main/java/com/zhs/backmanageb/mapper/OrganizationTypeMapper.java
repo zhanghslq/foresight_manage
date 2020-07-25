@@ -23,7 +23,7 @@ public interface OrganizationTypeMapper extends BaseMapper<OrganizationType> {
      *
      * @return 树状结构的数据
      */
-    List<OrganizationTypeBO> selectAllTree();
+    List<OrganizationTypeBO> selectAllTree(@Param("type") Integer type);
 
 
     /*

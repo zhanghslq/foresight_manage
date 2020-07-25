@@ -2,6 +2,7 @@ package com.zhs.backmanageb.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.OrganizationType;
 import com.zhs.backmanageb.model.bo.OrganizationTypeBO;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.naming.Name;
 import java.util.List;
 
 /**
@@ -40,17 +42,19 @@ public class OrganizationTypeController {
     @ApiOperation("添加组织类别")
     @PostMapping("/insert")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "detail",value = "分类组织备注",required = false),
+            @ApiImplicitParam(name = "detail",value = "分类组织备注"),
             @ApiImplicitParam(name = "name",value = "组织分类名称",required = true),
             @ApiImplicitParam(name = "parentId",value = "上级分类id",required = true),
             @ApiImplicitParam(name = "type",value = "所属分类（军，政，等）",required = true),
+            @ApiImplicitParam(name = "hasLocation",value = "是否需要关联地区，0否，1是",required = true)
     })
-    public Result<Boolean> insert(String detail,@RequestParam String name,@RequestParam Long parentId,@RequestParam Integer type){
+    public Result<Boolean> insert(@RequestParam Integer hasLocation,String detail,@RequestParam String name,@RequestParam Long parentId,@RequestParam Integer type){
         OrganizationType organizationType = new OrganizationType();
         organizationType.setDetail(detail);
         organizationType.setName(name);
         organizationType.setParentId(parentId);
         organizationType.setType(type);
+        organizationType.setHasLocation(hasLocation);
         organizationTypeService.save(organizationType);
         return Result.success(true);
     }
@@ -61,15 +65,17 @@ public class OrganizationTypeController {
             @ApiImplicitParam(name = "name",value = "组织分类名称",required = true),
             @ApiImplicitParam(name = "parentId",value = "上级分类id",required = true),
             @ApiImplicitParam(name = "type",value = "所属分类（军，政，等）",required = true),
+            @ApiImplicitParam(name = "hasLocation",value = "是否需要关联地区，0否，1是",required = true)
     })
-    public Result<Boolean> insertBatch(String content,@RequestParam String name,@RequestParam Long parentId,@RequestParam Integer type){
+    public Result<Boolean> insertBatch(@RequestParam Integer hasLocation,String content,@RequestParam String name,@RequestParam Long parentId,@RequestParam Integer type){
         OrganizationType organizationType = new OrganizationType();
         organizationType.setName(name);
         organizationType.setParentId(parentId);
         organizationType.setType(type);
+        organizationType.setHasLocation(hasLocation);
         organizationTypeService.save(organizationType);
         if(!StringUtils.isEmpty(content)){
-            organizationTypeService.insertBatch(content,type,organizationType.getId());
+            organizationTypeService.insertBatch(content,type,organizationType.getId(),hasLocation);
         }
         return Result.success(true);
     }
@@ -89,6 +95,14 @@ public class OrganizationTypeController {
         wrapper.eq("parent_id",0);
         List<OrganizationType> list = organizationTypeService.list(wrapper);
         return Result.success(list);
+    }
+
+    @PostMapping("/listData/tree/byType")
+    @ApiOperation("根据type查询组织类别的树状数据（可用于组织顶部的查询），children为空的没子类数据，children不为空的可选择下级组织类别")
+    @ApiImplicitParam(name = "type",value = "类别",required = true)
+    public Result<List<OrganizationTypeBO>> listTreeByType(@RequestParam Integer type){
+        List<OrganizationTypeBO> organizationTypeBOS = organizationTypeService.listAllTreeByType(type);
+        return Result.success(organizationTypeBOS);
     }
     @PostMapping("/list/type")
     @ApiOperation("军，政，法，等以及对应的编号")
@@ -110,7 +124,7 @@ public class OrganizationTypeController {
         return Result.success(commonTypeVOS);
     }
     @PostMapping("list/byParentId")
-    @ApiOperation("根据id，查找直系下属的组织，查最顶级的传0")
+    @ApiOperation("根据id，查找直系下属的组织，（可用于组织顶部的查询下级组织）")
     public Result<List<OrganizationType>> listByParentId(@RequestParam Long parentId){
         QueryWrapper<OrganizationType> wrapper = new QueryWrapper<>();
         wrapper.eq("parent_id",parentId);
@@ -118,14 +132,12 @@ public class OrganizationTypeController {
         return Result.success(list);
     }
 
-    /*@PostMapping("")
-    @ApiOperation("根据id，查找全部下属的组织树，查最顶级的传0")
-    public Result<List<OrganizationType>> listAllChildrenByParentId(@RequestParam Long parentId){
-        QueryWrapper<OrganizationType> wrapper = new QueryWrapper<>();
-
-        List<OrganizationType> list = organizationTypeService.list(wrapper);
-        return Result.success(list);
-    }*/
+    @PostMapping("update")
+    @ApiOperation("修改")
+    @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
+    public Result<Boolean> update(OrganizationType organizationType){
+        return Result.success(organizationTypeService.updateById(organizationType));
+    }
 
 }
 

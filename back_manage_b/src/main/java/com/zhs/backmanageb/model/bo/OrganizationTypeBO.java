@@ -23,6 +23,15 @@ public class OrganizationTypeBO {
     @ApiModelProperty(value = "大的分类，比如军，政，等")
     private Integer type;
 
+    @ApiModelProperty(value = "是否关联地区,0否，1是")
+    private Integer hasLocation;
+
+    @ApiModelProperty(value = "地区id")
+    private Long areaId;
+
+    @ApiModelProperty(value = "地区名称")
+    private String areaName;
+
     private List<OrganizationTypeBO> children;
 
     private Long parentId;

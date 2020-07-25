@@ -20,6 +20,9 @@
     <select id="selectAllTree" resultMap="myTreeMap">
         select id,name,type,detail,parent_id from organization_type
         where parent_id=0 and deleted=0
+        <if test="type!=null ">
+            and type =#{type,jdbcType=INTEGER}
+        </if>
     </select>
     <select id="selectFirstTreeByParentId" resultType="com.zhs.backmanageb.model.bo.OrganizationTypeBO" >
         select id,name,type,detail,parent_id from organization_type

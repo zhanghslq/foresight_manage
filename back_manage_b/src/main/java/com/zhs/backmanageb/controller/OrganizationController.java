@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Organization;
+import com.zhs.backmanageb.entity.OrganizationType;
+import com.zhs.backmanageb.model.bo.OrganizationBO;
 import com.zhs.backmanageb.service.OrganizationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -63,5 +66,28 @@ public class OrganizationController {
     public Result<Boolean> update(Organization organization){
         return Result.success(organizationService.updateById(organization));
     }
+
+    // 查一个组织的时候会查组织详情和领导人，以及联系人
+
+
+    @PostMapping("query/by_organization_type")
+    @ApiOperation("根据组织类别查询组织,领导人，联系人（企业查询除外，企业是根这些分开的）")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "organizationTypeId",value = "组织类型id",required = true),
+            /*@ApiImplicitParam(name = "type",value = "所属体系，军政法企等）",required = true),*/
+    })
+    public Result<OrganizationBO> queryByOrganizationType(Long organizationTypeId){
+        OrganizationBO organizationBO = organizationService.queryByOrganizationType(organizationTypeId);
+        return Result.success(organizationBO);
+    }
+
+    @ApiOperation("根据组织Id查询下属组织,领导人，联系人（企业查询除外，企业是根这些分开的）")
+    @PostMapping("query/by_id")
+    public Result<OrganizationBO> queryByParentId(Long id){
+        OrganizationBO organizationBO = organizationService.queryByParentId(id);
+        return Result.success(organizationBO);
+    }
+
+
 }
 

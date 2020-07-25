@@ -1,9 +1,6 @@
 package com.zhs.backmanageb.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zhs.backmanageb.common.constant.CommonTypeEnum;
 import com.zhs.backmanageb.common.constant.RootTypeEnum;
-import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.OrganizationType;
 import com.zhs.backmanageb.exception.MyException;
 import com.zhs.backmanageb.mapper.OrganizationTypeMapper;
@@ -80,7 +77,7 @@ public class OrganizationTypeServiceImpl extends ServiceImpl<OrganizationTypeMap
     @Override
     public List<CommonTypeVO> listAllTree() {
         List<CommonTypeVO> commonTypeVOS = listType();
-        List<OrganizationTypeBO> organizationTypeBOS = organizationTypeMapper.selectAllTree();
+        List<OrganizationTypeBO> organizationTypeBOS = organizationTypeMapper.selectAllTree(null);
         Map<Integer, List<OrganizationTypeBO>> map = organizationTypeBOS.stream().collect(Collectors.groupingBy(OrganizationTypeBO::getType));
         for (CommonTypeVO commonTypeVO : commonTypeVOS) {
             commonTypeVO.setOrganizationTypeListTree(map.get(commonTypeVO.getId().intValue()));
@@ -89,7 +86,7 @@ public class OrganizationTypeServiceImpl extends ServiceImpl<OrganizationTypeMap
     }
 
     @Override
-    public void insertBatch(String content, Integer type,Long parentId) {
+    public void insertBatch(String content, Integer type, Long parentId, Integer hasLocation) {
         ArrayList<OrganizationType> organizationTypeArrayList = new ArrayList<>();
         if(StringUtils.isEmpty(content)){
             throw new MyException("内容不能为空");
@@ -100,8 +97,14 @@ public class OrganizationTypeServiceImpl extends ServiceImpl<OrganizationTypeMap
             organizationType.setName(name.trim());
             organizationType.setType(type);
             organizationType.setParentId(parentId);
+            organizationType.setHasLocation(hasLocation);
             organizationTypeArrayList.add(organizationType);
         }
         saveBatch(organizationTypeArrayList);
+    }
+
+    @Override
+    public List<OrganizationTypeBO> listAllTreeByType(Integer type) {
+        return organizationTypeMapper.selectAllTree(type);
     }
 }

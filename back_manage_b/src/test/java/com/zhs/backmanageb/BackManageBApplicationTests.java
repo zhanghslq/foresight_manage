@@ -26,9 +26,9 @@ class BackManageBApplicationTests {
     }
     @Test
     void testTree(){
-        List<OrganizationTypeBO> organizationTypeBOS = organizationTypeMapper.selectAllTree();
+//        List<OrganizationTypeBO> organizationTypeBOS = organizationTypeMapper.selectAllTree();
 
-        System.out.println(organizationTypeBOS);
+//        System.out.println(organizationTypeBOS);
     }
 
 }

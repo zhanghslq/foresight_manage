@@ -84,7 +84,7 @@ public class OrganizationController {
 
     @ApiOperation("根据组织Id查询下属组织,领导人，联系人（企业查询除外，企业是根这些分开的）")
     @PostMapping("query/by_id")
-    public Result<OrganizationBO> queryByParentId(Long id){
+    public Result<OrganizationBO> queryById(Long id){
         OrganizationBO organizationBO = organizationService.queryByParentId(id);
         return Result.success(organizationBO);
     }

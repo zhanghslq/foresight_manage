@@ -80,7 +80,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
     @Override
     public OrganizationBO queryByParentId(Long id) {
         OrganizationBO organizationBO = new OrganizationBO();
-
+        organizationBO.setOrganization(getById(id));
         getContactAndLeader(organizationBO,id);
         QueryWrapper<Organization> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("parentId",id);

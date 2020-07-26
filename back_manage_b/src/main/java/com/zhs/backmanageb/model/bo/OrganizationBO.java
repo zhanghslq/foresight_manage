@@ -15,9 +15,9 @@ import java.util.List;
 public class OrganizationBO {
 
     /**
-     * 组织
+     * 下属组织
      */
-    private List<Organization> organizations;
+    private List<Organization> organizationChildren;
 
     /**
      * 领导人
@@ -28,4 +28,9 @@ public class OrganizationBO {
      * 联系人
      */
     private List<Contacts> contacts;
+
+    /**
+     * 组织机构本身
+     */
+    private Organization organization;
 }

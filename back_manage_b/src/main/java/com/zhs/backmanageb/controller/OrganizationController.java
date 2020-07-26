@@ -71,13 +71,14 @@ public class OrganizationController {
 
 
     @PostMapping("query/by_organization_type")
-    @ApiOperation("根据组织类别查询组织,领导人，联系人（企业查询除外，企业是根这些分开的）")
+    @ApiOperation("根据组织类别,地区（可选）查询组织,领导人，联系人（企业查询除外，企业是根这些分开的）")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "organizationTypeId",value = "组织类型id",required = true),
-            /*@ApiImplicitParam(name = "type",value = "所属体系，军政法企等）",required = true),*/
+            @ApiImplicitParam(name = "areaId",value = "地区id"),
     })
-    public Result<OrganizationBO> queryByOrganizationType(Long organizationTypeId){
-        OrganizationBO organizationBO = organizationService.queryByOrganizationType(organizationTypeId);
+    public Result<OrganizationBO> queryByOrganizationType(@RequestParam Long organizationTypeId,Long areaId){
+        //
+        OrganizationBO organizationBO = organizationService.queryByOrganizationType(organizationTypeId,areaId);
         return Result.success(organizationBO);
     }
 

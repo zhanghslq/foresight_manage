@@ -14,7 +14,7 @@ import com.zhs.backmanageb.model.bo.OrganizationBO;
  */
 public interface OrganizationService extends IService<Organization> {
 
-    OrganizationBO queryByOrganizationType(Long organizationTypeId);
+    OrganizationBO queryByOrganizationType(Long organizationTypeId, Long areaId);
 
     OrganizationBO queryByParentId(Long id);
 }

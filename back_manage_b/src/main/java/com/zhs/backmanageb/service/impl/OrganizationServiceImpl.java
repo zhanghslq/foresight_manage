@@ -1,22 +1,19 @@
 package com.zhs.backmanageb.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zhs.backmanageb.entity.Contacts;
-import com.zhs.backmanageb.entity.Leader;
-import com.zhs.backmanageb.entity.Organization;
-import com.zhs.backmanageb.entity.OrganizationType;
+import com.zhs.backmanageb.common.constant.ModuleTypeEnum;
+import com.zhs.backmanageb.entity.*;
 import com.zhs.backmanageb.mapper.OrganizationMapper;
-import com.zhs.backmanageb.model.bo.OrganizationBO;
-import com.zhs.backmanageb.service.ContactsService;
-import com.zhs.backmanageb.service.LeaderService;
-import com.zhs.backmanageb.service.OrganizationService;
+import com.zhs.backmanageb.model.bo.OrganizationModuleBO;
+import com.zhs.backmanageb.model.vo.OrganizationVO;
+import com.zhs.backmanageb.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zhs.backmanageb.service.OrganizationTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -37,13 +34,15 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
     @Autowired
     private ContactsService contactsService;
 
+    @Autowired
+    private OrganizationModuleService organizationModuleService;
 
     @Autowired
     private OrganizationTypeService organizationTypeService;
 
 
     @Override
-    public OrganizationBO queryByOrganizationType(Long organizationTypeId, Long areaId) {
+    public OrganizationVO queryByOrganizationType(Long organizationTypeId, Long areaId) {
         List<Long> organizationTypeIds = new ArrayList<>();
         // 需要先判断组织类别是不是还有子类，还有子类的话就取子类中的
         QueryWrapper<OrganizationType> organizationTypeQueryWrapper = new QueryWrapper<>();
@@ -54,7 +53,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         }else {
             organizationTypeIds.add(organizationTypeId);
         }
-        OrganizationBO organizationBO = new OrganizationBO();
+        OrganizationVO organizationVO = new OrganizationVO();
         QueryWrapper<Organization> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("organization_type_id",organizationTypeIds);
         if(Objects.isNull(areaId)){
@@ -62,42 +61,79 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         }
         List<Organization> list = list(queryWrapper);
         if (list.size()==0){
-            return organizationBO;
+            return organizationVO;
         }
         Organization organization = list.get(0);
-        QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
-        organizationQueryWrapper.eq("parentId",organization.getId());
-        // 查到的子类组织
-        List<Organization> organizationChildren = list(organizationQueryWrapper);
-        organizationBO.setOrganizationChildren(organizationChildren);
-        //自身
-        organizationBO.setOrganization(organization);
+        // 这里需要对子类组织进行分类，对联系人，领导人进行分模块
+        organizationVO.setOrganization(organization);
+
         // 联系人和领导人
-        getContactAndLeader(organizationBO, organization.getId());
-        return organizationBO;
+        getContactAndLeader(organizationVO, organization.getId());
+        return organizationVO;
     }
 
     @Override
-    public OrganizationBO queryByParentId(Long id) {
-        OrganizationBO organizationBO = new OrganizationBO();
-        organizationBO.setOrganization(getById(id));
-        getContactAndLeader(organizationBO,id);
-        QueryWrapper<Organization> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("parentId",id);
-        List<Organization> list = list(queryWrapper);
-        organizationBO.setOrganizationChildren(list);
+    public OrganizationModuleBO queryByParentId(Long id) {
+        OrganizationModuleBO organizationBO = new OrganizationModuleBO();
+        /*organizationBO.setOrganization(getById(id));
+        getContactAndLeader(organizationBO,id);*/
         return organizationBO;
     }
-    private void getContactAndLeader(OrganizationBO organizationBO, Long organizationId) {
+    private void getContactAndLeader(OrganizationVO organizationVO, Long organizationId) {
+        QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
+        organizationQueryWrapper.eq("parentId",organizationId);
+        // 查到的子类组织
+        List<Organization> organizationChildren = list(organizationQueryWrapper);
+
+        Map<Long, List<Organization>> organizationMap = organizationChildren.stream().collect(Collectors.groupingBy(item -> {
+            if (item.getModuleId() == null) {
+                return 0L;
+            }
+            return item.getModuleId();
+        }));
+
 
         QueryWrapper<Contacts> contactsQueryWrapper = new QueryWrapper<>();
         contactsQueryWrapper.eq("organization_id", organizationId);
         List<Contacts> contactsList = contactsService.list(contactsQueryWrapper);
-        organizationBO.setContacts(contactsList);
+        Map<Long, List<Contacts>> contactsMap = contactsList.stream().collect(Collectors.groupingBy(item -> {
+            if (item.getModuleId() == null) {
+                return 0L;
+            }
+            return item.getModuleId();
+        }));
+
 
         QueryWrapper<Leader> leaderQueryWrapper = new QueryWrapper<>();
         leaderQueryWrapper.eq("organization_id", organizationId);
         List<Leader> leaderList = leaderService.list(leaderQueryWrapper);
-        organizationBO.setLeaders(leaderList);
+
+        Map<Long, List<Leader>> leaderMap = leaderList.stream().collect(Collectors.groupingBy(item -> {
+            if (item.getModuleId() == null) {
+                return 0L;
+            }
+            return item.getModuleId();
+        }));
+
+        QueryWrapper<OrganizationModule> organizationModuleQueryWrapper = new QueryWrapper<>();
+        organizationModuleQueryWrapper.eq("organization_id",organizationId);
+        List<OrganizationModule> organizationModuleList = organizationModuleService.list(organizationModuleQueryWrapper);
+        List<OrganizationModuleBO> organizationModuleBOS = new ArrayList<>();
+        for (OrganizationModule organizationModule : organizationModuleList) {
+            OrganizationModuleBO organizationModuleBO = new OrganizationModuleBO();
+            organizationModuleBO.setModuleName(organizationModule.getName());
+            if(ModuleTypeEnum.LEADER.getId().equals(organizationModule.getType())){
+                organizationModuleBO.setType(ModuleTypeEnum.LEADER.getId());
+                organizationModuleBO.setLeaders(leaderMap.get(organizationModule.getId()));
+            }else if(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(organizationModule.getType())){
+                organizationModuleBO.setType(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId());
+                organizationModuleBO.setOrganizationChildren(organizationMap.get(organizationModule.getId()));
+            }else if(ModuleTypeEnum.CONTACTS.getId().equals(organizationModule.getType())){
+                organizationModuleBO.setType(ModuleTypeEnum.CONTACTS.getId());
+                organizationModuleBO.setContacts(contactsMap.get(organizationModule.getId()));
+            }
+            organizationModuleBOS.add(organizationModuleBO);
+        }
+        organizationVO.setOrganizationModules(organizationModuleBOS);
     }
 }

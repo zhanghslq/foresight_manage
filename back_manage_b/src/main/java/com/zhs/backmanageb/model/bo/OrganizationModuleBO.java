@@ -3,6 +3,8 @@ package com.zhs.backmanageb.model.bo;
 import com.zhs.backmanageb.entity.Contacts;
 import com.zhs.backmanageb.entity.Leader;
 import com.zhs.backmanageb.entity.Organization;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -12,8 +14,16 @@ import java.util.List;
  * @date: 2020/7/25 17:57
  */
 @Data
-public class OrganizationBO {
+@ApiModel("组织模块")
+public class OrganizationModuleBO {
+    /**
+     * 模块类型
+     */
+    @ApiModelProperty("组织模块的类型，0领导人模块，1下属组织模块，2联系人模块，根据type，取对应属性的值")
+    private Integer type;
 
+    @ApiModelProperty("模块名称")
+    private String moduleName;
     /**
      * 下属组织
      */

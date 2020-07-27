@@ -2,7 +2,8 @@ package com.zhs.backmanageb.service;
 
 import com.zhs.backmanageb.entity.Organization;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.zhs.backmanageb.model.bo.OrganizationBO;
+import com.zhs.backmanageb.model.bo.OrganizationModuleBO;
+import com.zhs.backmanageb.model.vo.OrganizationVO;
 
 /**
  * <p>
@@ -14,7 +15,7 @@ import com.zhs.backmanageb.model.bo.OrganizationBO;
  */
 public interface OrganizationService extends IService<Organization> {
 
-    OrganizationBO queryByOrganizationType(Long organizationTypeId, Long areaId);
+    OrganizationVO queryByOrganizationType(Long organizationTypeId, Long areaId);
 
-    OrganizationBO queryByParentId(Long id);
+    OrganizationModuleBO queryByParentId(Long id);
 }

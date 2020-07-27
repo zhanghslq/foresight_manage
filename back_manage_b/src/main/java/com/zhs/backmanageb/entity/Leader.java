@@ -47,6 +47,9 @@ public class Leader implements Serializable {
     @ApiModelProperty(value = "领导姓名")
     private String realName;
 
+    @ApiModelProperty("模块id")
+    private Long moduleId;
+
     @JsonIgnore
     @ApiModelProperty(value = "删除标志")
     @TableLogic

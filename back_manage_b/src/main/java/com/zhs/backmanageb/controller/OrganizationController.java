@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Organization;
-import com.zhs.backmanageb.entity.OrganizationType;
-import com.zhs.backmanageb.model.bo.OrganizationBO;
+import com.zhs.backmanageb.model.bo.OrganizationModuleBO;
+import com.zhs.backmanageb.model.vo.OrganizationVO;
 import com.zhs.backmanageb.service.OrganizationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * <p>
@@ -76,16 +75,16 @@ public class OrganizationController {
             @ApiImplicitParam(name = "organizationTypeId",value = "组织类型id",required = true),
             @ApiImplicitParam(name = "areaId",value = "地区id"),
     })
-    public Result<OrganizationBO> queryByOrganizationType(@RequestParam Long organizationTypeId,Long areaId){
+    public Result<OrganizationVO> queryByOrganizationType(@RequestParam Long organizationTypeId,Long areaId){
         //
-        OrganizationBO organizationBO = organizationService.queryByOrganizationType(organizationTypeId,areaId);
-        return Result.success(organizationBO);
+        OrganizationVO organizationVO = organizationService.queryByOrganizationType(organizationTypeId,areaId);
+        return Result.success(organizationVO);
     }
 
     @ApiOperation("根据组织Id查询下属组织,领导人，联系人（企业查询除外，企业是根这些分开的）")
     @PostMapping("query/by_id")
-    public Result<OrganizationBO> queryById(Long id){
-        OrganizationBO organizationBO = organizationService.queryByParentId(id);
+    public Result<OrganizationModuleBO> queryById(Long id){
+        OrganizationModuleBO organizationBO = organizationService.queryByParentId(id);
         return Result.success(organizationBO);
     }
     @ApiOperation("删除组织")

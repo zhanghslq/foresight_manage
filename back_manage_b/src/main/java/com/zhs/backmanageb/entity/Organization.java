@@ -89,6 +89,10 @@ public class Organization implements Serializable {
     @ApiModelProperty(value = "机构报告地址")
     private String reportUrl;
 
+    @ApiModelProperty("模块id")
+    private Long moduleId;
+
+
     @JsonIgnore
     @ApiModelProperty(value = "删除标志")
     @TableLogic

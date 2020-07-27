@@ -5,6 +5,7 @@
         <id property="id" jdbcType="BIGINT" column="id" javaType="long" />
         <result property="name" javaType="java.lang.String" column="name"/>
         <result property="type" javaType="integer" column="type"/>
+        <result property="hasLocation" column="has_location"/>
         <result property="detail" javaType="java.lang.String" column="detail"/>
         <collection property="children" javaType="list"  ofType="com.zhs.backmanageb.model.bo.OrganizationTypeBO" column="id" select="selectAllTreeByParentId" />
     </resultMap>
@@ -12,24 +13,27 @@
         <id property="id" jdbcType="BIGINT" column="id" javaType="long" />
         <result property="name" javaType="java.lang.String" column="name"/>
         <result property="type" javaType="integer" column="type"/>
+        <result property="hasLocation" column="has_location"/>
         <result property="detail" javaType="java.lang.String" column="detail"/>
         <result property="parentId" javaType="long" column="parent_id"/>
         <collection property="children" javaType="list"  ofType="com.zhs.backmanageb.model.bo.OrganizationTypeBO" column="id" select="selectFirstTreeByParentId" />
     </resultMap>
-
+    <sql id="baseSQl">
+            id,name,type,detail,has_location,parent_id
+    </sql>
     <select id="selectAllTree" resultMap="myTreeMap">
-        select id,name,type,detail,parent_id from organization_type
+        select <include refid="baseSQl"/> from organization_type
         where parent_id=0 and deleted=0
         <if test="type!=null ">
             and type =#{type,jdbcType=INTEGER}
         </if>
     </select>
     <select id="selectFirstTreeByParentId" resultType="com.zhs.backmanageb.model.bo.OrganizationTypeBO" >
-        select id,name,type,detail,parent_id from organization_type
+        select id,name,type,detail,has_location,parent_id from organization_type
         where parent_id=#{parentId,jdbcType=BIGINT} and deleted=0
     </select>
     <select id="selectAllTreeByParentId" resultMap="myTreeMap" >
-        select id,name,type,detail,parent_id from organization_type
+        select id,name,type,detail,has_location,parent_id from organization_type
         where parent_id=#{parentId,jdbcType=BIGINT} and deleted=0
     </select>
     <select id="selectAllIdHasChild" resultType="java.lang.Long">
@@ -37,14 +41,14 @@
         where deleted=0 and parent_id!=0
     </select>
     <select id="selectAllHasChild" resultMap="myFirstTreeMap">
-        select id,name,type,detail,parent_id from organization_type
+        select id,name,type,detail,has_location,parent_id from organization_type
         where deleted=0 and id in
         <foreach collection="parentIds" separator="," open="(" close=")" item="pid">
             #{pid,jdbcType=BIGINT}
         </foreach>
     </select>
     <select id="listByParentIdZero" resultType="com.zhs.backmanageb.model.bo.OrganizationTypeBO">
-        select id,name,type,detail,parent_id from organization_type
+        select id,name,type,detail,has_location,parent_id from organization_type
         where deleted=0 and parent_id=0
     </select>
 

@@ -88,6 +88,12 @@ public class OrganizationController {
         OrganizationBO organizationBO = organizationService.queryByParentId(id);
         return Result.success(organizationBO);
     }
+    @ApiOperation("删除组织")
+    @PostMapping("delete")
+    @ApiImplicitParam(name = "id",value = "组织id",required = true)
+    public Result<Boolean> delete(@RequestParam Long id){
+        return Result.success(organizationService.removeById(id));
+    }
 
 
 }

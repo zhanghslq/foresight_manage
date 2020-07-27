@@ -25,7 +25,7 @@ import javax.annotation.Resource;
  * @author zhs
  * @since 2020-07-27
  */
-@Api("组织模块")
+@Api(tags = "组织模块")
 @RestController
 @RequestMapping("/organizationModule")
 public class OrganizationModuleController {

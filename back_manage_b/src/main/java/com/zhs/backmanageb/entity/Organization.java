@@ -44,10 +44,10 @@ public class Organization implements Serializable {
     @ApiModelProperty(value = "行政级别")
     private Long levelId;
 
-    @ApiModelProperty(value = "所属系统（应该算是上级id）")
+    @ApiModelProperty(value = "上级组织id）")
     private Long parentId;
 
-    @ApiModelProperty(value = "所属系统（比如全国人大，等等这种粒度的）")
+    @ApiModelProperty(value = "组织类别id，比如全国人大，等等这种粒度的")
     private Long organizationTypeId;
 
     @ApiModelProperty(value = "所属体系（军，政，法等）")

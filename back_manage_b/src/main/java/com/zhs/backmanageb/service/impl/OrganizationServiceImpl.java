@@ -75,15 +75,13 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
     @Override
     public OrganizationVO queryByParentId(Long id) {
         OrganizationVO organizationVO = new OrganizationVO();
-        /*organizationBO.setOrganization(getById(id));
-        getContactAndLeader(organizationBO,id);*/
         organizationVO.setOrganization(getById(id));
         getContactAndLeader(organizationVO,id);
         return organizationVO;
     }
     private void getContactAndLeader(OrganizationVO organizationVO, Long organizationId) {
         QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
-        organizationQueryWrapper.eq("parentId",organizationId);
+        organizationQueryWrapper.eq("parent_id",organizationId);
         // 查到的子类组织
         List<Organization> organizationChildren = list(organizationQueryWrapper);
 

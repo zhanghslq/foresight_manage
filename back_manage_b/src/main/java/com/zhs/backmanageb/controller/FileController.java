@@ -13,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author: zhs
@@ -23,22 +25,30 @@ import java.nio.charset.StandardCharsets;
 @RequestMapping("file")
 @Api(tags = "文件管理")
 public class FileController {
+    private  String prefix = "/data/file/";
 
-    @RequestMapping("getTemplate")
-    public void getTemplate(HttpServletResponse response,String fileName){
+    @RequestMapping("getFile")
+    public String getTemplate(HttpServletResponse response,String fileName){
+        if(System.getProperty("os").toLowerCase().startsWith("win")){
+            prefix = "c://data/file/";
+        }
         try {
-            InputStream fis = new BufferedInputStream(new FileInputStream("主持人批量导入模板.xlsx"));
+            File file = new File(prefix + fileName);
+            if(!file.exists()){
+                return "文件不存在";
+            }
+
+            InputStream fis = new BufferedInputStream(new FileInputStream(prefix+fileName));
             byte[] buffer = new byte[fis.available()];
             fis.read(buffer);
             fis.close();
             // 设置response的Header
             response.setCharacterEncoding("utf-8");
-
-            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            //1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
+            response.setContentType("multipart/form-data");
 
             response.setHeader("Content-Disposition", "attachment; filename="
-                    + new String("主持人批量导入模板".getBytes(StandardCharsets.UTF_8), "iso8859-1")
-                    + ".xlsx");
+                    + new String(file.getName().getBytes(StandardCharsets.UTF_8), "iso8859-1"));
             OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
             toClient.write(buffer);
             toClient.flush();
@@ -47,39 +57,39 @@ public class FileController {
             e.printStackTrace();
             log.info("下载失败");
         }
+        return null;
     }
 
 
-    @RequestMapping("listUpload")
+    @RequestMapping("upload")
     public Result<String> listUpload(@RequestParam("file") MultipartFile file){
+        if(System.getProperty("os").toLowerCase().startsWith("win")){
+            prefix = "c://data/file/";
+        }
+        if (file.isEmpty()) {
+            return Result.fail(500,"文件不能为空","");
+        }
         //批量添加
         String fileName = file.getOriginalFilename();
         if (StringUtils.isEmpty(fileName)){
             return Result.fail(500,"文件不能为空","");
         }
-        // 获取文件后缀
-        String prefix=fileName.substring(fileName.lastIndexOf("."));
-        if (!prefix.toLowerCase().contains("xls") && !prefix.toLowerCase().contains("xlsx") ){
-            return Result.fail(500,"文件格式异常，请上传Excel文件格式","");
+
+        // 定义文件路径 日期/时间戳/文件名
+        LocalDate now = LocalDate.now();
+        String today = now.format(DateTimeFormatter.ofPattern("yyyy-M-d"));
+        long currentTimeMillis = System.currentTimeMillis();
+        String name = file.getName();
+        String filename = today + "/" + currentTimeMillis + "/" + name;
+        File file1 = new File(prefix + fileName);
+        if(!file1.getParentFile().exists()){
+            file1.getParentFile().mkdirs();
         }
-        // 防止生成的临时文件重复-建议使用UUID
-        final File excelFile;
         try {
-            excelFile = File.createTempFile(System.currentTimeMillis()+"", prefix);
-            file.transferTo(excelFile);
+            file.transferTo(file1);
         } catch (IOException e) {
             e.printStackTrace();
-            return Result.fail(500,"文件上传失败","");
         }
-
-        FileInputStream fileInputStream;
-        try {
-            fileInputStream = new FileInputStream(excelFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return Result.fail(500,"文件上传失败","");
-        }
-
-        return Result.success("");
+        return Result.success(fileName);
     }
 }

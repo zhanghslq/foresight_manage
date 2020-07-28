@@ -73,11 +73,13 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
     }
 
     @Override
-    public OrganizationModuleBO queryByParentId(Long id) {
-        OrganizationModuleBO organizationBO = new OrganizationModuleBO();
+    public OrganizationVO queryByParentId(Long id) {
+        OrganizationVO organizationVO = new OrganizationVO();
         /*organizationBO.setOrganization(getById(id));
         getContactAndLeader(organizationBO,id);*/
-        return organizationBO;
+        organizationVO.setOrganization(getById(id));
+        getContactAndLeader(organizationVO,id);
+        return organizationVO;
     }
     private void getContactAndLeader(OrganizationVO organizationVO, Long organizationId) {
         QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();

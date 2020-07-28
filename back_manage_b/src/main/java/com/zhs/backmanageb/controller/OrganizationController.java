@@ -83,9 +83,10 @@ public class OrganizationController {
 
     @ApiOperation("根据组织Id查询下属组织,领导人，联系人（企业查询除外，企业是根这些分开的）")
     @PostMapping("query/by_id")
-    public Result<OrganizationModuleBO> queryById(Long id){
-        OrganizationModuleBO organizationBO = organizationService.queryByParentId(id);
-        return Result.success(organizationBO);
+    @ApiImplicitParam(name = "id",value = "组织id",required = true)
+    public Result<OrganizationVO> queryById(@RequestParam Long id){
+        OrganizationVO organizationVO = organizationService.queryByParentId(id);
+        return Result.success(organizationVO);
     }
     @ApiOperation("删除组织")
     @PostMapping("delete")

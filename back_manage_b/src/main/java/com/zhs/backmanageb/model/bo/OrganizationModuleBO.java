@@ -3,6 +3,7 @@ package com.zhs.backmanageb.model.bo;
 import com.zhs.backmanageb.entity.Contacts;
 import com.zhs.backmanageb.entity.Leader;
 import com.zhs.backmanageb.entity.Organization;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -24,6 +25,9 @@ public class OrganizationModuleBO {
 
     @ApiModelProperty("模块名称")
     private String moduleName;
+
+    @ApiModelProperty("模块id")
+    private Long moduleId;
     /**
      * 下属组织
      */

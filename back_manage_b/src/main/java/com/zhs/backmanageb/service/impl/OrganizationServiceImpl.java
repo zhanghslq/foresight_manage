@@ -122,6 +122,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         for (OrganizationModule organizationModule : organizationModuleList) {
             OrganizationModuleBO organizationModuleBO = new OrganizationModuleBO();
             organizationModuleBO.setModuleName(organizationModule.getName());
+            organizationModuleBO.setModuleId(organizationModule.getId());
             if(ModuleTypeEnum.LEADER.getId().equals(organizationModule.getType())){
                 organizationModuleBO.setType(ModuleTypeEnum.LEADER.getId());
                 organizationModuleBO.setLeaders(leaderMap.get(organizationModule.getId()));

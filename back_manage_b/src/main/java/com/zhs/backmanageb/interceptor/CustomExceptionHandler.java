@@ -29,6 +29,7 @@ public class CustomExceptionHandler {
 	@ExceptionHandler(value = Exception.class)
 	@ResponseBody
 	public Result<String> defaultErrorHandler(HttpServletRequest req, HttpServletResponse resp, Exception e) throws Exception{
+		log.error(e.getMessage(),e);
 		return Result.fail(500,"服务器内部错误",e.getMessage());
 	}
 

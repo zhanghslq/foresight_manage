@@ -29,7 +29,7 @@ public class FileController {
 
     @RequestMapping("getFile")
     public String getTemplate(HttpServletResponse response,String fileName){
-        if(System.getProperty("os").toLowerCase().startsWith("win")){
+        if(System.getProperty("os.name").toLowerCase().startsWith("win")){
             prefix = "c://data/file/";
         }
         try {
@@ -60,10 +60,9 @@ public class FileController {
         return null;
     }
 
-
     @RequestMapping("upload")
     public Result<String> listUpload(@RequestParam("file") MultipartFile file){
-        if(System.getProperty("os").toLowerCase().startsWith("win")){
+        if(System.getProperty("os.name").toLowerCase().startsWith("win")){
             prefix = "c://data/file/";
         }
         if (file.isEmpty()) {
@@ -79,9 +78,8 @@ public class FileController {
         LocalDate now = LocalDate.now();
         String today = now.format(DateTimeFormatter.ofPattern("yyyy-M-d"));
         long currentTimeMillis = System.currentTimeMillis();
-        String name = file.getName();
-        String filename = today + "/" + currentTimeMillis + "/" + name;
-        File file1 = new File(prefix + fileName);
+        String filePath = today + "/" + currentTimeMillis + "/" + fileName;
+        File file1 = new File(prefix + filePath);
         if(!file1.getParentFile().exists()){
             file1.getParentFile().mkdirs();
         }
@@ -90,6 +88,6 @@ public class FileController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return Result.success(fileName);
+        return Result.success(filePath);
     }
 }

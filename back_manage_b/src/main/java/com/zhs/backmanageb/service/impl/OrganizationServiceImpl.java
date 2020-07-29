@@ -56,7 +56,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         OrganizationVO organizationVO = new OrganizationVO();
         QueryWrapper<Organization> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("organization_type_id",organizationTypeIds);
-        if(Objects.isNull(areaId)){
+        if(!Objects.isNull(areaId)){
             queryWrapper.eq("area_id",areaId);
         }
         List<Organization> list = list(queryWrapper);

@@ -65,5 +65,11 @@ public class ExpertController {
     public Result<Boolean> deleteById(@RequestParam Long id){
         return Result.success(expertService.removeById(id));
     }
+    @PostMapping("insert")
+    @ApiOperation("插入")
+    @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
+    public Result<Boolean> insert(Expert expert){
+        return Result.success(expertService.save(expert));
+    }
 }
 

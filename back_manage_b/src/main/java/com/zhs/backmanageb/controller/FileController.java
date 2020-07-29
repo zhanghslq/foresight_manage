@@ -3,6 +3,7 @@ package com.zhs.backmanageb.controller;
 import com.zhs.backmanageb.common.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
@@ -28,8 +29,11 @@ public class FileController {
 
     @GetMapping("getFile")
     @ApiOperation("下载文件")
-    @ApiImplicitParam(name = "fileName",value = "返回的文件名字",required = true)
-    public String getTemplate(HttpServletResponse response,@RequestParam String fileName){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "fileName",value = "返回的文件名字",required = true),
+            @ApiImplicitParam(name = "isInline",value = "1预览，默认0下载")
+    })
+    public String getTemplate(HttpServletResponse response,@RequestParam String fileName,@RequestParam(defaultValue = "0",required = false) Integer isInline){
         if(System.getProperty("os.name").toLowerCase().startsWith("win")){
             prefix = "c://data/file/";
         }
@@ -46,10 +50,16 @@ public class FileController {
             // 设置response的Header
             response.setCharacterEncoding("utf-8");
             //1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
-            response.setContentType("multipart/form-data");
+            if(isInline==1){
+                response.setContentType("image/jpeg");
+                response.setHeader("Content-Disposition", "inline; filename="
+                        + new String(file.getName().getBytes(StandardCharsets.UTF_8), "iso8859-1"));
+            }else {
+                response.setContentType("multipart/form-data");
+                response.setHeader("Content-Disposition", "attachment; filename="
+                        + new String(file.getName().getBytes(StandardCharsets.UTF_8), "iso8859-1"));
+            }
 
-            response.setHeader("Content-Disposition", "attachment; filename="
-                    + new String(file.getName().getBytes(StandardCharsets.UTF_8), "iso8859-1"));
             OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
             toClient.write(buffer);
             toClient.flush();

@@ -69,6 +69,12 @@ public class ContactsController {
     }
 
 
+    @PostMapping("delete")
+    @ApiOperation("删除")
+    @ApiImplicitParam(name = "id",value = "联系人id",required = true)
+    public Result<Boolean> delete(@RequestParam Long id){
+        return Result.success(contactsService.removeById(id));
+    }
     // 插入联系人用的是导入文件模板的形式
 }
 

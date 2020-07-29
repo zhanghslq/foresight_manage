@@ -138,6 +138,13 @@ public class OrganizationTypeController {
     public Result<Boolean> update(OrganizationType organizationType){
         return Result.success(organizationTypeService.updateById(organizationType));
     }
+    @PostMapping("delete")
+    @ApiOperation("删除")
+    @ApiImplicitParam(name = "id",value = "组织类别id",required = true)
+    public Result<Boolean> delete(@RequestParam Long id){
+        return Result.success(organizationTypeService.removeById(id));
+    }
+
 
 }
 

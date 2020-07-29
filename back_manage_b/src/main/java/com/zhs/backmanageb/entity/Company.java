@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -57,15 +59,31 @@ administrativeLevelId;
     @ApiModelProperty(value = "机构网址")
     private String website;
 
-    private Long regionId;
+    @ApiModelProperty("地区id")
+    private Long areaId;
 
-    private String addressDeail;
+    @ApiModelProperty("地址详情")
+    private String addressDetail;
+    @ApiModelProperty("地区名称")
+    private String addressName;
 
+
+    @ApiModelProperty("企业logo")
     private String logoUrl;
 
     @ApiModelProperty(value = "企业报告")
     private String reportUrl;
 
+    @ApiModelProperty("父类企业id")
+    private Long parentId;
+
+    @ApiModelProperty("企业类别id")
+    private Long organizationTypeId;
+
+    @ApiModelProperty("模块id")
+    private Long moduleId;
+
+    @JsonIgnore
     @ApiModelProperty(value = "删除标志")
     @TableLogic
     private Integer deleted;

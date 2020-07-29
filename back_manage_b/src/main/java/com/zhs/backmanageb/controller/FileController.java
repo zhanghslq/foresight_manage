@@ -2,12 +2,11 @@ package com.zhs.backmanageb.controller;
 
 import com.zhs.backmanageb.common.Result;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -27,8 +26,10 @@ import java.time.format.DateTimeFormatter;
 public class FileController {
     private  String prefix = "/data/file/";
 
-    @RequestMapping("getFile")
-    public String getTemplate(HttpServletResponse response,String fileName){
+    @GetMapping("getFile")
+    @ApiOperation("下载文件")
+    @ApiImplicitParam(name = "fileName",value = "返回的文件名字",required = true)
+    public String getTemplate(HttpServletResponse response,@RequestParam String fileName){
         if(System.getProperty("os.name").toLowerCase().startsWith("win")){
             prefix = "c://data/file/";
         }
@@ -60,7 +61,9 @@ public class FileController {
         return null;
     }
 
-    @RequestMapping("upload")
+    @ApiOperation("上传文件,上传成功会把文件名返回，可以拿去下载")
+    @ApiImplicitParam(name = "file",value = "需要上传的文件",required = true)
+    @PostMapping("upload")
     public Result<String> listUpload(@RequestParam("file") MultipartFile file){
         if(System.getProperty("os.name").toLowerCase().startsWith("win")){
             prefix = "c://data/file/";

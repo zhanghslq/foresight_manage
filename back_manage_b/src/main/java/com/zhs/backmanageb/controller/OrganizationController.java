@@ -13,11 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -55,14 +51,14 @@ public class OrganizationController {
     @PostMapping("insert")
     @ApiOperation("插入")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
-    public Result<Boolean> insert(Organization organization){
+    public Result<Boolean> insert(@RequestBody Organization organization){
         return Result.success(organizationService.save(organization));
     }
 
     @PostMapping("update")
     @ApiOperation("修改")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
-    public Result<Boolean> update(Organization organization){
+    public Result<Boolean> update(@RequestBody Organization organization){
         return Result.success(organizationService.updateById(organization));
     }
 

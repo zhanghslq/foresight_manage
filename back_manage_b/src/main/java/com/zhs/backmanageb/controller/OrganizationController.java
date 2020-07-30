@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Organization;
+import com.zhs.backmanageb.entity.OrganizationTag;
 import com.zhs.backmanageb.model.bo.OrganizationModuleBO;
 import com.zhs.backmanageb.model.vo.OrganizationVO;
 import com.zhs.backmanageb.service.OrganizationService;
+import com.zhs.backmanageb.service.OrganizationTagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -16,6 +18,11 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -32,6 +39,8 @@ public class OrganizationController {
 
     @Resource
     private OrganizationService organizationService;
+    @Resource
+    private OrganizationTagService organizationTagService;
 
 
     @ApiOperation("根据类型获取组织列表（军，政，法等）")
@@ -50,9 +59,22 @@ public class OrganizationController {
     }
     @PostMapping("insert")
     @ApiOperation("插入")
+    @ApiImplicitParam(name = "tags",value = "标签,多个逗号相隔")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
-    public Result<Boolean> insert(@RequestBody Organization organization){
-        return Result.success(organizationService.save(organization));
+    public Result<Boolean> insert(@RequestBody Organization organization, List<String> tags){
+        organizationService.save(organization);
+        if(!Objects.isNull(tags)&&tags.size()>0){
+            ArrayList<OrganizationTag> organizationTags = new ArrayList<>();
+            for (String tag : tags) {
+                OrganizationTag organizationTag = new OrganizationTag();
+                organizationTag.setIsCompany(0);
+                organizationTag.setName(tag);
+                organizationTag.setOragnizationId(organization.getId());
+                organizationTags.add(organizationTag);
+            }
+            organizationTagService.saveBatch(organizationTags);
+        }
+        return Result.success(true);
     }
 
     @PostMapping("update")

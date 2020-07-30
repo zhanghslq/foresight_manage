@@ -4,9 +4,11 @@ package com.zhs.backmanageb.controller;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Company;
+import com.zhs.backmanageb.entity.OrganizationTag;
 import com.zhs.backmanageb.model.vo.CompanyVO;
 import com.zhs.backmanageb.model.vo.OrganizationVO;
 import com.zhs.backmanageb.service.CompanyService;
+import com.zhs.backmanageb.service.OrganizationTagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -14,6 +16,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>
@@ -29,12 +34,26 @@ import javax.annotation.Resource;
 public class CompanyController {
     @Resource
     private CompanyService companyService;
+    @Resource
+    private OrganizationTagService organizationTagService;
 
     @PostMapping("insert")
     @ApiOperation("插入企业")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
-    public Result<Boolean> insert(@RequestBody Company company){
-        return Result.success(companyService.save(company));
+    public Result<Boolean> insert(@RequestBody Company company, List<String> tags){
+        companyService.save(company);
+        if(!Objects.isNull(tags)&&tags.size()>0){
+            ArrayList<OrganizationTag> organizationTags = new ArrayList<>();
+            for (String tag : tags) {
+                OrganizationTag organizationTag = new OrganizationTag();
+                organizationTag.setIsCompany(1);
+                organizationTag.setName(tag);
+                organizationTag.setOragnizationId(company.getId());
+                organizationTags.add(organizationTag);
+            }
+            organizationTagService.saveBatch(organizationTags);
+        }
+        return Result.success(true);
     }
 
     @PostMapping("update")

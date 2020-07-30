@@ -60,7 +60,7 @@ public class MyCode {
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
         //strategy.setInclude("resume","leader","organization","common_data","company","concat_record","contacts","experience_record","expert");// 设置要映射的表名
-        strategy.setInclude("role","page","admin_role","role_page");// 设置要映射的表名
+        strategy.setInclude("organization_tag");// 设置要映射的表名
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true);

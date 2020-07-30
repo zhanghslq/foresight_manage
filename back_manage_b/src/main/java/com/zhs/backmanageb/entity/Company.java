@@ -64,6 +64,9 @@ public class Company implements Serializable {
     @ApiModelProperty("地址详情")
     private String addressDetail;
 
+    @ApiModelProperty("地区id，集合，json形式")
+    private String areaIdArray;
+
 
 
     @ApiModelProperty("企业logo")

@@ -74,6 +74,9 @@ public class Organization implements Serializable {
     @ApiModelProperty(value = "网址")
     private String website;
 
+    @ApiModelProperty("地区id，集合，json形式")
+    private String areaIdArray;
+
     @ApiModelProperty(value = "地区id")
     private Long areaId;
 

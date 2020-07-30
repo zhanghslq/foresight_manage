@@ -38,11 +38,7 @@ public class Company implements Serializable {
     @ApiModelProperty(value = "完善度")
     private Integer perfectValue;
 
-    @ApiModelProperty(value = "行政级别")
-    private Long 
-administrativeLevelId;
-
-    @ApiModelProperty(value = "企业级别")
+    @ApiModelProperty(value = "企业行政级别")
     private Long companyLevelId;
 
     @ApiModelProperty(value = "上级关系类型")
@@ -62,10 +58,12 @@ administrativeLevelId;
     @ApiModelProperty("地区id")
     private Long areaId;
 
+    @ApiModelProperty("地区名称")
+    private String areaName;
+
     @ApiModelProperty("地址详情")
     private String addressDetail;
-    @ApiModelProperty("地区名称")
-    private String addressName;
+
 
 
     @ApiModelProperty("企业logo")

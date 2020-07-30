@@ -3,10 +3,17 @@ package com.zhs.backmanageb;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+
+
 @MapperScan("com.zhs.backmanageb.mapper")
 @SpringBootApplication
+@EnableScheduling
+@EnableAsync
 public class BackManageBApplication implements WebMvcConfigurer {
 
     public static void main(String[] args) {

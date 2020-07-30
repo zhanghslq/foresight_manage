@@ -60,21 +60,21 @@ public class MyCode {
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
         //strategy.setInclude("resume","leader","organization","common_data","company","concat_record","contacts","experience_record","expert");// 设置要映射的表名
-        strategy.setInclude("organization_module");// 设置要映射的表名
+        strategy.setInclude("role","page","admin_role","role_page");// 设置要映射的表名
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true);
         strategy.setRestControllerStyle(true);
 
-        //strategy.setLogicDeleteFieldName("deleted");
+        strategy.setLogicDeleteFieldName("deleted");
 
         //自动填充配置
-        //TableFill createTime = new TableFill("create_time", FieldFill.INSERT);
-        //TableFill updateTime = new TableFill("update_time", FieldFill.INSERT_UPDATE);
+        TableFill createTime = new TableFill("create_time", FieldFill.INSERT);
+        TableFill updateTime = new TableFill("update_time", FieldFill.INSERT_UPDATE);
         ArrayList<TableFill> tableFills = new ArrayList<>();
-        //tableFills.add(createTime);
-        //tableFills.add(updateTime);
-        //strategy.setTableFillList(tableFills);
+        tableFills.add(createTime);
+        tableFills.add(updateTime);
+        strategy.setTableFillList(tableFills);
 
         //乐观锁
 //        strategy.setVersionFieldName("version");

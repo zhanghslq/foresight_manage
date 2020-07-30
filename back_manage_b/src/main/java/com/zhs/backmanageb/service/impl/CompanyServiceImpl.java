@@ -123,7 +123,7 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
 
         QueryWrapper<OrganizationModule> organizationModuleQueryWrapper = new QueryWrapper<>();
         organizationModuleQueryWrapper.eq("organization_id",organizationId);
-        organizationModuleQueryWrapper.eq("type",RootTypeEnum.COMPANY.getId());
+        organizationModuleQueryWrapper.eq("is_company",1);
 
         List<OrganizationModule> organizationModuleList = organizationModuleService.list(organizationModuleQueryWrapper);
         List<CompanyModuleBO> companyModuleBOS = new ArrayList<>();

@@ -2,6 +2,7 @@ package com.zhs.backmanageb.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.backmanageb.common.constant.ModuleTypeEnum;
+import com.zhs.backmanageb.common.constant.RootTypeEnum;
 import com.zhs.backmanageb.entity.*;
 import com.zhs.backmanageb.mapper.CompanyMapper;
 import com.zhs.backmanageb.model.bo.CompanyModuleBO;
@@ -83,10 +84,10 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
     }
 
     private void getContactAndLeader(CompanyVO companyVO, Long organizationId) {
-        QueryWrapper<Company> organizationQueryWrapper = new QueryWrapper<>();
-        organizationQueryWrapper.eq("parent_id",organizationId);
+        QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();
+        companyQueryWrapper.eq("parent_id",organizationId);
         // 查到的子类组织
-        List<Company> companyChildren = list(organizationQueryWrapper);
+        List<Company> companyChildren = list(companyQueryWrapper);
 
         Map<Long, List<Company>> companyMap = companyChildren.stream().collect(Collectors.groupingBy(item -> {
             if (item.getModuleId() == null) {
@@ -98,6 +99,7 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
 
         QueryWrapper<Contacts> contactsQueryWrapper = new QueryWrapper<>();
         contactsQueryWrapper.eq("organization_id", organizationId);
+        contactsQueryWrapper.eq("type", RootTypeEnum.COMPANY.getId());
         List<Contacts> contactsList = contactsService.list(contactsQueryWrapper);
         Map<Long, List<Contacts>> contactsMap = contactsList.stream().collect(Collectors.groupingBy(item -> {
             if (item.getModuleId() == null) {
@@ -109,6 +111,7 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
 
         QueryWrapper<Leader> leaderQueryWrapper = new QueryWrapper<>();
         leaderQueryWrapper.eq("organization_id", organizationId);
+        leaderQueryWrapper.eq("type", RootTypeEnum.COMPANY.getId());
         List<Leader> leaderList = leaderService.list(leaderQueryWrapper);
 
         Map<Long, List<Leader>> leaderMap = leaderList.stream().collect(Collectors.groupingBy(item -> {
@@ -120,6 +123,8 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
 
         QueryWrapper<OrganizationModule> organizationModuleQueryWrapper = new QueryWrapper<>();
         organizationModuleQueryWrapper.eq("organization_id",organizationId);
+        organizationModuleQueryWrapper.eq("type",RootTypeEnum.COMPANY.getId());
+
         List<OrganizationModule> organizationModuleList = organizationModuleService.list(organizationModuleQueryWrapper);
         List<CompanyModuleBO> companyModuleBOS = new ArrayList<>();
         for (OrganizationModule organizationModule : organizationModuleList) {

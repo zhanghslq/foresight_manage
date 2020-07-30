@@ -32,6 +32,9 @@ public class Contacts implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
+    @ApiModelProperty("组织体系，军政法等")
+    private Integer type;
+
     @ApiModelProperty("联系人姓名")
     private String realName;
 

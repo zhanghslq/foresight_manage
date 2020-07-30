@@ -134,12 +134,15 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
             if(ModuleTypeEnum.LEADER.getId().equals(organizationModule.getType())){
                 companyModuleBO.setType(ModuleTypeEnum.LEADER.getId());
                 companyModuleBO.setLeaders(leaderMap.get(organizationModule.getId()));
-            }else if(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(organizationModule.getType())){
+            }/*else if(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(organizationModule.getType())){
                 companyModuleBO.setType(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId());
                 companyModuleBO.setCompanyChildren(companyMap.get(organizationModule.getId()));
-            }else if(ModuleTypeEnum.CONTACTS.getId().equals(organizationModule.getType())){
+            }*/else if(ModuleTypeEnum.CONTACTS.getId().equals(organizationModule.getType())){
                 companyModuleBO.setType(ModuleTypeEnum.CONTACTS.getId());
                 companyModuleBO.setContacts(contactsMap.get(organizationModule.getId()));
+            }else if(ModuleTypeEnum.COMPANY_CHILDREN.getId().equals(organizationModule.getType())){
+                companyModuleBO.setType(ModuleTypeEnum.COMPANY_CHILDREN.getId());
+                companyModuleBO.setCompanyChildren(companyMap.get(organizationModule.getId()));
             }
             companyModuleBOS.add(companyModuleBO);
         }

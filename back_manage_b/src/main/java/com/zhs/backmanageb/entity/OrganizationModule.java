@@ -38,6 +38,9 @@ public class OrganizationModule implements Serializable {
     @ApiModelProperty(value = "组织模块类型，0领导人，1下属机构，2联系人,3下属企业")
     private Integer type;
 
+    @ApiModelProperty("是否是企业，默认0否,1是")
+    private Integer isCompany;
+
     @JsonIgnore
     @ApiModelProperty(value = "删除标志")
     @TableLogic

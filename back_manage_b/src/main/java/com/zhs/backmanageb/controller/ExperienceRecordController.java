@@ -1,6 +1,7 @@
 package com.zhs.backmanageb.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.ExperienceRecord;
@@ -59,6 +60,14 @@ public class ExperienceRecordController {
     public Result<Boolean> updateBatch(@RequestBody List<ExperienceRecord> experienceRecords){
         experienceRecordService.updateBatchById(experienceRecords);
         return Result.success(true);
+    }
+
+    @PostMapping("list/by_resume_id")
+    @ApiOperation("根据简历id查询工作经历")
+    public Result<List<ExperienceRecord>> listByResumeId(@RequestParam Long resumeId){
+        QueryWrapper<ExperienceRecord> experienceRecordQueryWrapper = new QueryWrapper<>();
+        experienceRecordQueryWrapper.eq("resume_id",resumeId);
+        return Result.success(experienceRecordService.list(experienceRecordQueryWrapper));
     }
 
 

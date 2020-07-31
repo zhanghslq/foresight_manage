@@ -1,6 +1,7 @@
 package com.zhs.backmanageb.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
@@ -66,14 +67,30 @@ public class ResumeController {
     @PostMapping("update")
     @ApiOperation("修改")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
-    public Result<Boolean> update(@RequestBody Resume resume) {
-        return Result.success(resumeService.updateById(resume));
+    public Result<Boolean> update(@RequestBody ResumeDTO resumeDTO) {
+        Resume resume = resumeDTO.getResume();
+        boolean save = resumeService.updateById(resume);
+        List<ExperienceRecord> experienceRecordList = resumeDTO.getExperienceRecordList();
+        if(!Objects.isNull(experienceRecordList)&&experienceRecordList.size()>0){
+            for (ExperienceRecord experienceRecord : experienceRecordList) {
+                experienceRecord.setResumeId(resume.getId());
+            }
+            experienceRecordService.saveOrUpdateBatch(experienceRecordList);
+        }
+        return Result.success(save);
     }
     @PostMapping("queryById")
     @ApiOperation("查询详情")
     @ApiImplicitParam(name = "id",value = "编号",required = true)
-    public Result<Resume> queryById(@RequestParam Long id){
-        return Result.success(resumeService.getById(id));
+    public Result<ResumeDTO> queryById(@RequestParam Long id){
+        Resume resume = resumeService.getById(id);
+        QueryWrapper<ExperienceRecord> experienceRecordQueryWrapper = new QueryWrapper<>();
+        experienceRecordQueryWrapper.eq("resume_id",id);
+        List<ExperienceRecord> experienceRecordList = experienceRecordService.list(experienceRecordQueryWrapper);
+        ResumeDTO resumeDTO = new ResumeDTO();
+        resumeDTO.setResume(resume);
+        resumeDTO.setExperienceRecordList(experienceRecordList);
+        return Result.success(resumeDTO);
     }
 
 

@@ -62,6 +62,13 @@ public class ExperienceRecordController {
         return Result.success(true);
     }
 
+    @PostMapping("saveOrUpdateBatch")
+    @ApiOperation("批量根据idx新增或修改")
+    public Result<Boolean> insertOrUpdateBatch(@RequestBody List<ExperienceRecord> experienceRecords){
+        experienceRecordService.saveOrUpdateBatch(experienceRecords);
+        return Result.success(true);
+    }
+
     @PostMapping("list/by_resume_id")
     @ApiOperation("根据简历id查询工作经历")
     public Result<List<ExperienceRecord>> listByResumeId(@RequestParam Long resumeId){

@@ -3,6 +3,7 @@ package com.zhs.backmanageb.interceptor;
 import com.alibaba.fastjson.JSONObject;
 
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class ReqLogAspect {
 
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-
+        requestInfo.set(request.getRequestURL().toString());
         //记录基本信息
         logger.info(requestInfo.get() + " BASIC " + request.getMethod()  + " " + joinPoint.getSignature().getDeclaringTypeName());
         logger.info(requestInfo.get() + " ARGS " + printArray(joinPoint.getArgs()) + " " + getParams(request));

@@ -40,9 +40,14 @@ public class Resume implements Serializable {
     @ApiModelProperty("出生日期 yyyy-MM-dd")
     private Date birthday;
 
-    private Long provinceId;
+    @ApiModelProperty("地区id")
+    private Long areaId;
 
-    private Long cityId;
+    @ApiModelProperty("地区id集合")
+    private String areaIdArray;
+
+    @ApiModelProperty("地区全名")
+    private String areaName;
 
     @ApiModelProperty(value = "当前单位")
     private String company;

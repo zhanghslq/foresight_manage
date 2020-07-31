@@ -34,6 +34,8 @@ server:
 logging:
   file:
     name: /data/log/foresight.log
+    # 超过50M归档文件
+    max-size: 50MB
   level:
     com.zhs.backmanageb.mapper: debug
     org.springframework: warn

@@ -4,7 +4,10 @@ package com.zhs.backmanageb.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
+import com.zhs.backmanageb.entity.ExperienceRecord;
 import com.zhs.backmanageb.entity.Resume;
+import com.zhs.backmanageb.model.dto.ResumeDTO;
+import com.zhs.backmanageb.service.ExperienceRecordService;
 import com.zhs.backmanageb.service.ResumeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -13,6 +16,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>
@@ -29,6 +34,8 @@ public class ResumeController {
 
     @Resource
     private ResumeService resumeService;
+    @Resource
+    private ExperienceRecordService experienceRecordService;
 
     @ApiOperation("简历列表")
     @PostMapping("list")
@@ -43,8 +50,16 @@ public class ResumeController {
     @ApiOperation("插入")
     @PostMapping("insert")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
-    public Result<Boolean> insert(@RequestBody Resume resume){
+    public Result<Boolean> insert(@RequestBody ResumeDTO resumeDTO){
+        Resume resume = resumeDTO.getResume();
         boolean save = resumeService.save(resume);
+        List<ExperienceRecord> experienceRecordList = resumeDTO.getExperienceRecordList();
+        if(!Objects.isNull(experienceRecordList)&&experienceRecordList.size()>0){
+            for (ExperienceRecord experienceRecord : experienceRecordList) {
+                experienceRecord.setResumeId(resume.getId());
+            }
+            experienceRecordService.saveBatch(experienceRecordList);
+        }
         return Result.success(save);
     }
 

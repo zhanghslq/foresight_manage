@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.util.WebUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.ServletRequest;
@@ -11,6 +12,7 @@ import javax.servlet.ServletResponse;
 import java.io.Serializable;
 
 @Slf4j
+@Component
 public class CustomSessionManager extends DefaultWebSessionManager {
 
 
@@ -26,6 +28,7 @@ public class CustomSessionManager extends DefaultWebSessionManager {
     @Override
     protected Serializable getSessionId(ServletRequest request, ServletResponse response) {
         String sessionId = WebUtils.toHttp(request).getHeader(AUTHORIZATION);//如果请求头中有 Authorization 则其值为sessionId
+        log.info(sessionId);
         if (!StringUtils.isEmpty(sessionId)) {
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE, REFERENCED_SESSION_ID_SOURCE);
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, sessionId);

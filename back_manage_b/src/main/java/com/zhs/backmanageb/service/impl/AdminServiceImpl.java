@@ -1,16 +1,23 @@
 package com.zhs.backmanageb.service.impl;
 
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.backmanageb.entity.*;
+import com.zhs.backmanageb.exception.MyException;
 import com.zhs.backmanageb.mapper.AdminMapper;
 import com.zhs.backmanageb.mapper.CommonDataMapper;
 import com.zhs.backmanageb.service.*;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -83,5 +90,46 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         }
         List<Long> pageIds = rolePages.stream().map(RolePage::getPageId).collect(Collectors.toList());
         return pageService.listByIds(pageIds);
+    }
+
+    @Override
+    public Admin login(String username, String password) {
+        Admin admin = queryByUserName(username);
+
+        if(Objects.isNull(admin)){
+            throw new  MyException("用户不存在");
+        }
+        String salt = admin.getSalt();
+        String pass = SecureUtil.md5(password + salt);
+        if(admin.getPassword().equals(pass)){
+            Subject subject = SecurityUtils.getSubject();
+            subject.login(new UsernamePasswordToken(username,password));
+        }else {
+            throw new MyException("密码不正确");
+        }
+        return admin;
+    }
+
+    @Override
+    public Admin queryByUserName(String username) {
+        QueryWrapper<Admin> adminQueryWrapper = new QueryWrapper<>();
+        adminQueryWrapper.eq("username",username);
+        Admin admin = getOne(adminQueryWrapper);
+        return admin;
+    }
+
+    @Override
+    public void register(String username, String password, String realName) {
+        Admin admin = queryByUserName(username);
+        if(!Objects.isNull(admin)){
+            throw new MyException("用户名已存在");
+        }
+        String salt = RandomUtil.randomString(6);
+        admin = new Admin();
+        admin.setUsername(username);
+        admin.setSalt(salt);
+        String newPassword = SecureUtil.md5(password + salt);
+        admin.setPassword(newPassword);
+        save(admin);
     }
 }

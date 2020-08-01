@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+
 @Slf4j
 public class CORSAuthenticationFilter extends FormAuthenticationFilter {
 
@@ -35,10 +36,11 @@ public class CORSAuthenticationFilter extends FormAuthenticationFilter {
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setStatus(HttpServletResponse.SC_OK);
         res.setCharacterEncoding("UTF-8");
+        res.setContentType("application/json");
         PrintWriter writer = res.getWriter();
         Map<String, Object> map= new HashMap<>();
         map.put("code", 401);
-        map.put("msg", "未登录");
+        map.put("msg", "No permission");
         writer.write(JSON.toJSONString(map));
         writer.close();
         return false;

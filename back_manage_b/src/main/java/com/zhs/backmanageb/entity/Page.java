@@ -36,6 +36,9 @@ public class Page implements Serializable {
     @ApiModelProperty(value = "页面描述")
     private String description;
 
+    @ApiModelProperty("上级页面id")
+    private Long parentId;
+
     @ApiModelProperty(value = "删除标志")
     @TableLogic
     private Integer deleted;

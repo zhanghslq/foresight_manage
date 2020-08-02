@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @author zhs
  * @since 2020-07-29
  */
-@Api("角色页面管理")
+@Api(tags = "角色页面管理")
 @RestController
 @RequestMapping("/rolePage")
 public class RolePageController {

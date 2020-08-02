@@ -56,7 +56,7 @@ public class AdminController {
     }
     @PostMapping("add")
     @ApiOperation("添加用户")
-    public Result<Boolean> add(String username,String password,String realName){
+    public Result<Boolean> add(@RequestParam String username,@RequestParam String password,String realName){
         adminService.register(username,password,realName);
         return Result.success(true);
     }

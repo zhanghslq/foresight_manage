@@ -1,6 +1,7 @@
 package com.zhs.backmanageb.shiro.realm;
 
 
+import cn.hutool.crypto.SecureUtil;
 import com.zhs.backmanageb.entity.Admin;
 import com.zhs.backmanageb.service.AdminService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,9 +12,12 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.util.SimpleByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Objects;
@@ -41,22 +45,8 @@ public class AdminRealm extends AuthorizingRealm  {
         if (!subject.isAuthenticated()) {
             throw new AuthorizationException("未登录");
         }
-
-        /*List<RolePermissionUriBO> rolePermissionUris;
-        if (ShiroThreadLocalUtil.isCurrOperationIsWithoutLogin()) {
-            // 当前为免密/免登录访问
-            rolePermissionUris = getRolePermissionsWhenWithoutLogin();
-        } else {
-            // 持有正常登录凭证进行访问
-            Long userId = (Long)principals.getPrimaryPrincipal();
-            if (DefaultUtil.isDefaultId(userId)) {
-                throw new AuthorizationException("用户id非法：" + userId);
-            }
-            rolePermissionUris = getRolePermissionsOfUser(userId);
-        }
-
-        return getAuthInfo(rolePermissionUris);*/
-        return null;
+        SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
+        return simpleAuthorizationInfo;
     }
 
     /**
@@ -70,16 +60,8 @@ public class AdminRealm extends AuthorizingRealm  {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 
-        Object credentials = token.getCredentials();
-        Object principal = token.getPrincipal();
-        Admin admin = adminService.queryByUserName(principal.toString());
-        if(Objects.isNull(admin)){
-            return null;
-        }
-        // 判断密码是否正确
+        return new SimpleAuthenticationInfo(token.getPrincipal().toString(),token.getCredentials().toString(),
+                this.getName());
 
-        // 此步骤前，当前用户已经认证成功，故不再重复认证，直接返回即可
-        log.info("用户认证");
-        return new SimpleAuthenticationInfo(admin.getUsername(), admin.getPassword(), this.getName());
     }
 }

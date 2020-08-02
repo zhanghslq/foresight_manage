@@ -2,7 +2,9 @@ package com.zhs.backmanageb.config;
 
 import com.zhs.backmanageb.filter.CORSAuthenticationFilter;
 import com.zhs.backmanageb.shiro.CustomSessionManager;
+import com.zhs.backmanageb.shiro.CustomerCredentialsMatcher;
 import com.zhs.backmanageb.shiro.realm.AdminRealm;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.codec.Base64;
@@ -16,6 +18,7 @@ import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -29,7 +32,9 @@ public class ShiroConfig {
 
     @Bean
     public Realm realm() {
-        return new AdminRealm();
+        AdminRealm adminRealm = new AdminRealm();
+        adminRealm.setCredentialsMatcher(new CustomerCredentialsMatcher());
+        return adminRealm;
     }
 
     @Bean

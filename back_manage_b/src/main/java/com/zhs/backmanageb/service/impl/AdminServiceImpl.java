@@ -103,7 +103,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         String pass = SecureUtil.md5(password + salt);
         if(admin.getPassword().equals(pass)){
             Subject subject = SecurityUtils.getSubject();
-            subject.login(new UsernamePasswordToken(username,password));
+            subject.login(new UsernamePasswordToken(username,pass));
         }else {
             throw new MyException("密码不正确");
         }
@@ -128,6 +128,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         admin = new Admin();
         admin.setUsername(username);
         admin.setSalt(salt);
+        admin.setRealName(realName);
         String newPassword = SecureUtil.md5(password + salt);
         admin.setPassword(newPassword);
         save(admin);

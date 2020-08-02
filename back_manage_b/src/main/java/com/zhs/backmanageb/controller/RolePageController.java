@@ -10,6 +10,8 @@ import com.zhs.backmanageb.entity.RolePage;
 import com.zhs.backmanageb.service.PageService;
 import com.zhs.backmanageb.service.RolePageService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,6 +51,10 @@ public class RolePageController {
 
     @PostMapping("update_page/by_tole_id")
     @ApiOperation("更新角色权限")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "roleId",value = "角色id",required = true),
+            @ApiImplicitParam(name = "pageIds",value = "页面权限id，多个逗号相隔",required = true),
+    })
     public Result<Boolean> updatePageByRoleId(@RequestParam Long roleId,@RequestParam List<Long> pageIds){
         QueryWrapper<RolePage> rolePageQueryWrapper = new QueryWrapper<>();
         rolePageQueryWrapper.eq("role_id",roleId);

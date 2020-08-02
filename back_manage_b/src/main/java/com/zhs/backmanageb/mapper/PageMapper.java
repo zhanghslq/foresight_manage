@@ -2,6 +2,10 @@ package com.zhs.backmanageb.mapper;
 
 import com.zhs.backmanageb.entity.Page;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zhs.backmanageb.model.bo.PageBO;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface PageMapper extends BaseMapper<Page> {
 
+    List<PageBO> listTree();
+
+    List<PageBO> listByParentId(@Param("parentId") Long parentId);
 }

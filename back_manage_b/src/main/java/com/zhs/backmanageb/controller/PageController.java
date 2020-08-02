@@ -5,6 +5,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Page;
+import com.zhs.backmanageb.model.bo.PageBO;
 import com.zhs.backmanageb.service.PageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -44,6 +45,14 @@ public class PageController {
     public Result<List<Page>> list(){
         return Result.success(pageService.list());
     }
+
+
+    @PostMapping("list/tree")
+    @ApiOperation("查询所有页面树状结构")
+    public Result<List<PageBO>> listTree(){
+        return Result.success(pageService.listTree());
+    }
+
 
     @PostMapping("update")
     @ApiOperation("修改页面属性")

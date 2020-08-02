@@ -36,7 +36,7 @@ public class RolePageController {
     @PostMapping("insert")
     @ApiOperation("增加角色页面权限")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
-    public Result<Boolean> insert(@RequestParam RolePage rolePage){
+    public Result<Boolean> insert(RolePage rolePage){
         return Result.success(rolePageService.save(rolePage));
     }
     @PostMapping("insertBatch")

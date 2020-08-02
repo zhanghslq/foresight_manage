@@ -2,6 +2,7 @@ package com.zhs.backmanageb.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Page;
@@ -13,6 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +45,38 @@ public class RolePageController {
     @ApiOperation("批量添加角色页面权限")
     public Result<Boolean> insertBatch(@RequestBody List<RolePage>rolePages){
         return Result.success(rolePageService.saveBatch(rolePages));
+    }
+
+    @PostMapping("update_page/by_tole_id")
+    @ApiOperation("更新角色权限")
+    public Result<Boolean> updatePageByRoleId(@RequestParam Long roleId,@RequestParam List<Long> pageIds){
+        QueryWrapper<RolePage> rolePageQueryWrapper = new QueryWrapper<>();
+        rolePageQueryWrapper.eq("role_id",roleId);
+        List<RolePage> list = rolePageService.list(rolePageQueryWrapper);
+        List<Long> pageIdList = list.stream().map(RolePage::getPageId).collect(Collectors.toList());
+        List<Long> pageIdList2 = new ArrayList<>(pageIdList);
+        // 剩下是需要删除的,差集
+        pageIdList.removeAll(pageIds);
+        List<Long> removeList = list.stream().filter(rolePage -> pageIdList.contains(rolePage.getPageId())).map(RolePage::getId).collect(Collectors.toList());
+        if(removeList.size()>0){
+            rolePageService.removeByIds(removeList);
+        }
+        // 并集，都是不需要插入的
+        pageIdList2.retainAll(pageIds);
+        ArrayList<RolePage> insertList = new ArrayList<>();
+        for (Long pageId : pageIds) {
+            if(!pageIdList2.contains(pageId)){
+                // 原本不存在的新加
+                RolePage rolePage = new RolePage();
+                rolePage.setRoleId(roleId);
+                rolePage.setPageId(pageId);
+                insertList.add(rolePage);
+            }
+        }
+        if(insertList.size()>0){
+            rolePageService.saveBatch(insertList);
+        }
+        return Result.success(true);
     }
 
     @PostMapping("delete")

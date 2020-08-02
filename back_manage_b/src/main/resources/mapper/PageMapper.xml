@@ -5,7 +5,7 @@
         <id column="id" property="id"/>
         <result column="name" property="name"/>
         <result column="description" property="description"/>
-        <collection property="children" ofType="com.zhs.backmanageb.model.bo.PageBO" column="id" select="com.zhs.backmanageb.mapper.AreaMapper.selectByParentId"/>
+        <collection property="children" ofType="com.zhs.backmanageb.model.bo.PageBO" column="id" select="listByParentId"/>
     </resultMap>
 
     <select id="listTree" resultMap="baseMap">

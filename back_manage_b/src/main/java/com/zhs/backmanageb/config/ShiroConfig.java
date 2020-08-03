@@ -116,10 +116,9 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/druid/**", "anon");
         filterChainDefinitionMap.put("/favicon.ico", "anon");
         filterChainDefinitionMap.put("/captcha.jpg", "anon");
-        filterChainDefinitionMap.put("/corp/call_back/receive", "anon");
+        filterChainDefinitionMap.put("/admin/login", "anon");
         //authc:所有url必须通过认证才能访问，anon:所有url都可以匿名访问
-        filterChainDefinitionMap.put("/admin/list", "anon");
-        //filterChainDefinitionMap.put("/**", "corsAuthenticationFilter");
+        filterChainDefinitionMap.put("/**", "authc");
 
         shiroFilter.setFilterChainDefinitionMap(filterChainDefinitionMap);
         //自定义过滤器

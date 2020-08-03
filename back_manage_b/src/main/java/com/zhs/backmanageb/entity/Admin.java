@@ -31,6 +31,8 @@ public class Admin extends BaseEntity{
     private String password;
     @ApiModelProperty("真实姓名")
     private String realName;
+    @ApiModelProperty("手机号")
+    private String mobile;
 
     @JsonIgnore
     private String salt;

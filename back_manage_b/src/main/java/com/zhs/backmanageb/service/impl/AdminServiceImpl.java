@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.backmanageb.entity.*;
 import com.zhs.backmanageb.exception.MyException;
 import com.zhs.backmanageb.mapper.AdminMapper;
-import com.zhs.backmanageb.mapper.CommonDataMapper;
 import com.zhs.backmanageb.service.*;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -114,15 +113,27 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     public Admin queryByUserName(String username) {
         QueryWrapper<Admin> adminQueryWrapper = new QueryWrapper<>();
         adminQueryWrapper.eq("username",username);
-        Admin admin = getOne(adminQueryWrapper);
-        return admin;
+        return getOne(adminQueryWrapper);
     }
 
     @Override
-    public void register(String username, String password, String realName) {
+    public Admin queryByMobile(String mobile) {
+        QueryWrapper<Admin> adminQueryWrapper = new QueryWrapper<>();
+        adminQueryWrapper.eq("mobile",mobile);
+        return getOne(adminQueryWrapper);
+    }
+
+    @Override
+    public void register(String username, String password, String realName, String mobile, Long roleId) {
         Admin admin = queryByUserName(username);
         if(!Objects.isNull(admin)){
             throw new MyException("用户名已存在");
+        }
+        if(!Objects.isNull(mobile)){
+            Admin byMobile = queryByMobile(mobile);
+            if(!Objects.isNull(byMobile)){
+                throw new MyException("手机号已存在");
+            }
         }
         String salt = RandomUtil.randomString(6);
         admin = new Admin();
@@ -132,5 +143,56 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         String newPassword = SecureUtil.md5(password + salt);
         admin.setPassword(newPassword);
         save(admin);
+        // 注册完，添加用户角色
+        if(!Objects.isNull(roleId)){
+            AdminRole adminRole = new AdminRole();
+            adminRole.setAdminId(admin.getId());
+            adminRole.setRoleId(roleId);
+            adminRoleService.save(adminRole);
+        }
+    }
+
+    @Override
+    public void updateUserAndRole(Long adminId, String username, String password, String realName, String mobile, Long roleId) {
+        Admin admin = getById(adminId);
+        String salt = admin.getSalt();
+
+        Admin admin1 = queryByUserName(username);
+        if(!Objects.isNull(admin1)){
+            throw new MyException("用户名已存在");
+        }
+        if(!Objects.isNull(mobile)){
+            if(!Objects.isNull(queryByUserName(username))){
+                throw new MyException("手机号已存在");
+            }
+        }
+        String newPassword = SecureUtil.md5(password + salt);
+        admin.setUsername(username);
+        admin.setPassword(newPassword);
+        admin.setRealName(realName);
+        admin.setMobile(mobile);
+        if(!Objects.isNull(roleId)){
+            QueryWrapper<AdminRole> adminRoleQueryWrapper = new QueryWrapper<>();
+            adminRoleQueryWrapper.eq("admin_id",adminId);
+            List<AdminRole> list = adminRoleService.list(adminRoleQueryWrapper);
+            AdminRole adminRole = new AdminRole();
+            adminRole.setRoleId(roleId);
+            adminRole.setAdminId(adminId);
+            if(list.size()==0){
+                adminRoleService.save(adminRole);
+            }else if(list.size()==1){
+                AdminRole adminRole1 = list.get(0);
+                adminRole.setId(adminRole1.getId());
+                adminRoleService.updateById(adminRole);
+            }else {
+                List<Long> adminRoleIds = list.stream().map(AdminRole::getId).collect(Collectors.toList());
+                Long adminRoleId = adminRoleIds.get(0);
+                adminRole.setId(adminRoleId);
+                adminRoleService.updateById(adminRole);
+                adminRoleIds.remove(0);
+                adminRoleService.removeByIds(adminRoleIds);
+            }
+        }
+
     }
 }

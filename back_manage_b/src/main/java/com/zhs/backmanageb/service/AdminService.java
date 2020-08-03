@@ -2,7 +2,6 @@ package com.zhs.backmanageb.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhs.backmanageb.entity.Admin;
-import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.Page;
 import com.zhs.backmanageb.entity.Role;
 
@@ -23,6 +22,9 @@ public interface AdminService extends IService<Admin> {
 
     Admin queryByUserName(String username);
 
-    void register(String username, String password, String realName);
+    Admin queryByMobile(String mobile);
 
+    void register(String username, String password, String realName, String mobile, Long roleId);
+
+    void updateUserAndRole(Long adminId, String username, String password, String realName, String mobile, Long roleId);
 }

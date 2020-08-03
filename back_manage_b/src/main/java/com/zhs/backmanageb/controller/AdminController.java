@@ -56,17 +56,24 @@ public class AdminController {
     }
     @PostMapping("add")
     @ApiOperation("添加用户")
-    public Result<Boolean> add(@RequestParam String username,@RequestParam String password,String realName){
-        adminService.register(username,password,realName);
+    public Result<Boolean> add(@RequestParam String username,@RequestParam String password,String realName,String mobile,Long roleId){
+        adminService.register(username,password,realName,mobile,roleId);
         return Result.success(true);
     }
 
-    @PostMapping("updatePassword")
+    @PostMapping("update")
+    @ApiOperation("修改用户信息以及角色")
+    public Result<Boolean> update(@RequestParam Long adminId,@RequestParam String username,@RequestParam String password,String realName,String mobile,Long roleId){
+        adminService.updateUserAndRole(adminId,username,password,realName,mobile,roleId);
+        return Result.success(true);
+    }
+
+    /*@PostMapping("updatePassword")
     @ApiOperation("修改密码")
-    public Result<Boolean> updatePassword(){
+    public Result<Boolean> updatePassword(String password){
 
         return Result.success(true);
-    }
+    }*/
     @ApiOperation("根据管理员id查询拥有角色")
     @PostMapping("list_role/by_admin_id")
     public Result<List<Role>> listRoleByAdminId(@RequestParam Long adminId){

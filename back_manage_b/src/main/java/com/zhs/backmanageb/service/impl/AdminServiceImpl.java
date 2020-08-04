@@ -162,7 +162,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
             throw new MyException("用户名已存在");
         }
         if(!Objects.isNull(mobile)){
-            if(!Objects.isNull(queryByUserName(username))){
+            if(!Objects.isNull(queryByMobile(mobile))){
                 throw new MyException("手机号已存在");
             }
         }

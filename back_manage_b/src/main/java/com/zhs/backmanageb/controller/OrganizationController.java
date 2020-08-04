@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -62,6 +63,14 @@ public class OrganizationController {
     @ApiImplicitParam(name = "tags",value = "标签,多个逗号相隔")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(@RequestBody Organization organization, List<String> tags){
+        // 插入的时候需要记录操作人id
+        try {
+            Object principal = SecurityUtils.getSubject().getPrincipal();
+            Long adminId = Long.valueOf(principal.toString());
+            organization.setAdminId(adminId);
+        } catch (NumberFormatException e) {
+            organization.setAdminId(0L);
+        }
         organizationService.save(organization);
         if(!Objects.isNull(tags)&&tags.size()>0){
             ArrayList<OrganizationTag> organizationTags = new ArrayList<>();

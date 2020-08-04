@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -53,8 +54,8 @@ public class ExpertController {
         return Result.success(expert);
     }
     @PostMapping("update")
-    @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
-    @ApiOperation("更新方法，部分属性不用填（没有的或者不需要更新的都不需要），id必填，所有更新同理")
+    @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
+    @ApiOperation("更新方法，id必填，所有更新同理")
     public Result<Boolean> update(Expert expert){
         return Result.success(expertService.updateById(expert));
     }
@@ -69,6 +70,15 @@ public class ExpertController {
     @ApiOperation("插入")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(Expert expert){
+        // 插入的时候需要记录操作人id
+        try {
+            Object principal = SecurityUtils.getSubject().getPrincipal();
+            Long adminId = Long.valueOf(principal.toString());
+            expert.setAdminId(adminId);
+        } catch (NumberFormatException e) {
+            expert.setAdminId(0L);
+        }
+
         return Result.success(expertService.save(expert));
     }
 }

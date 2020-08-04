@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,6 +66,14 @@ public class ContactsController {
     @ApiOperation("插入")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(Contacts contacts){
+        // 插入的时候需要记录操作人id
+        try {
+            Object principal = SecurityUtils.getSubject().getPrincipal();
+            Long adminId = Long.valueOf(principal.toString());
+            contacts.setAdminId(adminId);
+        } catch (NumberFormatException e) {
+            contacts.setAdminId(0L);
+        }
         return Result.success(contactsService.save(contacts));
     }
 

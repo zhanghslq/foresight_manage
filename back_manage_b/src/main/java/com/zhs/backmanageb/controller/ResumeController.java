@@ -14,6 +14,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -52,8 +54,15 @@ public class ResumeController {
     @PostMapping("insert")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(@RequestBody ResumeDTO resumeDTO){
-        // 插入的时候需要记录操作人id
         Resume resume = resumeDTO.getResume();
+        // 插入的时候需要记录操作人id
+        try {
+            Object principal = SecurityUtils.getSubject().getPrincipal();
+            Long adminId = Long.valueOf(principal.toString());
+            resume.setAdminId(adminId);
+        } catch (NumberFormatException e) {
+            resume.setAdminId(0L);
+        }
         boolean save = resumeService.save(resume);
         List<ExperienceRecord> experienceRecordList = resumeDTO.getExperienceRecordList();
         if(!Objects.isNull(experienceRecordList)&&experienceRecordList.size()>0){

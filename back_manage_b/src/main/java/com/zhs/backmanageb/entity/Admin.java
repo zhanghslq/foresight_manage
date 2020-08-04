@@ -1,9 +1,6 @@
 package com.zhs.backmanageb.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -44,8 +41,12 @@ public class Admin extends BaseEntity{
     @JsonIgnore
     private String salt;
 
+
     @JsonIgnore
+    @ApiModelProperty(value = "删除标志")
+    @TableLogic
     private Integer deleted;
+
     @ApiModelProperty("创建时间")
     private Date createTime;
     @ApiModelProperty("更新时间")

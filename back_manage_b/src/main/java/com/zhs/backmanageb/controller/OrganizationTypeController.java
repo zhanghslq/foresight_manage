@@ -39,7 +39,7 @@ public class OrganizationTypeController {
     @Resource
     private OrganizationTypeService organizationTypeService;
 
-    @ApiOperation("添加组织类别")
+    @ApiOperation(value = "添加组织类别",tags = "新增")
     @PostMapping("/insert")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "detail",value = "分类组织备注"),
@@ -58,7 +58,7 @@ public class OrganizationTypeController {
         organizationTypeService.save(organizationType);
         return Result.success(true);
     }
-    @ApiOperation("添加组织类别并批量添加子类别")
+    @ApiOperation(value = "添加组织类别并批量添加子类别",tags = "新增")
     @PostMapping("/insertBatch")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "content",value = "分类组织详情，用于批量添加子类别，一行一个",required = false),
@@ -81,13 +81,13 @@ public class OrganizationTypeController {
     }
 
     @PostMapping("/list")
-    @ApiOperation("全部组织")
+    @ApiOperation(value = "全部组织",tags = "查询")
     public Result<List<OrganizationType>> list(){
         List<OrganizationType> list = organizationTypeService.list();
         return Result.success(list);
     }
     @PostMapping("/listData/byType")
-    @ApiOperation("根据组织类别查询一级类别")
+    @ApiOperation(value = "根据组织类别查询一级类别",tags = "查询")
     @ApiImplicitParam(name = "type",value = "类别",required = true)
     public Result<List<OrganizationType>> list(@RequestParam Integer type){
         QueryWrapper<OrganizationType> wrapper = new QueryWrapper<>();
@@ -98,33 +98,33 @@ public class OrganizationTypeController {
     }
 
     @PostMapping("/listData/tree/byType")
-    @ApiOperation("根据type查询组织类别的树状数据（可用于组织顶部的查询），children为空的没子类数据，children不为空的可选择下级组织类别")
+    @ApiOperation(value = "根据type查询组织类别的树状数据（可用于组织顶部的查询）",tags = "查询")
     @ApiImplicitParam(name = "type",value = "类别",required = true)
     public Result<List<OrganizationTypeBO>> listTreeByType(@RequestParam Integer type){
         List<OrganizationTypeBO> organizationTypeBOS = organizationTypeService.listAllTreeByType(type);
         return Result.success(organizationTypeBOS);
     }
     @PostMapping("/list/type")
-    @ApiOperation("军，政，法，等以及对应的编号")
+    @ApiOperation(value = "军，政，法，等以及对应的编号",tags = "查询")
     public Result<List<CommonTypeVO>> listType(){
         List<CommonTypeVO> commonTypeVOS = organizationTypeService.listType();
         return Result.success(commonTypeVOS);
     }
     @PostMapping("/list/all")
-    @ApiOperation("拿到所有数据，体系以及体系下的组织(平铺结构)")
+    @ApiOperation(value = "拿到所有数据，体系以及体系下的组织(平铺结构)",tags = "查询")
     public Result<List<OrganizationTypeBO>> listAll(){
         List<OrganizationTypeBO> commonTypeVOS =organizationTypeService.listAll();
         return Result.success(commonTypeVOS);
     }
 
     @PostMapping("/list/allTree")
-    @ApiOperation("拿到所有数据，体系以及体系下的组织(树状结构)")
+    @ApiOperation(value = "拿到所有数据，体系以及体系下的组织(树状结构)",tags = "查询")
     public Result<List<CommonTypeVO>> listAllTree(){
         List<CommonTypeVO> commonTypeVOS =organizationTypeService.listAllTree();
         return Result.success(commonTypeVOS);
     }
     @PostMapping("list/byParentId")
-    @ApiOperation("根据id，查找直系下属的组织，（可用于组织顶部的查询下级组织）")
+    @ApiOperation(value = "根据id，查找直系下属的组织，（可用于组织顶部的查询下级组织）",tags = "查询")
     public Result<List<OrganizationType>> listByParentId(@RequestParam Long parentId){
         QueryWrapper<OrganizationType> wrapper = new QueryWrapper<>();
         wrapper.eq("parent_id",parentId);
@@ -133,13 +133,13 @@ public class OrganizationTypeController {
     }
 
     @PostMapping("update")
-    @ApiOperation("修改")
+    @ApiOperation(value = "修改",tags = "修改")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     public Result<Boolean> update(OrganizationType organizationType){
         return Result.success(organizationTypeService.updateById(organizationType));
     }
     @PostMapping("delete")
-    @ApiOperation("删除")
+    @ApiOperation(value = "删除",tags = "删除")
     @ApiImplicitParam(name = "id",value = "组织类别id",required = true)
     public Result<Boolean> delete(@RequestParam Long id){
         return Result.success(organizationTypeService.removeById(id));

@@ -39,7 +39,7 @@ public class CompanyController {
     private OrganizationTagService organizationTagService;
 
     @PostMapping("insert")
-    @ApiOperation("插入企业")
+    @ApiOperation(value = "插入企业",tags = "新增")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(@RequestBody Company company, List<String> tags){
         // 插入的时候需要记录操作人id
@@ -66,21 +66,21 @@ public class CompanyController {
     }
 
     @PostMapping("update")
-    @ApiOperation("修改企业")
+    @ApiOperation(value = "修改企业",tags = "修改")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     public Result<Boolean> update(@RequestBody Company company){
         return Result.success(companyService.updateById(company));
     }
 
     @PostMapping("delete")
-    @ApiOperation("删除企业")
+    @ApiOperation(value = "删除企业",tags = "删除")
     @ApiImplicitParam(name = "id",value = "企业id",required = true)
     public Result<Boolean> delete(@RequestParam Long id){
         return Result.success(companyService.removeById(id));
     }
 
     @PostMapping("query/by_organization_type")
-    @ApiOperation("根据组织类别,地区（可选）查询组织,领导人，联系人")
+    @ApiOperation(value = "根据组织类别,地区（可选）查询组织,领导人，联系人",tags = "查询")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "organizationTypeId",value = "组织类型id",required = true),
             @ApiImplicitParam(name = "areaId",value = "地区id"),
@@ -91,7 +91,7 @@ public class CompanyController {
         return Result.success(companyVO);
     }
 
-    @ApiOperation("根据企业Id查询下属企业,领导人，联系人")
+    @ApiOperation(value = "根据企业Id查询下属企业,领导人，联系人",tags = "查询")
     @PostMapping("query/by_id")
     @ApiImplicitParam(name = "id",value = "企业id",required = true)
     public Result<CompanyVO> queryById(@RequestParam Long id){

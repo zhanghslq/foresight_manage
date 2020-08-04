@@ -28,7 +28,7 @@ public class FileController {
     private  String prefix = "/data/file/";
 
     @GetMapping("getFile")
-    @ApiOperation("下载文件")
+    @ApiOperation(value = "下载文件",tags = "查询")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "fileName",value = "返回的文件名字",required = true),
             @ApiImplicitParam(name = "isInline",value = "1预览，默认0下载")
@@ -71,7 +71,7 @@ public class FileController {
         return null;
     }
 
-    @ApiOperation("上传文件,上传成功会把文件名返回，可以拿去下载")
+    @ApiOperation(value = "上传文件,上传成功会把文件名返回，可以拿去下载",tags = "新增")
     @ApiImplicitParam(name = "file",value = "需要上传的文件",required = true)
     @PostMapping("upload")
     public Result<String> listUpload(@RequestParam("file") MultipartFile file){

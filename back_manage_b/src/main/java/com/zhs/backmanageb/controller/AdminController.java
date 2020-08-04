@@ -44,7 +44,7 @@ public class AdminController {
     private AdminService adminService;
 
     @PostMapping("/login")
-    @ApiOperation("登陆")
+    @ApiOperation(value = "登陆",tags = "登陆")
     public Result<AdminLoginReturnDTO> login(HttpServletRequest request, String username, String password){
         Admin admin = adminService.login(username,password);
         String sessionId = request.getSession().getId();
@@ -54,26 +54,26 @@ public class AdminController {
         return Result.success(adminLoginReturnDTO);
     }
     @PostMapping("logout")
-    @ApiOperation("退出")
+    @ApiOperation(value = "退出",tags = "登出")
     public Result<Boolean> logout(Long adminId){
         SecurityUtils.getSubject().logout();
         return Result.success(true);
     }
     @PostMapping("add")
-    @ApiOperation("添加用户")
+    @ApiOperation(value = "添加用户",tags = "新增")
     public Result<Boolean> add(@RequestParam String username,@RequestParam String password,String realName,String mobile,Long roleId){
         adminService.register(username,password,realName,mobile,roleId);
         return Result.success(true);
     }
 
     @PostMapping("update")
-    @ApiOperation("修改用户信息以及角色")
+    @ApiOperation(value = "修改用户信息以及角色",tags = "修改")
     public Result<Boolean> update(@RequestParam Long adminId,@RequestParam String username,@RequestParam String password,String realName,String mobile,Long roleId){
         adminService.updateUserAndRole(adminId,username,password,realName,mobile,roleId);
         return Result.success(true);
     }
     @PostMapping("delete")
-    @ApiOperation("删除用户")
+    @ApiOperation(value = "删除用户",tags = "删除")
     @ApiImplicitParam(name = "adminId",value = "用户id",required = true)
     public Result<Boolean> delete(@RequestParam Long adminId){
         adminService.removeById(adminId);
@@ -81,13 +81,13 @@ public class AdminController {
     }
 
     @PostMapping("updatePassword")
-    @ApiOperation("修改密码")
+    @ApiOperation(value = "修改密码",tags = "修改")
     public Result<Boolean> updatePassword(@RequestParam Long adminId,@RequestParam String oldPassword,@RequestParam String password){
         adminService.updatePassword(adminId,oldPassword,password);
         return Result.success(true);
     }
     @PostMapping("freezeUser")
-    @ApiOperation("冻结用户")
+    @ApiOperation(value = "冻结用户",tags = "修改")
     public Result<Boolean> freezeUser(@RequestParam Long adminId){
         Admin byId = adminService.getById(adminId);
         if(Objects.isNull(byId)){
@@ -98,7 +98,7 @@ public class AdminController {
         return Result.success(true);
     }
 
-    @ApiOperation("根据管理员id查询拥有角色")
+    @ApiOperation(value = "根据管理员id查询拥有角色",tags = "查询")
     @PostMapping("list_role/by_admin_id")
     public Result<List<Role>> listRoleByAdminId(@RequestParam Long adminId){
         return Result.success(adminService.listRoleByAdminId(adminId));
@@ -111,13 +111,13 @@ public class AdminController {
     }
 
     @PostMapping("list_page/by_role_id")
-    @ApiOperation("根据角色id查询页面权限")
+    @ApiOperation(value = "根据角色id查询页面权限",tags = "查询")
     public Result<List<Page>> listPageByRoleId(@RequestParam Long roleId){
         return Result.success(adminService.listPageByRoleId(roleId));
     }
 
     @PostMapping("list")
-    @ApiOperation("查询所有用户")
+    @ApiOperation(value = "查询所有用户",tags = "查询")
     public Result<List<AdminVO>> list(){
         List<Admin> list = adminService.list();
         List<AdminVO> result = new ArrayList<>();
@@ -131,7 +131,7 @@ public class AdminController {
     }
 
     @PostMapping("list/by_page")
-    @ApiOperation("分页查询所有用户")
+    @ApiOperation(value = "分页查询所有用户",tags = "查询")
     public Result<com.baomidou.mybatisplus.extension.plugins.pagination.Page<AdminVO>> listByPage(@RequestParam Integer current, @RequestParam Integer size){
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<Admin> adminPage = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(current, size);
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<Admin> page = adminService.page(adminPage);
@@ -151,7 +151,7 @@ public class AdminController {
 
     // 查询用户的录入数据
     @PostMapping("query/add_data")
-    @ApiOperation("查用户添加的数据")
+    @ApiOperation(value = "查用户添加的数据",tags = "查询")
     public Result<AdminAddDataVO> queryAddData(@RequestParam Long adminId){
         AdminAddDataVO adminAddDataVO = adminService.queryAddData(adminId);
         return Result.success(adminAddDataVO);

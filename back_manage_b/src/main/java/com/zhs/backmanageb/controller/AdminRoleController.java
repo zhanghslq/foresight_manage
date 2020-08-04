@@ -39,20 +39,20 @@ public class AdminRoleController {
 
 
     @PostMapping("insert")
-    @ApiOperation("给用户增加角色")
+    @ApiOperation(value = "给用户增加角色",tags = "新增")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(AdminRole adminRole){
         return Result.success(adminRoleService.save(adminRole));
     }
 
     @PostMapping("delete")
-    @ApiOperation("根据id删除")
+    @ApiOperation(value = "根据id删除",tags = "删除")
     public Result<Boolean> delete(Long id){
         return Result.success(adminRoleService.removeById(id));
     }
 
     @PostMapping("insertBatch")
-    @ApiOperation("给用户添加多个角色")
+    @ApiOperation(value = "给用户添加多个角色",tags = "新增")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "roleIds",value = "角色id，多个用逗号相隔",required = true),
             @ApiImplicitParam(name = "adminId",value = "管理员id",required = true),

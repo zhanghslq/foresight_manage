@@ -34,34 +34,34 @@ public class LeaderController {
     private LeaderService leaderService;
 
     @PostMapping("insert")
-    @ApiOperation("插入")
+    @ApiOperation(value = "插入",tags = "新增")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(Leader leader){
         return Result.success(leaderService.save(leader));
     }
 
     @PostMapping("update")
-    @ApiOperation("修改")
+    @ApiOperation(value = "修改",tags = "修改")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     public Result<Boolean> update(Leader leader){
         return Result.success(leaderService.updateById(leader));
     }
 
     @PostMapping("delete")
-    @ApiOperation(("删除"))
+    @ApiOperation(value = "删除",tags = "删除")
     @ApiImplicitParam(name = "id",value = "编号",required = true)
     public Result<Boolean> deleteById(@RequestParam Long id){
         return Result.success(leaderService.removeById(id));
     }
 
     @PostMapping("queryById")
-    @ApiOperation("查询详情")
+    @ApiOperation(value = "查询详情",tags = "查询")
     @ApiImplicitParam(name = "id",value = "编号",required = true)
     public Result<Leader> queryById(Long id){
         return Result.success(leaderService.getById(id));
     }
     @PostMapping("organizationId")
-    @ApiOperation("根据组织id查询")
+    @ApiOperation(value = "根据组织id查询",tags = "查询")
     public Result<List<Leader>> listByOrganizationId(@RequestParam Long organizationId){
         QueryWrapper<Leader> leaderQueryWrapper = new QueryWrapper<>();
         leaderQueryWrapper.eq("organization_id",organizationId);

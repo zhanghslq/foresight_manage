@@ -36,7 +36,7 @@ public class ContactsController {
     private ContactsService contactsService;
 
     @PostMapping("list")
-    @ApiOperation("联系人列表")
+    @ApiOperation(value = "联系人列表",tags = "查询")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current",value = "当前页",required = true),
             @ApiImplicitParam(name = "size",value = "每页多少条",required = true),
@@ -49,13 +49,13 @@ public class ContactsController {
 
     @PostMapping("update")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
-    @ApiOperation("修改联系人")
+    @ApiOperation(value = "修改联系人",tags = "修改")
     public Result<Boolean> update(Contacts contacts){
         // 这样更改会显得属性有点多，后面可以针对性的进行精简
         return Result.success(contactsService.updateById(contacts));
     }
 
-    @ApiOperation("获取联系人详情")
+    @ApiOperation(value = "获取联系人详情",tags = "查询")
     @ApiImplicitParam(name = "id",value = "id",required = true)
     @PostMapping("query")
     public Result<Contacts> queryById(@RequestParam Long id){
@@ -63,7 +63,7 @@ public class ContactsController {
         return Result.success(contacts);
     }
     @PostMapping("insert")
-    @ApiOperation("插入")
+    @ApiOperation(value = "插入",tags = "新增")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(Contacts contacts){
         // 插入的时候需要记录操作人id
@@ -79,7 +79,7 @@ public class ContactsController {
 
 
     @PostMapping("delete")
-    @ApiOperation("删除")
+    @ApiOperation(value = "删除",tags = "删除")
     @ApiImplicitParam(name = "id",value = "联系人id",required = true)
     public Result<Boolean> delete(@RequestParam Long id){
         return Result.success(contactsService.removeById(id));

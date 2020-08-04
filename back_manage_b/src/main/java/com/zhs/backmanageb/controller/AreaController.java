@@ -39,7 +39,7 @@ public class AreaController {
         return Result.success(areaService.selectAllTree());
     }*/
 
-    @ApiOperation("查询所有地区，不查数据库")
+    @ApiOperation(value = "查询所有地区，不查数据库",tags = "查询")
     @PostMapping("select/all_tree_no_db")
     public Result<List<AreaBO>> selectAllNoDatabase(){
         List<AreaBO> areaBOS = JSON.parseArray(readFileToString(), AreaBO.class);

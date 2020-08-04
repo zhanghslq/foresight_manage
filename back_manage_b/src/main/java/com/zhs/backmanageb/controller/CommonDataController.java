@@ -42,7 +42,7 @@ public class CommonDataController {
     @Resource
     private CommonDataService commonDataService;
 
-    @ApiOperation("根据类别获取列表进行维护,用于下拉框取值，也可以用于页面管理，不允许删除")
+    @ApiOperation(value = "根据类别获取列表进行维护,用于下拉框取值",tags = "查询")
     @ApiImplicitParam(name="type",value = "类型",required = true)
     @PostMapping("/list/by_type")
     public Result<List<CommonData>> listByType(@RequestParam Integer type){
@@ -52,7 +52,7 @@ public class CommonDataController {
         return Result.success(list);
     }
     @PostMapping("/list/all_type")
-    @ApiOperation("所有维护的下拉框列表，以及对应的id就是type,用于人工看，系统暂时不会用到，可直接写死，有变动会通知")
+    @ApiOperation(value = "所有维护的下拉框列表，以及对应的id就是type",tags = "查询")
     public Result<List<CommonTypeVO>> listAllType(){
         List<CommonTypeVO> result = new ArrayList<>();
         List<CommonData> list = commonDataService.list();
@@ -68,7 +68,7 @@ public class CommonDataController {
         }
         return Result.success(result);
     }
-    @ApiOperation("插入下拉框数据")
+    @ApiOperation(value = "插入下拉框数据",tags = "新增")
     @PostMapping("insert")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(CommonData commonData){
@@ -78,7 +78,7 @@ public class CommonDataController {
         return Result.success(commonDataService.save(commonData));
     }
     @PostMapping("insertBatch")
-    @ApiOperation("批量添加")
+    @ApiOperation(value = "批量添加",tags = "新增")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "content",value = "文本域内容",required = true),
             @ApiImplicitParam(name = "type",value = "类型",required = true),
@@ -88,13 +88,13 @@ public class CommonDataController {
         return Result.success(true);
     }
 
-    @ApiOperation("修改")
+    @ApiOperation(value = "修改",tags = "修改")
     @PostMapping("update")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     public Result<Boolean> update(CommonData commonData){
         return Result.success(commonDataService.updateById(commonData));
     }
-    @ApiOperation("删除")
+    @ApiOperation(value = "删除",tags = "删除")
     @PostMapping("delete")
     public Result<Boolean> delete(@RequestParam Long id){
         return Result.success(commonDataService.removeById(id));

@@ -30,7 +30,7 @@ public class ExperienceRecordController {
     @Resource
     private ExperienceRecordService experienceRecordService;
 
-    @ApiOperation("插入工作记录")
+    @ApiOperation(value = "插入工作记录",tags = "新增")
     @PostMapping("insert")
     public Result<Boolean> insert(@RequestBody ExperienceRecord experienceRecord){
         experienceRecordService.save(experienceRecord);
@@ -38,39 +38,39 @@ public class ExperienceRecordController {
     }
 
     @PostMapping("insertBatch")
-    @ApiOperation("批量插入")
+    @ApiOperation(value = "批量插入",tags = "新增")
     public Result<Boolean> insert(@RequestBody List<ExperienceRecord> experienceRecords){
         return Result.success(experienceRecordService.saveBatch(experienceRecords));
     }
     @PostMapping("delete")
-    @ApiOperation("删除")
+    @ApiOperation(value = "删除",tags = "新增")
     public Result<Boolean> delete(@RequestParam Long id){
         experienceRecordService.removeById(id);
         return Result.success(true);
     }
     @PostMapping("update")
-    @ApiOperation("根据id修改")
+    @ApiOperation(value = "根据id修改",tags = "修改")
     public Result<Boolean> update(@RequestBody ExperienceRecord experienceRecord){
         experienceRecordService.updateById(experienceRecord);
         return Result.success(true);
     }
 
     @PostMapping("updateBatch")
-    @ApiOperation("批量根据id修改")
+    @ApiOperation(value = "批量根据id修改",tags = "修改")
     public Result<Boolean> updateBatch(@RequestBody List<ExperienceRecord> experienceRecords){
         experienceRecordService.updateBatchById(experienceRecords);
         return Result.success(true);
     }
 
     @PostMapping("saveOrUpdateBatch")
-    @ApiOperation("批量根据idx新增或修改")
+    @ApiOperation(value = "批量根据idx新增或修改",tags = "修改")
     public Result<Boolean> insertOrUpdateBatch(@RequestBody List<ExperienceRecord> experienceRecords){
         experienceRecordService.saveOrUpdateBatch(experienceRecords);
         return Result.success(true);
     }
 
     @PostMapping("list/by_resume_id")
-    @ApiOperation("根据简历id查询工作经历")
+    @ApiOperation(value = "根据简历id查询工作经历",tags = "查询")
     public Result<List<ExperienceRecord>> listByResumeId(@RequestParam Long resumeId){
         QueryWrapper<ExperienceRecord> experienceRecordQueryWrapper = new QueryWrapper<>();
         experienceRecordQueryWrapper.eq("resume_id",resumeId);

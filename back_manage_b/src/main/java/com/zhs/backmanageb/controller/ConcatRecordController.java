@@ -36,7 +36,7 @@ public class ConcatRecordController {
     private ConcatRecordService concatRecordService;
 
     @PostMapping("list")
-    @ApiOperation("联系记录列表")
+    @ApiOperation(value = "联系记录列表",tags = "查询")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current",value = "当前页",required = true),
             @ApiImplicitParam(name = "size",value = "每页多少条",required = true),
@@ -47,14 +47,14 @@ public class ConcatRecordController {
         return Result.success(page1);
     }
     @PostMapping("delete")
-    @ApiOperation("根据id删除联系记录")
+    @ApiOperation(value = "根据id删除联系记录",tags = "删除")
     @ApiImplicitParam(name = "id",value = "联系记录id",required = true)
     public Result<Boolean> deleteById(@RequestParam Long id){
         return Result.success(concatRecordService.removeById(id));
     }
 
     @PostMapping("query")
-    @ApiOperation("根据id获取联系记录详情")
+    @ApiOperation(value = "根据id获取联系记录详情",tags = "查询")
     @ApiImplicitParam(name = "id",value = "联系记录id",required = true)
     public Result<ConcatRecordVO> queryById(@RequestParam Long id){
         //列表和详情应该需要经过稍微处理，把id替换掉，变成人的姓名
@@ -62,12 +62,12 @@ public class ConcatRecordController {
     }
 
     @PostMapping("update")
-    @ApiOperation("修改联系记录")
+    @ApiOperation(value = "修改联系记录",tags = "修改")
     public Result<Boolean> update(ConcatRecord concatRecord){
         return Result.success(concatRecordService.updateById(concatRecord));
     }
     @PostMapping("insert")
-    @ApiOperation("插入联系记录")
+    @ApiOperation(value = "插入联系记录",tags = "新增")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(ConcatRecord concatRecord){
         concatRecordService.save(concatRecord);

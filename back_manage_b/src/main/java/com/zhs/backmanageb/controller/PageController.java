@@ -34,13 +34,13 @@ public class PageController {
     private PageService pageService;
 
     @PostMapping("insert")
-    @ApiOperation("插入")
+    @ApiOperation(value = "插入",tags = "新增")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(Page page){
         return Result.success(pageService.save(page));
     }
 
-    @ApiOperation("查询所有的页面")
+    @ApiOperation(value = "查询所有的页面",tags = "查询")
     @PostMapping("list")
     public Result<List<Page>> list(){
         return Result.success(pageService.list());
@@ -48,20 +48,20 @@ public class PageController {
 
 
     @PostMapping("list/tree")
-    @ApiOperation("查询所有页面树状结构")
+    @ApiOperation(value = "查询所有页面树状结构",tags = "查询")
     public Result<List<PageBO>> listTree(){
         return Result.success(pageService.listTree());
     }
 
 
     @PostMapping("update")
-    @ApiOperation("修改页面属性")
+    @ApiOperation(value = "修改页面属性",tags = "修改")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     public Result<Boolean> update(Page page){
         return Result.success(pageService.updateById(page));
     }
 
-    @ApiOperation("删除")
+    @ApiOperation(value = "删除",tags = "删除")
     @PostMapping("delete")
     @ApiImplicitParam(name = "id",value = "页面id",required = true)
     public Result<Boolean> delete(Long id){

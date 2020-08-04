@@ -40,7 +40,7 @@ public class ResumeController {
     @Resource
     private ExperienceRecordService experienceRecordService;
 
-    @ApiOperation("简历列表")
+    @ApiOperation(value = "简历列表",tags = "查询")
     @PostMapping("list")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current",value = "当前页",required = true),
@@ -50,7 +50,7 @@ public class ResumeController {
         Page<Resume> resumePage = new Page<>(current, size);
         return Result.success(resumeService.page(resumePage));
     }
-    @ApiOperation("插入")
+    @ApiOperation(value = "插入",tags = "新增")
     @PostMapping("insert")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(@RequestBody ResumeDTO resumeDTO){
@@ -75,7 +75,7 @@ public class ResumeController {
     }
 
     @PostMapping("update")
-    @ApiOperation("修改")
+    @ApiOperation(value = "修改",tags = "修改")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     public Result<Boolean> update(@RequestBody ResumeDTO resumeDTO) {
         Resume resume = resumeDTO.getResume();
@@ -90,7 +90,7 @@ public class ResumeController {
         return Result.success(save);
     }
     @PostMapping("queryById")
-    @ApiOperation("查询详情")
+    @ApiOperation(value = "查询详情",tags = "查询")
     @ApiImplicitParam(name = "id",value = "编号",required = true)
     public Result<ResumeDTO> queryById(@RequestParam Long id){
         Resume resume = resumeService.getById(id);

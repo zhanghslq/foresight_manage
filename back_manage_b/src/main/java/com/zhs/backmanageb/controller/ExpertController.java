@@ -34,7 +34,7 @@ public class ExpertController {
     @Resource
     private ExpertService expertService;
 
-    @ApiOperation("获取专家列表")
+    @ApiOperation(value = "获取专家列表",tags = "查询")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current",value = "当前页",required = true),
             @ApiImplicitParam(name = "size",value = "每页多少条",required = true),
@@ -47,7 +47,7 @@ public class ExpertController {
     }
 
     @PostMapping("query")
-    @ApiOperation("获取详情")
+    @ApiOperation(value = "获取详情",tags = "查询")
     @ApiImplicitParam(name = "id",value = "编号",required = true)
     public Result<Expert> queryById(@RequestParam Long id){
         Expert expert = expertService.getById(id);
@@ -55,19 +55,19 @@ public class ExpertController {
     }
     @PostMapping("update")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
-    @ApiOperation("更新方法，id必填，所有更新同理")
+    @ApiOperation(value = "更新方法",tags = "修改")
     public Result<Boolean> update(Expert expert){
         return Result.success(expertService.updateById(expert));
     }
 
-    @ApiOperation("根据id删除")
+    @ApiOperation(value = "根据id删除",tags = "删除")
     @ApiImplicitParam(name = "id",value = "编号",required = true)
     @PostMapping("delete")
     public Result<Boolean> deleteById(@RequestParam Long id){
         return Result.success(expertService.removeById(id));
     }
     @PostMapping("insert")
-    @ApiOperation("插入")
+    @ApiOperation(value = "插入",tags = "新增")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(Expert expert){
         // 插入的时候需要记录操作人id

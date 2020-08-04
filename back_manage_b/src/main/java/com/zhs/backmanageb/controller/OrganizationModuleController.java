@@ -39,7 +39,7 @@ public class OrganizationModuleController {
             @ApiImplicitParam(name = "type",value = "模块类型，0领导人，1下属机构，2联系人，3下属企业",required = true),
             @ApiImplicitParam(name = "name",value = "模块名称",required = true)
     })
-    @ApiOperation("插入模块，返回模块id")
+    @ApiOperation(value = "插入模块，返回模块id",tags = "新增")
     public Result<Long> insert(OrganizationModule organizationModule){
         organizationModuleService.save(organizationModule);
         return Result.success(organizationModule.getId());

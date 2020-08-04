@@ -33,33 +33,33 @@ public class RoleController {
 
 
     @PostMapping("insert")
-    @ApiOperation("插入")
+    @ApiOperation(value = "插入",tags = "新增")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(Role role){
         return Result.success(roleService.save(role));
     }
 
     @PostMapping("update")
-    @ApiOperation("修改")
+    @ApiOperation(value = "修改",tags = "修改")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     public Result<Boolean> update(Role role){
         return Result.success(roleService.updateById(role));
     }
 
     @PostMapping("query")
-    @ApiOperation("根据id查询角色详情")
+    @ApiOperation(value = "根据id查询角色详情",tags = "查询")
     public Result<Role> query(Long id){
         return Result.success(roleService.getById(id));
     }
 
     @PostMapping("list")
-    @ApiOperation("查询全部角色")
+    @ApiOperation(value = "查询全部角色",tags = "查询")
     public Result<List<Role>> list(){
         return Result.success(roleService.list());
     }
 
     @PostMapping("delete")
-    @ApiOperation("删除角色")
+    @ApiOperation(value = "删除角色",tags = "删除")
     public Result<Boolean> delete(Long id){
         return Result.success(roleService.removeById(id));
     }

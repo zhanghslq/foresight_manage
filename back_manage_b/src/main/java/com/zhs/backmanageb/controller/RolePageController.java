@@ -38,19 +38,19 @@ public class RolePageController {
     private PageService pageService;
 
     @PostMapping("insert")
-    @ApiOperation("增加角色页面权限")
+    @ApiOperation(value = "增加角色页面权限",tags = "新增")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(RolePage rolePage){
         return Result.success(rolePageService.save(rolePage));
     }
     @PostMapping("insertBatch")
-    @ApiOperation("批量添加角色页面权限")
+    @ApiOperation(value = "批量添加角色页面权限",tags = "新增")
     public Result<Boolean> insertBatch(@RequestBody List<RolePage>rolePages){
         return Result.success(rolePageService.saveBatch(rolePages));
     }
 
     @PostMapping("update_page/by_tole_id")
-    @ApiOperation("更新角色权限")
+    @ApiOperation(value = "更新角色权限",tags = "修改")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "roleId",value = "角色id",required = true),
             @ApiImplicitParam(name = "pageIds",value = "页面权限id，多个逗号相隔",required = true),
@@ -86,13 +86,13 @@ public class RolePageController {
     }
 
     @PostMapping("delete")
-    @ApiOperation("删除页面权限")
+    @ApiOperation(value = "删除页面权限",tags = "删除")
     public Result<Boolean> delete(@RequestParam Long id){
         return Result.success(rolePageService.removeById(id));
     }
 
     @PostMapping("query_page_id/by_role_id")
-    @ApiOperation("根据角色id，查询拥有页面id")
+    @ApiOperation(value = "根据角色id，查询拥有页面id",tags = "查询")
     public Result<List<Long>> queryPageIdByRoleId(@RequestParam Long roleId){
         List<Long> pageIds = getPageIdsByRoleId(roleId);
         return Result.success(pageIds);
@@ -107,7 +107,7 @@ public class RolePageController {
     }
 
     @PostMapping("query_page/by_role_id")
-    @ApiOperation("根据角色id，查询拥有页面详情列表")
+    @ApiOperation(value = "根据角色id，查询拥有页面详情列表",tags = "查询")
     public Result<List<Page>> queryPageByRoleId(@RequestParam Long roleId){
         List<Long> pageIds = getPageIdsByRoleId(roleId);
         List<Page> pages = pageService.listByIds(pageIds);

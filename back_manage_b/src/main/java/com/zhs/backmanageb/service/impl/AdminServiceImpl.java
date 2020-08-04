@@ -158,7 +158,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         String salt = admin.getSalt();
 
         Admin admin1 = queryByUserName(username);
-        if(!Objects.isNull(admin1)){
+        if(!Objects.isNull(admin1)&&!admin1.getId().equals(admin.getId())){
             throw new MyException("用户名已存在");
         }
         if(!Objects.isNull(mobile)){
@@ -171,6 +171,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         admin.setPassword(newPassword);
         admin.setRealName(realName);
         admin.setMobile(mobile);
+        updateById(admin);
         if(!Objects.isNull(roleId)){
             QueryWrapper<AdminRole> adminRoleQueryWrapper = new QueryWrapper<>();
             adminRoleQueryWrapper.eq("admin_id",adminId);

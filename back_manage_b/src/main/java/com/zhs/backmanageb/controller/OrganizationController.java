@@ -62,7 +62,7 @@ public class OrganizationController {
     @ApiOperation("插入")
     @ApiImplicitParam(name = "tags",value = "标签,多个逗号相隔")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
-    public Result<Boolean> insert(@RequestBody Organization organization, List<String> tags){
+    public Result<Boolean> insert(@RequestBody Organization organization,@RequestParam(value = "tags") List<String> tags){
         // 插入的时候需要记录操作人id
         try {
             Object principal = SecurityUtils.getSubject().getPrincipal();

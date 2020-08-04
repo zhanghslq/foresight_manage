@@ -54,7 +54,7 @@ public class Organization implements Serializable {
     private Long type;
 
     @ApiModelProperty(value = "是否是事业单位0否，1是")
-    private String isGovernment;
+    private Integer isGovernment;
 
     @ApiModelProperty(value = "体系id，系统配置进行维护")
     private Long hierarchyId;

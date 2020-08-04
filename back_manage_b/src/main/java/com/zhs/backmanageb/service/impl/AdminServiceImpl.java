@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.backmanageb.entity.*;
 import com.zhs.backmanageb.exception.MyException;
 import com.zhs.backmanageb.mapper.AdminMapper;
+import com.zhs.backmanageb.model.vo.AdminAddDataVO;
 import com.zhs.backmanageb.service.*;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -41,6 +42,21 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
 
     @Autowired
     private RolePageService rolePageService;
+
+    @Autowired
+    private ResumeService resumeService;
+
+    @Autowired
+    private ContactsService contactsService;
+
+    @Autowired
+    private OrganizationService organizationService;
+
+    @Autowired
+    private CompanyService companyService;
+
+    @Autowired
+    private ExpertService expertService;
 
 
 
@@ -212,5 +228,33 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         String newPassword = SecureUtil.md5(password + salt);
         byId.setPassword(newPassword);
         updateById(byId);
+    }
+
+    @Override
+    public AdminAddDataVO queryAddData(Long adminId) {
+        QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();
+        companyQueryWrapper.eq("admin_id",adminId);
+        int companyCount = companyService.count(companyQueryWrapper);
+
+        QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
+        organizationQueryWrapper.eq("admin_id",adminId);
+        int organizationCount = organizationService.count(organizationQueryWrapper);
+
+        QueryWrapper<Resume> resumeQueryWrapper = new QueryWrapper<>();
+        resumeQueryWrapper.eq("admin_id",adminId);
+        int resumeCount = resumeService.count(resumeQueryWrapper);
+
+        QueryWrapper<Expert> expertQueryWrapper = new QueryWrapper<>();
+        expertQueryWrapper.eq("admin_id",adminId);
+        int expertCount = expertService.count(expertQueryWrapper);
+
+        QueryWrapper<Contacts> contactsQueryWrapper = new QueryWrapper<>();
+        contactsQueryWrapper.eq("admin_id",adminId);
+        int contactCount = contactsService.count(contactsQueryWrapper);
+        AdminAddDataVO adminAddDataVO = new AdminAddDataVO();
+        adminAddDataVO.setOrganizationCount(organizationCount+companyCount);
+        adminAddDataVO.setResumeCount(resumeCount);
+        adminAddDataVO.setImportCount(expertCount+resumeCount+contactCount);
+        return adminAddDataVO;
     }
 }

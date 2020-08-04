@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhs.backmanageb.entity.Admin;
 import com.zhs.backmanageb.entity.Page;
 import com.zhs.backmanageb.entity.Role;
+import com.zhs.backmanageb.model.vo.AdminAddDataVO;
 
 import java.util.List;
 
@@ -29,4 +30,6 @@ public interface AdminService extends IService<Admin> {
     void updateUserAndRole(Long adminId, String username, String password, String realName, String mobile, Long roleId);
 
     void updatePassword(Long adminId, String oldPassword, String password);
+
+    AdminAddDataVO queryAddData(Long adminId);
 }

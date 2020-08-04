@@ -10,6 +10,7 @@ import com.zhs.backmanageb.entity.Role;
 import com.zhs.backmanageb.exception.MyException;
 import com.zhs.backmanageb.model.dto.AdminLoginReturnDTO;
 import com.zhs.backmanageb.model.dto.AdminVO;
+import com.zhs.backmanageb.model.vo.AdminAddDataVO;
 import com.zhs.backmanageb.service.AdminService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -146,4 +147,14 @@ public class AdminController {
         adminVOPage.setRecords(result);
         return Result.success(adminVOPage);
     }
+
+
+    // 查询用户的录入数据
+    @PostMapping("query/add_data")
+    @ApiOperation("查用户添加的数据")
+    public Result<AdminAddDataVO> queryAddData(@RequestParam Long adminId){
+        AdminAddDataVO adminAddDataVO = adminService.queryAddData(adminId);
+        return Result.success(adminAddDataVO);
+    }
+
 }

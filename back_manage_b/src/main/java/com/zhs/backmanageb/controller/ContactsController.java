@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -85,5 +86,12 @@ public class ContactsController {
         return Result.success(contactsService.removeById(id));
     }
     // 插入联系人用的是导入文件模板的形式
+
+    @ApiOperation(value = "批量删除",tags = "删除")
+    @PostMapping("delete/by_ids")
+    @ApiImplicitParam(name = "ids",value = "多个逗号相隔",required = true)
+    public Result<Boolean> deleteByIds(@RequestParam List<Long> ids){
+        return Result.success(contactsService.removeByIds(ids));
+    }
 }
 

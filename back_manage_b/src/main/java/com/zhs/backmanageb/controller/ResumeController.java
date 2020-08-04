@@ -103,6 +103,12 @@ public class ResumeController {
         return Result.success(resumeDTO);
     }
 
+    @ApiOperation(value = "批量删除",tags = "删除")
+    @PostMapping("delete/by_ids")
+    @ApiImplicitParam(name = "ids",value = "多个逗号相隔",required = true)
+    public Result<Boolean> deleteByIds(@RequestParam List<Long> ids){
+        return Result.success(resumeService.removeByIds(ids));
+    }
 
 }
 

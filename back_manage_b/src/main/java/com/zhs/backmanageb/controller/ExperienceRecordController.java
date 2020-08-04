@@ -7,6 +7,7 @@ import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.ExperienceRecord;
 import com.zhs.backmanageb.service.ExperienceRecordService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -76,7 +77,12 @@ public class ExperienceRecordController {
         experienceRecordQueryWrapper.eq("resume_id",resumeId);
         return Result.success(experienceRecordService.list(experienceRecordQueryWrapper));
     }
-
+    @ApiOperation(value = "批量删除",tags = "删除")
+    @PostMapping("delete/by_ids")
+    @ApiImplicitParam(name = "ids",value = "多个逗号相隔",required = true)
+    public Result<Boolean> deleteByIds(@RequestParam List<Long> ids){
+        return Result.success(experienceRecordService.removeByIds(ids));
+    }
 
 }
 

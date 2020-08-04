@@ -1,7 +1,9 @@
 package com.zhs.backmanageb.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -23,7 +25,7 @@ import java.util.Date;
 @ApiModel(value = "管理员")
 public class Admin extends BaseEntity{
 
-    @ApiModelProperty("编号")
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     @ApiModelProperty("用户姓名")
     private String username;
@@ -33,6 +35,8 @@ public class Admin extends BaseEntity{
     private String realName;
     @ApiModelProperty("手机号")
     private String mobile;
+    @ApiModelProperty("用户状态，0正常，1冻结")
+    private Integer status;
 
     @JsonIgnore
     private String salt;

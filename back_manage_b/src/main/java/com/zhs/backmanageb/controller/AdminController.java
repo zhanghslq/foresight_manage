@@ -2,14 +2,17 @@ package com.zhs.backmanageb.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.injector.methods.UpdateById;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Admin;
 import com.zhs.backmanageb.entity.Page;
 import com.zhs.backmanageb.entity.Role;
+import com.zhs.backmanageb.exception.MyException;
 import com.zhs.backmanageb.model.dto.AdminLoginReturnDTO;
 import com.zhs.backmanageb.model.dto.AdminVO;
 import com.zhs.backmanageb.service.AdminService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -25,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author: zhs
@@ -67,13 +71,32 @@ public class AdminController {
         adminService.updateUserAndRole(adminId,username,password,realName,mobile,roleId);
         return Result.success(true);
     }
-
-    /*@PostMapping("updatePassword")
-    @ApiOperation("修改密码")
-    public Result<Boolean> updatePassword(String password){
-
+    @PostMapping("delete")
+    @ApiOperation("删除用户")
+    @ApiImplicitParam(name = "adminId",value = "用户id",required = true)
+    public Result<Boolean> delete(@RequestParam Long adminId){
+        adminService.removeById(adminId);
         return Result.success(true);
-    }*/
+    }
+
+    @PostMapping("updatePassword")
+    @ApiOperation("修改密码")
+    public Result<Boolean> updatePassword(@RequestParam Long adminId,@RequestParam String password){
+        adminService.updatePassword(adminId,password);
+        return Result.success(true);
+    }
+    @PostMapping("freezeUser")
+    @ApiOperation("冻结用户")
+    public Result<Boolean> freezeUser(@RequestParam Long adminId){
+        Admin byId = adminService.getById(adminId);
+        if(Objects.isNull(byId)){
+            throw new MyException("用户不存在");
+        }
+        byId.setStatus(1);
+        adminService.updateById(byId);
+        return Result.success(true);
+    }
+
     @ApiOperation("根据管理员id查询拥有角色")
     @PostMapping("list_role/by_admin_id")
     public Result<List<Role>> listRoleByAdminId(@RequestParam Long adminId){
@@ -100,6 +123,7 @@ public class AdminController {
         for (Admin admin : list) {
             AdminVO adminVO = new AdminVO();
             BeanUtil.copyProperties(admin,adminVO);
+            adminVO.setRoleList(adminService.listRoleByAdminId(admin.getId()));
             result.add(adminVO);
         }
         return Result.success(result);

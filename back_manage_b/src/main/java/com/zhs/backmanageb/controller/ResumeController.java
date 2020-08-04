@@ -52,6 +52,7 @@ public class ResumeController {
     @PostMapping("insert")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(@RequestBody ResumeDTO resumeDTO){
+        // 插入的时候需要记录操作人id
         Resume resume = resumeDTO.getResume();
         boolean save = resumeService.save(resume);
         List<ExperienceRecord> experienceRecordList = resumeDTO.getExperienceRecordList();

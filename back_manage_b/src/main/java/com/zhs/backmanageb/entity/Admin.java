@@ -38,6 +38,9 @@ public class Admin extends BaseEntity{
     @ApiModelProperty("用户状态，0正常，1冻结")
     private Integer status;
 
+    @ApiModelProperty("登陆次数")
+    private Integer loginCount;
+
     @JsonIgnore
     private String salt;
 

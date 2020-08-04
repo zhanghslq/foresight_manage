@@ -33,6 +33,7 @@ public class ReqLogAspect {
 
     ThreadLocal<Long> startTime = new ThreadLocal<>();
     ThreadLocal<String> requestInfo = new ThreadLocal<>();
+    ThreadLocal<String> logId = new ThreadLocal<>();
 
 
     @Before("webLog()")
@@ -68,9 +69,6 @@ public class ReqLogAspect {
         Enumeration paramNames = request.getParameterNames();
         while (paramNames.hasMoreElements()) {
             String paramName = (String) paramNames.nextElement();
-            if("questionString".equals(paramName)){
-                continue;
-            }
             String[] paramValues = request.getParameterValues(paramName);
             if (paramValues.length == 1) {
                 String paramValue = paramValues[0];

@@ -57,6 +57,9 @@ public class Expert implements Serializable {
     @ApiModelProperty(value = "从事领域")
     private String workArea;
 
+    @ApiModelProperty("管理员id")
+    private Long adminId;
+
     @JsonIgnore
     private Integer pushed;
 

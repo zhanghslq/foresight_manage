@@ -70,6 +70,9 @@ public class Resume implements Serializable {
     @ApiModelProperty(value = "现在状态")
     private String currentStatus;
 
+    @ApiModelProperty(value = "管理员id")
+    private Long adminId;
+
     @JsonIgnore
     @TableLogic
     private Integer deleted;

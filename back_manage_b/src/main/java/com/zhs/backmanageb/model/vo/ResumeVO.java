@@ -1,43 +1,30 @@
-package com.zhs.backmanageb.entity;
+package com.zhs.backmanageb.model.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.Date;
+
 /**
- * <p>
- * 
- * </p>
- *
- * @author zhs
- * @since 2020-07-11
+ * @author: zhs
+ * @date: 2020/8/5 16:31
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@ApiModel(value="Resume对象", description="")
-public class Resume implements Serializable {
-
-    private static final long serialVersionUID=1L;
-
+public class ResumeVO {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     @ApiModelProperty(value = "姓名")
     private String realName;
 
-    @ApiModelProperty(value = "行政级别id")
+    @ApiModelProperty("行政级别id")
     private Long levelId;
+
+    @ApiModelProperty("行政级别名称")
+    private String levelName;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("出生日期 yyyy-MM-dd")
@@ -76,9 +63,21 @@ public class Resume implements Serializable {
     @ApiModelProperty(value = "管理员id")
     private Long adminId;
 
-    @JsonIgnore
-    @TableLogic
-    private Integer deleted;
+    /**
+     * 现任职时间
+     */
+    @ApiModelProperty(value = "现任职时间,（现在工作开始时间）")
+    private Date beginWorkingTime;
+
+    /**
+     * 在职时间
+     */
+    @ApiModelProperty(value = "在职时间，（现在这份工作开始到现在）")
+    private String workingDays;
+
+    @ApiModelProperty(value = "年龄")
+    private Integer age;
+
 
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
@@ -86,6 +85,4 @@ public class Resume implements Serializable {
     @JsonIgnore
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
-
-
 }

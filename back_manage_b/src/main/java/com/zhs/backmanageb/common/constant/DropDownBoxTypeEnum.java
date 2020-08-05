@@ -51,7 +51,8 @@ public enum DropDownBoxTypeEnum {
     POLITICAL_PARTICIPATION_ORGANIZATION_TYPE(32,"参政机构所属类型"),
     PARTY_AFFAIRS_ORGANIZATION_TYPE(33,"党务机构所属类型"),
 
-    LEADER_LEVEL(34,"领导人行政级别");
+    LEADER_LEVEL(34,"领导人行政级别"),
+    RESUME_LEVEL(35,"简历行政级别");
 
 
 

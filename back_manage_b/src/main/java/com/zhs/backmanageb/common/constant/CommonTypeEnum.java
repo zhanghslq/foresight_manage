@@ -18,8 +18,7 @@ public enum CommonTypeEnum {
     private final Integer type;
     private final String name;
 
-    static {
-    }
+
 
 
 }

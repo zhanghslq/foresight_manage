@@ -8,6 +8,7 @@ import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.ExperienceRecord;
 import com.zhs.backmanageb.entity.Resume;
 import com.zhs.backmanageb.model.dto.ResumeDTO;
+import com.zhs.backmanageb.model.vo.ResumeVO;
 import com.zhs.backmanageb.service.ExperienceRecordService;
 import com.zhs.backmanageb.service.ResumeService;
 import io.swagger.annotations.Api;
@@ -46,9 +47,12 @@ public class ResumeController {
             @ApiImplicitParam(name = "current",value = "当前页",required = true),
             @ApiImplicitParam(name = "size",value = "每页多少条",required = true),
     })
-    public Result<Page<Resume>> list(@RequestParam Integer current,@RequestParam Integer size){
+    public Result<Page<ResumeVO>> list(@RequestParam Integer current,@RequestParam Integer size){
         Page<Resume> resumePage = new Page<>(current, size);
-        return Result.success(resumeService.page(resumePage));
+
+        Page<ResumeVO> pageSelf =resumeService.pageSelf(resumePage);
+
+        return Result.success(pageSelf);
     }
     @ApiOperation(value = "插入",tags = "新增")
     @PostMapping("insert")

@@ -73,7 +73,7 @@ public class Resume implements Serializable {
     private String organization;
 
     @ApiModelProperty(value = "职务(政治身份)")
-    private String organizationName;
+    private String organizationJob;
 
     @ApiModelProperty(value = "照片")
     private String photoUrl;

@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -39,6 +40,7 @@ public class Resume implements Serializable {
     @ApiModelProperty(value = "行政级别id")
     private Long levelId;
 
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("出生日期 yyyy-MM-dd")
     private Date birthday;

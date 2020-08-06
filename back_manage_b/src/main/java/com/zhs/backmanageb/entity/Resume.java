@@ -69,8 +69,17 @@ public class Resume implements Serializable {
     @ApiModelProperty(value = "当前职务")
     private String job;
 
+    @ApiModelProperty(value = "组织（政治身份）")
+    private String organization;
+
+    @ApiModelProperty(value = "职务(政治身份)")
+    private String organizationName;
+
     @ApiModelProperty(value = "照片")
     private String photoUrl;
+
+    @ApiModelProperty(value = "现在状态的id")
+    private Long currentStatusId;
 
     @ApiModelProperty(value = "现在状态")
     private String currentStatus;

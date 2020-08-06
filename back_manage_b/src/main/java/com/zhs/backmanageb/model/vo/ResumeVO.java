@@ -1,6 +1,7 @@
 package com.zhs.backmanageb.model.vo;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,6 +27,7 @@ public class ResumeVO {
     @ApiModelProperty("行政级别名称")
     private String levelName;
 
+    @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("出生日期 yyyy-MM-dd")
     private Date birthday;
@@ -66,6 +68,7 @@ public class ResumeVO {
     /**
      * 现任职时间
      */
+    @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
     @ApiModelProperty(value = "现任职时间,（现在工作开始时间）")
     private Date beginWorkingTime;
 

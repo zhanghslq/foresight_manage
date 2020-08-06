@@ -61,8 +61,6 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             // 然后把字段值填上
             // 行政级别
             resumeVO.setLevelName(map.get(resumeVO.getLevelId()));
-            resumeVOS.add(resumeVO);
-            //todo 年龄，在职时间
             Date birthday = record.getBirthday();
             if(!Objects.isNull(birthday)){
                 int age =DateUtil.ageOfNow(birthday);

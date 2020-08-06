@@ -2,4 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zhs.backmanageb.mapper.ExperienceRecordMapper">
 
+    <select id="queryLastExperience" resultType="com.zhs.backmanageb.entity.ExperienceRecord">
+        select resume_id as resumeId,max(begin_date) as beginDate from experience_record
+        where begin_date is not null and resume_id in
+        <foreach collection="resumeIds" separator="," close=")" open="(" item="rid" >
+            #{rid,jdbcType=BIGINT}
+        </foreach>
+        group by resume_id
+     </select>
 </mapper>

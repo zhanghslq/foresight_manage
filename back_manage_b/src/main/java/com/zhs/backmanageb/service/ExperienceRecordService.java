@@ -3,6 +3,8 @@ package com.zhs.backmanageb.service;
 import com.zhs.backmanageb.entity.ExperienceRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 履历表 服务类
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ExperienceRecordService extends IService<ExperienceRecord> {
 
+    List<ExperienceRecord> queryLastExperience(List<Long> resumeIds);
 }

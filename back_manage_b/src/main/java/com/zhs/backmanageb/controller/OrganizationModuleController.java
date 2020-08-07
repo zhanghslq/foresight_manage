@@ -1,21 +1,20 @@
 package com.zhs.backmanageb.controller;
 
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.OrganizationModule;
+import com.zhs.backmanageb.model.dto.OrganizationModuleSeqDTO;
 import com.zhs.backmanageb.service.OrganizationModuleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -44,5 +43,31 @@ public class OrganizationModuleController {
         organizationModuleService.save(organizationModule);
         return Result.success(organizationModule.getId());
     }
+
+    @PostMapping("update")
+    @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
+    @ApiOperation(value = "修改模块名",tags = "修改")
+    public Result<Boolean> updateById(OrganizationModule organizationModule){
+        organizationModuleService.updateById(organizationModule);
+        return Result.success(true);
+    }
+
+    @PostMapping("delete")
+    @ApiOperation(value = "删除",tags = "删除")
+    @ApiImplicitParam(name = "id",value = "模块id",required = true)
+    public Result<Boolean> delete(@RequestParam Long id){
+        organizationModuleService.removeById(id);
+        // 删除相关的数据
+        organizationModuleService.deleteDataAboutThis(id);
+        return Result.success(true);
+    }
+
+    @ApiOperation(value = "排序",tags = "修改")
+    @PostMapping("update/seq")
+    public Result<Boolean> updateSeq(@RequestParam Long moduleId, @RequestBody List<OrganizationModuleSeqDTO> organizationModuleSeqDTOList){
+        organizationModuleService.updateSeq(moduleId,organizationModuleSeqDTOList);
+        return Result.success(true);
+    }
+
 }
 

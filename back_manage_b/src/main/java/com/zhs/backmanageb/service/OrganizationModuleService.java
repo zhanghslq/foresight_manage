@@ -2,6 +2,9 @@ package com.zhs.backmanageb.service;
 
 import com.zhs.backmanageb.entity.OrganizationModule;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zhs.backmanageb.model.dto.OrganizationModuleSeqDTO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +15,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-07-27
  */
 public interface OrganizationModuleService extends IService<OrganizationModule> {
+
+    void deleteDataAboutThis(Long id);
+
+    void updateSeq(Long moduleId, List<OrganizationModuleSeqDTO> organizationModuleSeqDTOList);
 
 }

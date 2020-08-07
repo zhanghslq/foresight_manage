@@ -50,6 +50,9 @@ public class Leader implements Serializable {
     @ApiModelProperty("模块id")
     private Long moduleId;
 
+    @ApiModelProperty("排序")
+    private Integer seq;
+
     @JsonIgnore
     @ApiModelProperty(value = "删除标志")
     @TableLogic

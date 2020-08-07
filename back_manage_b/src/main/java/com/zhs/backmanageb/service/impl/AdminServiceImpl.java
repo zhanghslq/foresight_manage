@@ -58,6 +58,9 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     @Autowired
     private ExpertService expertService;
 
+    @Autowired
+    private AdminMapper adminMapper;
+
 
 
     @Override
@@ -114,6 +117,9 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         if(Objects.isNull(admin)){
             throw new  MyException("用户不存在");
         }
+        if(Objects.equals(admin.getStatus(), 1)){
+            throw new MyException("账号已被冻结，联系管理员恢复");
+        }
         String salt = admin.getSalt();
         String pass = SecureUtil.md5(password + salt);
         if(admin.getPassword().equals(pass)){
@@ -122,6 +128,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         }else {
             throw new MyException("密码不正确");
         }
+        adminMapper.increaseLoginCount(admin.getId());
         return admin;
     }
 

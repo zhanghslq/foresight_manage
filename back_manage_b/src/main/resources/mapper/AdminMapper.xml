@@ -10,5 +10,8 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
+    <update id="increaseLoginCount">
+        update admin set login_count=login_count+1 where id=#{id,jdbcType=BIGINT}
+    </update>
 
 </mapper>

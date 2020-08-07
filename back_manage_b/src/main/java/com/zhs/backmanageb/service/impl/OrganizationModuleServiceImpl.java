@@ -12,6 +12,7 @@ import com.zhs.backmanageb.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ public class OrganizationModuleServiceImpl extends ServiceImpl<OrganizationModul
     public void deleteDataAboutThis(Long id) {
         // 删除模块id相关的
         OrganizationModule byId = getById(id);
+        Assert.notNull(byId,"模块不存在");
         Integer type = byId.getType();
         if(ModuleTypeEnum.LEADER.getId().equals(type)){
             QueryWrapper<Leader> leaderQueryWrapper = new QueryWrapper<>();

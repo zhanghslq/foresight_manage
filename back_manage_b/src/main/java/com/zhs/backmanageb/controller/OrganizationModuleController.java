@@ -56,9 +56,9 @@ public class OrganizationModuleController {
     @ApiOperation(value = "删除",tags = "删除")
     @ApiImplicitParam(name = "id",value = "模块id",required = true)
     public Result<Boolean> delete(@RequestParam Long id){
-        organizationModuleService.removeById(id);
-        // 删除相关的数据
         organizationModuleService.deleteDataAboutThis(id);
+        // 删除相关的数据
+        organizationModuleService.removeById(id);
         return Result.success(true);
     }
 

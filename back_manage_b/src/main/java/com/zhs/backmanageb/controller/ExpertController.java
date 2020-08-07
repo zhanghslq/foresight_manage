@@ -11,11 +11,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -57,7 +53,7 @@ public class ExpertController {
     @PostMapping("update")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     @ApiOperation(value = "更新方法",tags = "修改")
-    public Result<Boolean> update(Expert expert){
+    public Result<Boolean> update(@RequestBody Expert expert){
         return Result.success(expertService.updateById(expert));
     }
 
@@ -70,7 +66,7 @@ public class ExpertController {
     @PostMapping("insert")
     @ApiOperation(value = "插入",tags = "新增")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
-    public Result<Boolean> insert(Expert expert){
+    public Result<Boolean> insert(@RequestBody Expert expert){
         // 插入的时候需要记录操作人id
         try {
             Object principal = SecurityUtils.getSubject().getPrincipal();

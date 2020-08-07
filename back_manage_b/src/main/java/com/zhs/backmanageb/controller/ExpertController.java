@@ -1,10 +1,16 @@
 package com.zhs.backmanageb.controller;
 
 
+import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
+import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
+import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.Expert;
+import com.zhs.backmanageb.model.vo.ExpertVO;
+import com.zhs.backmanageb.service.CommonDataService;
 import com.zhs.backmanageb.service.ExpertService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -14,7 +20,10 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -30,6 +39,8 @@ import java.util.List;
 public class ExpertController {
     @Resource
     private ExpertService expertService;
+    @Resource
+    private CommonDataService commonDataService;
 
     @ApiOperation(value = "获取专家列表",tags = "查询")
     @ApiImplicitParams({
@@ -37,10 +48,26 @@ public class ExpertController {
             @ApiImplicitParam(name = "size",value = "每页多少条",required = true),
     })
     @PostMapping("list")
-    public Result<Page<Expert>> list(@RequestParam Integer current,@RequestParam Integer size){
+    public Result<Page<ExpertVO>> list(@RequestParam Integer current,@RequestParam Integer size){
         Page<Expert> expertPage = new Page<>(current, size);
         Page<Expert> page = expertService.page(expertPage);
-        return Result.success(page);
+        // 领导人行政级别
+        QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
+        commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.EXPERT_LEVEL.getId());
+        List<CommonData> commonDataList = commonDataService.list(commonDataQueryWrapper);
+        Map<Long, String> map = commonDataList.stream().collect(Collectors.toMap(CommonData::getId, CommonData::getName));
+        Page<ExpertVO> expertVOPage = new Page<>();
+        BeanUtil.copyProperties(page,expertVOPage);
+        List<Expert> records = page.getRecords();
+        List<ExpertVO> expertVOS = new ArrayList<>();
+        for (Expert record : records) {
+            ExpertVO expertVO = new ExpertVO();
+            BeanUtil.copyProperties(record,expertVO);
+            expertVO.setLevelName(map.get(record.getLevelId()));
+            expertVOS.add(expertVO);
+        }
+        expertVOPage.setRecords(expertVOS);
+        return Result.success(expertVOPage);
     }
 
     @PostMapping("query")

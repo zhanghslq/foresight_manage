@@ -63,7 +63,7 @@ public class Contacts implements Serializable {
     private String concatPhone;
 
     @ApiModelProperty(value = "级别id")
-    private String levelId;
+    private Long levelId;
 
     @ApiModelProperty(value = "渠道")
     private String channel;

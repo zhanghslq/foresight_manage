@@ -1,10 +1,18 @@
 package com.zhs.backmanageb.controller;
 
 
+import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
+import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
+import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.Contacts;
+import com.zhs.backmanageb.entity.Expert;
+import com.zhs.backmanageb.model.vo.ContactsVO;
+import com.zhs.backmanageb.model.vo.ExpertVO;
+import com.zhs.backmanageb.service.CommonDataService;
 import com.zhs.backmanageb.service.ContactsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -19,7 +27,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -35,6 +46,8 @@ import java.util.List;
 public class ContactsController {
     @Resource
     private ContactsService contactsService;
+    @Resource
+    private CommonDataService commonDataService;
 
     @PostMapping("list")
     @ApiOperation(value = "联系人列表",tags = "查询")
@@ -42,10 +55,26 @@ public class ContactsController {
             @ApiImplicitParam(name = "current",value = "当前页",required = true),
             @ApiImplicitParam(name = "size",value = "每页多少条",required = true),
     })
-    public Result<Page<Contacts>> listByPage(@RequestParam Integer current, @RequestParam Integer size){
+    public Result<Page<ContactsVO>> listByPage(@RequestParam Integer current, @RequestParam Integer size){
         Page<Contacts> contactsPage = new Page<>(current, size);
-        Page<Contacts> page1 = contactsService.page(contactsPage);
-        return Result.success(page1);
+        Page<Contacts> page = contactsService.page(contactsPage);
+        // 领导人行政级别
+        QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
+        commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.CONCAT_LEVEL.getId());
+        List<CommonData> commonDataList = commonDataService.list(commonDataQueryWrapper);
+        Map<Long, String> map = commonDataList.stream().collect(Collectors.toMap(CommonData::getId, CommonData::getName));
+        Page<ContactsVO> contactsVOPage = new Page<>();
+        BeanUtil.copyProperties(page,contactsVOPage);
+        List<Contacts> records = page.getRecords();
+        List<ContactsVO> contactsVOS = new ArrayList<>();
+        for (Contacts record : records) {
+            ContactsVO contactsVO = new ContactsVO();
+            BeanUtil.copyProperties(record,contactsVO);
+            contactsVO.setLevelName(map.get(record.getLevelId()));
+            contactsVOS.add(contactsVO);
+        }
+        contactsVOPage.setRecords(contactsVOS);
+        return Result.success(contactsVOPage);
     }
 
     @PostMapping("update")

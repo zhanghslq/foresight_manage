@@ -26,10 +26,6 @@ public class ContactsVO implements Serializable {
     @ApiModelProperty("联系人姓名")
     private String realName;
 
-
-
-
-
     @ApiModelProperty("单位名称")
     private String companyName;
 
@@ -48,7 +44,7 @@ public class ContactsVO implements Serializable {
     private Long levelId;
 
     @ApiModelProperty(value = "级别描述")
-    private Integer levelName;
+    private String levelName;
 
     @ApiModelProperty(value = "渠道")
     private String channel;

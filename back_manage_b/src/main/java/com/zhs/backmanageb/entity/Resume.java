@@ -87,6 +87,9 @@ public class Resume implements Serializable {
     @ApiModelProperty(value = "管理员id")
     private Long adminId;
 
+    @ApiModelProperty(value = "文件url标志")
+    private String wordUrl;
+
     @JsonIgnore
     @TableLogic
     private Integer deleted;

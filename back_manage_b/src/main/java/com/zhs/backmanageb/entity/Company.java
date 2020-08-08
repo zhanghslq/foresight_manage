@@ -87,6 +87,9 @@ public class Company implements Serializable {
     @ApiModelProperty("管理员id")
     private Long adminId;
 
+    @ApiModelProperty("排序")
+    private Integer seq;
+
     @JsonIgnore
     @ApiModelProperty(value = "删除标志")
     @TableLogic

@@ -10,6 +10,8 @@ import com.zhs.backmanageb.service.CommonDataService;
 import com.zhs.backmanageb.service.ExpertService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.swagger.annotations.Authorization;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +39,14 @@ public class ExpertServiceImpl extends ServiceImpl<ExpertMapper, Expert> impleme
         QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
         commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.EXPERT_LEVEL.getId());
 
-
+        Subject subject = SecurityUtils.getSubject();
+        Object principal = subject.getPrincipal();
+        Long adminId=0L;
+        try {
+            adminId = Long.valueOf(principal.toString());
+        } catch (NumberFormatException e) {
+            log.error("未获取到认证信息");
+        }
         List<CommonData> list = commonDataService.list(commonDataQueryWrapper);
         Map<String, Long> map = list.stream().collect(Collectors.toMap(CommonData::getName, CommonData::getId, (k1, k2) -> k2));
 
@@ -48,6 +57,7 @@ public class ExpertServiceImpl extends ServiceImpl<ExpertMapper, Expert> impleme
         Map<String, Long> mapField = listField.stream().collect(Collectors.toMap(CommonData::getName, CommonData::getId, (k1, k2) -> k2));
 
         for (Expert readBook : readBooks) {
+            readBook.setAdminId(adminId);
             String sexName = readBook.getSexName();
             if(!Objects.isNull(sexName)){
                 if(sexName.contains("男")){

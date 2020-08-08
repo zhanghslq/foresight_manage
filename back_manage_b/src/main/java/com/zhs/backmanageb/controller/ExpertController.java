@@ -120,7 +120,7 @@ public class ExpertController {
         return Result.success(expertService.removeByIds(ids));
     }
     @ApiOperation(value = "上传文件进行批量插入",tags = "新增")
-    @RequestMapping("listUpload")
+    @PostMapping("listUpload")
     public Result<String> listUpload(@RequestParam("file") MultipartFile file){
         //批量添加
         String fileName = file.getOriginalFilename();

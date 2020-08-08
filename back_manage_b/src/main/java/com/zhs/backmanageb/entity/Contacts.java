@@ -87,6 +87,9 @@ public class Contacts implements Serializable {
     @ApiModelProperty(value = "渠道")
     private String channel;
 
+    @ApiModelProperty("排序")
+    private Integer seq;
+
     @JsonIgnore
     private Integer pushed;
 

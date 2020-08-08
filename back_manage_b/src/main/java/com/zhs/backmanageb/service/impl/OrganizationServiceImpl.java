@@ -11,10 +11,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -126,13 +123,22 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             organizationModuleBO.setModuleId(organizationModule.getId());
             if(ModuleTypeEnum.LEADER.getId().equals(organizationModule.getType())){
                 organizationModuleBO.setType(ModuleTypeEnum.LEADER.getId());
-                organizationModuleBO.setLeaders(leaderMap.get(organizationModule.getId()));
+                List<Leader> leaders = leaderMap.get(organizationModule.getId());
+                if(!Objects.isNull(leaders)){
+                    organizationModuleBO.setLeaders(leaders.stream().sorted(Comparator.comparingInt(Leader::getSeq)).collect(Collectors.toList()));
+                }
             }else if(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(organizationModule.getType())){
                 organizationModuleBO.setType(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId());
-                organizationModuleBO.setOrganizationChildren(organizationMap.get(organizationModule.getId()));
+                List<Organization> organizations = organizationMap.get(organizationModule.getId());
+                if(!Objects.isNull(organizations)){
+                    organizationModuleBO.setOrganizationChildren(organizations.stream().sorted(Comparator.comparingInt(Organization::getSeq)).collect(Collectors.toList()));
+                }
             }else if(ModuleTypeEnum.CONTACTS.getId().equals(organizationModule.getType())){
                 organizationModuleBO.setType(ModuleTypeEnum.CONTACTS.getId());
-                organizationModuleBO.setContacts(contactsMap.get(organizationModule.getId()));
+                List<Contacts> contacts = contactsMap.get(organizationModule.getId());
+                if(!Objects.isNull(contacts)){
+                    organizationModuleBO.setContacts(contacts.stream().sorted(Comparator.comparingInt(Contacts::getSeq)).collect(Collectors.toList()));
+                }
             }
             organizationModuleBOS.add(organizationModuleBO);
         }

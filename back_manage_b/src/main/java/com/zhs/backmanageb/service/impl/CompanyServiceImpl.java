@@ -14,10 +14,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.CheckedOutputStream;
 
@@ -133,16 +130,23 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
             companyModuleBO.setModuleId(organizationModule.getId());
             if(ModuleTypeEnum.LEADER.getId().equals(organizationModule.getType())){
                 companyModuleBO.setType(ModuleTypeEnum.LEADER.getId());
-                companyModuleBO.setLeaders(leaderMap.get(organizationModule.getId()));
-            }/*else if(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(organizationModule.getType())){
-                companyModuleBO.setType(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId());
-                companyModuleBO.setCompanyChildren(companyMap.get(organizationModule.getId()));
-            }*/else if(ModuleTypeEnum.CONTACTS.getId().equals(organizationModule.getType())){
+                List<Leader> leaders = leaderMap.get(organizationModule.getId());
+                if(!Objects.isNull(leaders)){
+                    companyModuleBO.setLeaders(leaders.stream().sorted(Comparator.comparingInt(Leader::getSeq)).collect(Collectors.toList()));
+                }
+            }else if(ModuleTypeEnum.CONTACTS.getId().equals(organizationModule.getType())){
                 companyModuleBO.setType(ModuleTypeEnum.CONTACTS.getId());
-                companyModuleBO.setContacts(contactsMap.get(organizationModule.getId()));
+                List<Contacts> contacts = contactsMap.get(organizationModule.getId());
+                if(!Objects.isNull(contacts)){
+                    companyModuleBO.setContacts(contacts.stream().sorted(Comparator.comparingInt(Contacts::getSeq)).collect(Collectors.toList()));
+                }
             }else if(ModuleTypeEnum.COMPANY_CHILDREN.getId().equals(organizationModule.getType())){
                 companyModuleBO.setType(ModuleTypeEnum.COMPANY_CHILDREN.getId());
-                companyModuleBO.setCompanyChildren(companyMap.get(organizationModule.getId()));
+                List<Company> companies = companyMap.get(organizationModule.getId());
+                if(!Objects.isNull(companies)){
+                    companyModuleBO.setCompanyChildren(companies.stream().sorted(Comparator.comparingInt(Company::getSeq)).collect(Collectors.toList()));
+
+                }
             }
             companyModuleBOS.add(companyModuleBO);
         }

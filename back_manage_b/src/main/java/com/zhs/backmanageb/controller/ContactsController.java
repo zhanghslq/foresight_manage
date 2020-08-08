@@ -22,11 +22,8 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -87,7 +84,7 @@ public class ContactsController {
     @PostMapping("update")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     @ApiOperation(value = "修改联系人",tags = "修改")
-    public Result<Boolean> update(Contacts contacts){
+    public Result<Boolean> update(@RequestBody Contacts contacts){
         // 这样更改会显得属性有点多，后面可以针对性的进行精简
         return Result.success(contactsService.updateById(contacts));
     }

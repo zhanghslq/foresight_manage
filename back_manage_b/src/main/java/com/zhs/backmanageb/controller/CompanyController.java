@@ -41,7 +41,7 @@ public class CompanyController {
     @PostMapping("insert")
     @ApiOperation(value = "插入企业",tags = "新增")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
-    public Result<Boolean> insert(@RequestBody Company company, List<String> tags){
+    public Result<Boolean> insert(@RequestBody Company company,@RequestParam(value = "tags",required = false) List<String> tags){
         // 插入的时候需要记录操作人id
         try {
             Object principal = SecurityUtils.getSubject().getPrincipal();

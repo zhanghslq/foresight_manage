@@ -11,6 +11,7 @@ import com.zhs.backmanageb.model.dto.ResumeDTO;
 import com.zhs.backmanageb.model.vo.ResumeVO;
 import com.zhs.backmanageb.service.ExperienceRecordService;
 import com.zhs.backmanageb.service.ResumeService;
+import com.zhs.backmanageb.util.AsposeWordUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -114,5 +115,14 @@ public class ResumeController {
         return Result.success(resumeService.removeByIds(ids));
     }
 
+
+    @ApiOperation(value = "简历文件获取简历内容")
+    @PostMapping("get/text")
+    @ApiImplicitParam(name = "filename",value = "上传简历文件得到的文件名",required = true)
+    public Result<ResumeDTO> getText(@RequestParam String filename){
+        ResumeDTO resumeDTO = resumeService.dealWord(filename);
+        return Result.success(resumeDTO);
+
+    }
 }
 

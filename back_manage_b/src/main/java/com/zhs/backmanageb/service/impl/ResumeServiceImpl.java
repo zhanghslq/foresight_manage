@@ -11,11 +11,13 @@ import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.ExperienceRecord;
 import com.zhs.backmanageb.entity.Resume;
 import com.zhs.backmanageb.mapper.ResumeMapper;
+import com.zhs.backmanageb.model.dto.ResumeDTO;
 import com.zhs.backmanageb.model.vo.ResumeVO;
 import com.zhs.backmanageb.service.CommonDataService;
 import com.zhs.backmanageb.service.ExperienceRecordService;
 import com.zhs.backmanageb.service.ResumeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zhs.backmanageb.util.AsposeWordUtil;
 import net.sf.jsqlparser.statement.drop.Drop;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,5 +79,13 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         }
         resumeVOPage.setRecords(resumeVOS);
         return resumeVOPage;
+    }
+
+    @Override
+    public ResumeDTO dealWord(String filename) {
+        String text = AsposeWordUtil.getText(filename);
+        // 拿到text到php进行请求，获取结果
+
+        return null;
     }
 }

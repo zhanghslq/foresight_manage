@@ -58,7 +58,7 @@ public class CompanyController {
                 OrganizationTag organizationTag = new OrganizationTag();
                 organizationTag.setIsCompany(1);
                 organizationTag.setName(tag);
-                organizationTag.setOragnizationId(company.getId());
+                organizationTag.setOrganizationId(company.getId());
                 organizationTags.add(organizationTag);
             }
             organizationTagService.saveBatch(organizationTags);

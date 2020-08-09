@@ -107,6 +107,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             organizationTag.setId(tag.getId());
             organizationTag.setName(tag.getName());
             organizationTag.setIsCompany(0);
+            organizationTag.setOrganizationId(id);
             organizationTagArrayList.add(organizationTag);
         }
         organizationTagService.saveOrUpdateBatch(organizationTagArrayList);

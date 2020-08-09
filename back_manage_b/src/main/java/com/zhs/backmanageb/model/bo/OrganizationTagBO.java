@@ -9,5 +9,5 @@ import lombok.Data;
 @Data
 public class OrganizationTagBO {
     private Long id;
-    private String namel;
+    private String name;
 }

@@ -81,6 +81,37 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         getContactAndLeader(organizationVO,id);
         return organizationVO;
     }
+
+    @Override
+    public void dealTags(Long id, List<OrganizationTagBO> tags) {
+        if(Objects.isNull(tags)||tags.size()==0){
+            QueryWrapper<OrganizationTag> organizationTagQueryWrapper = new QueryWrapper<>();
+            organizationTagQueryWrapper.eq("organization_id",id);
+            organizationTagQueryWrapper.eq("is_company",0);
+            organizationTagService.remove(organizationTagQueryWrapper);
+            return;
+        }
+        QueryWrapper<OrganizationTag> organizationTagQueryWrapper = new QueryWrapper<>();
+        organizationTagQueryWrapper.eq("organization_id",id);
+        organizationTagQueryWrapper.eq("is_company",0);
+        List<OrganizationTag> organizationTags = organizationTagService.list(organizationTagQueryWrapper);
+        List<Long> tagIds = organizationTags.stream().map(OrganizationTag::getId).collect(Collectors.toList());
+        List<Long> boIds = tags.stream().filter(organizationTagBO -> !Objects.isNull(organizationTagBO.getId())).map(OrganizationTagBO::getId).collect(Collectors.toList());
+        tagIds.removeAll(boIds);
+        if(tagIds.size()>0){
+            organizationTagService.removeByIds(tagIds);
+        }
+        List<OrganizationTag> organizationTagArrayList = new ArrayList<>();
+        for (OrganizationTagBO tag : tags) {
+            OrganizationTag organizationTag = new OrganizationTag();
+            organizationTag.setId(tag.getId());
+            organizationTag.setName(tag.getName());
+            organizationTag.setIsCompany(0);
+            organizationTagArrayList.add(organizationTag);
+        }
+        organizationTagService.saveOrUpdateBatch(organizationTagArrayList);
+    }
+
     private void getContactAndLeader(OrganizationVO organizationVO, Long organizationId) {
         QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
         organizationQueryWrapper.eq("parent_id",organizationId);

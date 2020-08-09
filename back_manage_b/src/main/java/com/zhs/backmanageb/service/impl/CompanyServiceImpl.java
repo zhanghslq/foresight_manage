@@ -7,19 +7,15 @@ import com.zhs.backmanageb.common.constant.RootTypeEnum;
 import com.zhs.backmanageb.entity.*;
 import com.zhs.backmanageb.mapper.CompanyMapper;
 import com.zhs.backmanageb.model.bo.CompanyModuleBO;
-import com.zhs.backmanageb.model.bo.OrganizationModuleBO;
 import com.zhs.backmanageb.model.bo.OrganizationTagBO;
 import com.zhs.backmanageb.model.vo.CompanyVO;
-import com.zhs.backmanageb.model.vo.OrganizationVO;
 import com.zhs.backmanageb.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.zip.CheckedOutputStream;
 
 /**
  * <p>
@@ -84,6 +80,36 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
         companyVO.setCompany(getById(id));
         getContactAndLeader(companyVO,id);
         return companyVO;
+    }
+
+    @Override
+    public void dealTags(Long id, List<OrganizationTagBO> tags) {
+        if(Objects.isNull(tags)||tags.size()==0){
+            QueryWrapper<OrganizationTag> organizationTagQueryWrapper = new QueryWrapper<>();
+            organizationTagQueryWrapper.eq("organization_id",id);
+            organizationTagQueryWrapper.eq("is_company",1);
+            organizationTagService.remove(organizationTagQueryWrapper);
+            return;
+        }
+        QueryWrapper<OrganizationTag> organizationTagQueryWrapper = new QueryWrapper<>();
+        organizationTagQueryWrapper.eq("organization_id",id);
+        organizationTagQueryWrapper.eq("is_company",1);
+        List<OrganizationTag> organizationTags = organizationTagService.list(organizationTagQueryWrapper);
+        List<Long> tagIds = organizationTags.stream().map(OrganizationTag::getId).collect(Collectors.toList());
+        List<Long> boIds = tags.stream().filter(organizationTagBO -> !Objects.isNull(organizationTagBO.getId())).map(OrganizationTagBO::getId).collect(Collectors.toList());
+        tagIds.removeAll(boIds);
+        if(tagIds.size()>0){
+            organizationTagService.removeByIds(tagIds);
+        }
+        List<OrganizationTag> organizationTagArrayList = new ArrayList<>();
+        for (OrganizationTagBO tag : tags) {
+            OrganizationTag organizationTag = new OrganizationTag();
+            organizationTag.setId(tag.getId());
+            organizationTag.setName(tag.getName());
+            organizationTag.setIsCompany(1);
+            organizationTagArrayList.add(organizationTag);
+        }
+        organizationTagService.saveOrUpdateBatch(organizationTagArrayList);
     }
 
     private void getContactAndLeader(CompanyVO companyVO, Long organizationId) {

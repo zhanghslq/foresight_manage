@@ -5,6 +5,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Company;
 import com.zhs.backmanageb.entity.OrganizationTag;
+import com.zhs.backmanageb.model.bo.OrganizationTagBO;
 import com.zhs.backmanageb.model.vo.CompanyVO;
 import com.zhs.backmanageb.model.vo.OrganizationVO;
 import com.zhs.backmanageb.service.CompanyService;
@@ -68,7 +69,9 @@ public class CompanyController {
     @PostMapping("update")
     @ApiOperation(value = "修改企业",tags = "修改")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
-    public Result<Boolean> update(@RequestBody Company company){
+    public Result<Boolean> update(@RequestBody Company company, @RequestParam(value = "tags",required = false) List<OrganizationTagBO> tags){
+        companyService.dealTags(company.getId(),tags);
+
         return Result.success(companyService.updateById(company));
     }
 

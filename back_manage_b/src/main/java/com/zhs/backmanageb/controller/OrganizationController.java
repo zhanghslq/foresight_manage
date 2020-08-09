@@ -8,6 +8,7 @@ import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Organization;
 import com.zhs.backmanageb.entity.OrganizationTag;
 import com.zhs.backmanageb.model.bo.OrganizationModuleBO;
+import com.zhs.backmanageb.model.bo.OrganizationTagBO;
 import com.zhs.backmanageb.model.vo.OrganizationVO;
 import com.zhs.backmanageb.service.OrganizationService;
 import com.zhs.backmanageb.service.OrganizationTagService;
@@ -89,7 +90,8 @@ public class OrganizationController {
     @PostMapping("update")
     @ApiOperation(value = "修改",tags = "修改")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
-    public Result<Boolean> update(@RequestBody Organization organization){
+    public Result<Boolean> update(@RequestBody Organization organization,@RequestParam(value = "tags",required = false) List<OrganizationTagBO> tags){
+        organizationService.dealTags(organization.getId(),tags);
         return Result.success(organizationService.updateById(organization));
     }
 

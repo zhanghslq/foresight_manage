@@ -45,6 +45,5 @@ public class ResumeConvertDTO {
     private String politicsCompany;
     private String politicsPosition;
     private String photo;
-    private List<ExpierenceRecordConvertDTO> expierenceRecordConvertDTOS;
 
 }

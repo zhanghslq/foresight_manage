@@ -16,7 +16,7 @@ public class AsposeWordTest {
 
     @Test
     public void test() throws Exception {
-        Document nodes = new Document("D:\\test2.docx");
+        Document nodes = new Document("D:\\林武.docx");
 
         String text = nodes.getText();
         System.out.println(text);

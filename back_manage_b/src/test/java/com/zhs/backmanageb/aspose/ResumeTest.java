@@ -4,9 +4,12 @@ import cn.hutool.core.codec.Base64;
 import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.aspose.words.Document;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.LinkedMultiValueMap;
@@ -14,33 +17,36 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author: zhs
  * @date: 2020/8/9 8:33
  */
+@Slf4j
 public class ResumeTest {
     @Test
-    public void test(){
+    public void test() throws Exception {
+        Document nodes = new Document("D:\\蔡奇.docx");
+
+        String text = nodes.getText();
+        log.info(text);
         RestTemplate restTemplate = new RestTemplate();
-        JSONObject json = new JSONObject();
-        json.put("text","get测试");
-        String jsonObject = restTemplate.postForObject("http://resume.carltrip.com/api/resume/resumeTest", "\"赵文泉，男，汉族，1963年11月出生，安徽长丰人，1986年7月参加工作，1994年11月入党， 本科学历（1986年07毕业于新疆大学中文系），学士学位。1982.09 新疆大学汉语言文学专业学习（大学）1986.07 吐鲁番地区劳动人事处科技干部科科员1991.05 吐鲁番地区劳动人事处办公室副主任\\n\" +\n" +
-                "                \"　　1992.09 吐鲁番地区政协工委办公室主任科员\\n\" +\n" +
-                "                \"　　1993.08 吐鲁番地委组织部电教中心副主任（正科）\\n\" +\n" +
-                "                \"　　1995.03 吐鲁番地委组织部调研室主任\\n\" +\n" +
-                "                \"　　1996.05 吐鲁番地委办公室副主任\\n\" +\n" +
-                "                \"　　2002.06 吐鲁番地委副秘书长、办公室主任\\n\" +\n" +
-                "                \"　　2004.11 鄯善县委书记（鄯善人大党组书记、鄯善工业园区党工委书记）\\n\" +\n" +
-                "                \"　　2011.07 吐鲁番地委委员、宣传部长\\n\" +\n" +
-                "                \"　　2015.02 吐鲁番地委委员、行署常务副专员、宣传部长\\n\" +\n" +
-                "                \"　　2015.04 吐鲁番市委常委、行署常务副专员\\n\" +\n" +
-                "                \"　　2015.07 吐鲁番市委常委，市政府常务副市长\\n\" +\n" +
-                "                \"　　2016.07 吐鲁番市委副书记，市政府常务副市长\\n\" +\n" +
-                "                \"　　2017.02 吐鲁番市政协主席\\n\" +\n" +
-                "                \"　　2017.03 克拉玛依市委书记 \"", String.class);
-        System.out.println(jsonObject);
+        HttpHeaders headers = new HttpHeaders();
+        //定义请求参数类型，这里用json所以是MediaType.APPLICATION_JSON
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        //RestTemplate带参传的时候要用HttpEntity<?>对象传递
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("resumeText", text);
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(map, headers);
+
+        ResponseEntity<String> entity = restTemplate.postForEntity("http://resume.carltrip.com/api/resume/index", request, String.class);
+        //获取3方接口返回的数据通过entity.getBody();它返回的是一个字符串；
+        String body = entity.getBody();
+        System.out.println(body);
     }
+
     @Test
     public void testcv(){
         HttpHeaders requestHeaders = new HttpHeaders();

@@ -1,8 +1,12 @@
 package com.zhs.backmanageb.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sun.corba.se.spi.ior.ObjectKey;
@@ -11,6 +15,8 @@ import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.ExperienceRecord;
 import com.zhs.backmanageb.entity.Resume;
 import com.zhs.backmanageb.mapper.ResumeMapper;
+import com.zhs.backmanageb.model.dto.ExpierenceRecordConvertDTO;
+import com.zhs.backmanageb.model.dto.ResumeConvertDTO;
 import com.zhs.backmanageb.model.dto.ResumeDTO;
 import com.zhs.backmanageb.model.vo.ResumeVO;
 import com.zhs.backmanageb.service.CommonDataService;
@@ -18,9 +24,17 @@ import com.zhs.backmanageb.service.ExperienceRecordService;
 import com.zhs.backmanageb.service.ResumeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.backmanageb.util.AsposeWordUtil;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.statement.drop.Drop;
+import org.apache.poi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,6 +47,7 @@ import java.util.stream.Collectors;
  * @author zhs
  * @since 2020-07-11
  */
+@Slf4j
 @Service
 public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> implements ResumeService {
 
@@ -40,6 +55,8 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
     private CommonDataService commonDataService;
     @Autowired
     private ExperienceRecordService experienceRecordService;
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Override
     public Page<ResumeVO> pageSelf(Page<Resume> resumePage) {
@@ -88,7 +105,81 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         String text = AsposeWordUtil.getText(filename);
         // 拿到text到php进行请求，获取结果
 
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        //定义请求参数类型，这里用json所以是MediaType.APPLICATION_JSON
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        //RestTemplate带参传的时候要用HttpEntity<?>对象传递
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("resumeText", text);
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(map, headers);
+        ResponseEntity<String> entity = restTemplate.postForEntity("http://resume.carltrip.com/api/resume/index", request, String.class);
+        //获取3方接口返回的数据通过entity.getBody();它返回的是一个字符串；
+        String body = entity.getBody();
+        if(!StringUtils.isEmpty(body)){
+            JSONArray jsonArray = JSONArray.parseArray(body);
+            /*
+             * 0=个人信息
+             * 1=履历
+             * 2=传入的内容
+             */
+            Object o = jsonArray.get(0);
+            ResumeConvertDTO resumeConvertDTO = JSONObject.parseObject(o.toString(), ResumeConvertDTO.class);
+            Resume resume = new Resume();
+            BeanUtil.copyProperties(resumeConvertDTO,resume);
+            /*
+             * name : 林武
+             * sex : 男
+             * nation : 汉族
+             * parties : 中国共产党
+             * level :
+             * company : 山西省委、山西省政府
+             * position : 军民融合办主任、副书记、省长、党组书记
+             * positionDate : 2020-01
+             * birthday : 1962-2
+             * age : 58
+             * birthplace : 福建/闽侯
+             * workStatus : 在职
+             * politicsCompany :
+             * politicsPosition :
+             * photo :
+             */
+            resume.setRealName(resumeConvertDTO.getName());
+            String sex = resumeConvertDTO.getSex();
 
+            if(sex.contains("男")){
+                resume.setSex(1);
+            }else if(sex.contains("女")){
+                resume.setSex(0);
+            }
+            resume.setSexName(sex);
+            String birthday = resumeConvertDTO.getBirthday();
+            Date date = Convert.toDate(birthday);
+            resume.setBirthday(date);
+            resume.setBirthdayString(birthday);
+            resume.setJob(resumeConvertDTO.getPosition());
+            resume.setOrganization(resumeConvertDTO.getPoliticsCompany());
+            resume.setOrganizationJob(resumeConvertDTO.getPoliticsPosition());
+
+            Object o1 = jsonArray.get(1);
+            List<ExpierenceRecordConvertDTO> expierenceRecordConvertDTOS = JSONArray.parseArray(o1.toString(), ExpierenceRecordConvertDTO.class);
+            ArrayList<ExperienceRecord> experienceRecords = new ArrayList<>();
+            for (ExpierenceRecordConvertDTO expierenceRecordConvertDTO : expierenceRecordConvertDTOS) {
+                ExperienceRecord experienceRecord = new ExperienceRecord();
+                experienceRecord.setBeginDate(Convert.toDate(expierenceRecordConvertDTO.getStartDate()));
+                experienceRecord.setBeginDateString(expierenceRecordConvertDTO.getStartDate());
+                experienceRecord.setEndDate(Convert.toDate(expierenceRecordConvertDTO.getEndDate()));
+                experienceRecord.setBeginDateString(expierenceRecordConvertDTO.getEndDate());
+                experienceRecord.setCompanyName(expierenceRecordConvertDTO.getPosition());
+                experienceRecords.add(experienceRecord);
+            }
+            resumeDTO.setExperienceRecordList(experienceRecords);
+            resumeDTO.setResume(resume);
+
+            Object o2 = jsonArray.get(2);
+            log.info("word解析出来的内容：{}",o2.toString());
+
+        }
         return resumeDTO;
     }
 }

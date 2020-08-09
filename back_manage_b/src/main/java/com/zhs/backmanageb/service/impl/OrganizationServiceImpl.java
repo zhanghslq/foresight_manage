@@ -1,10 +1,12 @@
 package com.zhs.backmanageb.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.backmanageb.common.constant.ModuleTypeEnum;
 import com.zhs.backmanageb.entity.*;
 import com.zhs.backmanageb.mapper.OrganizationMapper;
 import com.zhs.backmanageb.model.bo.OrganizationModuleBO;
+import com.zhs.backmanageb.model.bo.OrganizationTagBO;
 import com.zhs.backmanageb.model.vo.OrganizationVO;
 import com.zhs.backmanageb.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -36,6 +38,9 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
     @Autowired
     private OrganizationTypeService organizationTypeService;
+
+    @Autowired
+    private OrganizationTagService organizationTagService;
 
 
     @Override
@@ -88,6 +93,21 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             }
             return item.getModuleId();
         }));
+
+        QueryWrapper<OrganizationTag> organizationTagQueryWrapper = new QueryWrapper<>();
+        organizationTagQueryWrapper.eq("organization_id",organizationId);
+        organizationTagQueryWrapper.eq("is_company",0);
+        List<OrganizationTag> list = organizationTagService.list(organizationTagQueryWrapper);
+        if(list.size()>0){
+            ArrayList<OrganizationTagBO> organizationTagBOS = new ArrayList<>();
+            for (OrganizationTag organizationTag : list) {
+                OrganizationTagBO organizationTagBO = new OrganizationTagBO();
+                BeanUtil.copyProperties(organizationTag,organizationTagBO);
+                organizationTagBOS.add(organizationTagBO);
+            }
+            organizationVO.setTags(organizationTagBOS);
+        }
+
 
 
         QueryWrapper<Contacts> contactsQueryWrapper = new QueryWrapper<>();

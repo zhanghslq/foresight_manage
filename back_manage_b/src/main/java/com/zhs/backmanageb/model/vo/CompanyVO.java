@@ -4,6 +4,7 @@ import com.zhs.backmanageb.entity.Company;
 import com.zhs.backmanageb.entity.Organization;
 import com.zhs.backmanageb.model.bo.CompanyModuleBO;
 import com.zhs.backmanageb.model.bo.OrganizationModuleBO;
+import com.zhs.backmanageb.model.bo.OrganizationTagBO;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
@@ -17,6 +18,8 @@ import java.util.List;
 @Data
 public class CompanyVO {
     private Company company;
+
+    private List<OrganizationTagBO> tags;
 
     private List<CompanyModuleBO> companyModules;
 }

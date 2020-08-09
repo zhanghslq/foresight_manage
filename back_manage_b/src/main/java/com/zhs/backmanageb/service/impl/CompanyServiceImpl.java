@@ -1,5 +1,6 @@
 package com.zhs.backmanageb.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.backmanageb.common.constant.ModuleTypeEnum;
 import com.zhs.backmanageb.common.constant.RootTypeEnum;
@@ -7,6 +8,7 @@ import com.zhs.backmanageb.entity.*;
 import com.zhs.backmanageb.mapper.CompanyMapper;
 import com.zhs.backmanageb.model.bo.CompanyModuleBO;
 import com.zhs.backmanageb.model.bo.OrganizationModuleBO;
+import com.zhs.backmanageb.model.bo.OrganizationTagBO;
 import com.zhs.backmanageb.model.vo.CompanyVO;
 import com.zhs.backmanageb.model.vo.OrganizationVO;
 import com.zhs.backmanageb.service.*;
@@ -14,6 +16,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.CheckedOutputStream;
@@ -39,6 +42,9 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
 
     @Autowired
     private OrganizationModuleService organizationModuleService;
+
+    @Autowired
+    private OrganizationTagService organizationTagService;
 
 
     @Override
@@ -93,6 +99,19 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
             return item.getModuleId();
         }));
 
+        QueryWrapper<OrganizationTag> organizationTagQueryWrapper = new QueryWrapper<>();
+        organizationTagQueryWrapper.eq("organization_id",organizationId);
+        organizationTagQueryWrapper.eq("is_company",1);
+        List<OrganizationTag> list = organizationTagService.list(organizationTagQueryWrapper);
+        if(list.size()>0){
+            ArrayList<OrganizationTagBO> organizationTagBOS = new ArrayList<>();
+            for (OrganizationTag organizationTag : list) {
+                OrganizationTagBO organizationTagBO = new OrganizationTagBO();
+                BeanUtil.copyProperties(organizationTag,organizationTagBO);
+                organizationTagBOS.add(organizationTagBO);
+            }
+            companyVO.setTags(organizationTagBOS);
+        }
 
         QueryWrapper<Contacts> contactsQueryWrapper = new QueryWrapper<>();
         contactsQueryWrapper.eq("organization_id", organizationId);

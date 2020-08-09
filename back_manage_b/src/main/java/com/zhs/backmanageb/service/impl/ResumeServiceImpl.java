@@ -126,7 +126,6 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             Object o = jsonArray.get(0);
             ResumeConvertDTO resumeConvertDTO = JSONObject.parseObject(o.toString(), ResumeConvertDTO.class);
             Resume resume = new Resume();
-            BeanUtil.copyProperties(resumeConvertDTO,resume);
             /*
              * name : 林武
              * sex : 男
@@ -160,7 +159,11 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             resume.setJob(resumeConvertDTO.getPosition());
             resume.setOrganization(resumeConvertDTO.getPoliticsCompany());
             resume.setOrganizationJob(resumeConvertDTO.getPoliticsPosition());
-
+            resume.setCompany(resumeConvertDTO.getCompany());
+            resume.setJob(resumeConvertDTO.getPosition());
+            resume.setAreaName(resumeConvertDTO.getBirthplace());
+            resume.setNationName(resumeConvertDTO.getNation());
+            resume.setPartiesName(resumeConvertDTO.getParties());
             Object o1 = jsonArray.get(1);
             List<ExpierenceRecordConvertDTO> expierenceRecordConvertDTOS = JSONArray.parseArray(o1.toString(), ExpierenceRecordConvertDTO.class);
             ArrayList<ExperienceRecord> experienceRecords = new ArrayList<>();

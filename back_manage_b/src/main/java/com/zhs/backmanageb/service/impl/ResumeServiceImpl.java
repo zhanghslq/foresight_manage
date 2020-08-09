@@ -83,9 +83,12 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
 
     @Override
     public ResumeDTO dealWord(String filename) {
+        ResumeDTO resumeDTO = new ResumeDTO();
+
         String text = AsposeWordUtil.getText(filename);
         // 拿到text到php进行请求，获取结果
 
-        return null;
+
+        return resumeDTO;
     }
 }

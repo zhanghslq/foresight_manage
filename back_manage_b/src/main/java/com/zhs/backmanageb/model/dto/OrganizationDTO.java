@@ -13,5 +13,5 @@ import java.util.List;
 @Data
 public class OrganizationDTO {
     private Organization organization;
-    List<OrganizationTagBO> tags;
+    private List<OrganizationTagBO> tags;
 }

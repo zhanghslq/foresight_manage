@@ -106,7 +106,7 @@ public class ExpertController {
         expertQueryWrapper.like(!StringUtils.isEmpty(expert.getLevelId()),"level_id",expert.getLevelId());
         expertQueryWrapper.like(!StringUtils.isEmpty(expert.getLevelName()),"level_name",expert.getLevelName());
         // 更新时间
-        if(Objects.isNull(expert.getUpdateTime())){
+        if(!Objects.isNull(expert.getUpdateTime())){
             expertQueryWrapper.ge("update_time",DateUtil.beginOfDay(expert.getUpdateTime()));
             expertQueryWrapper.le("update_time",DateUtil.endOfDay(expert.getUpdateTime()));
         }

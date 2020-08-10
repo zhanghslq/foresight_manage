@@ -53,7 +53,7 @@ public class ResumeController {
 
         return Result.success(pageSelf);
     }
-    @ApiOperation(value = "简历列表",tags = "查询")
+    @ApiOperation(value = "按照条件查询简历列表",tags = "查询")
     @PostMapping("search/list")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current",value = "当前页",required = true),

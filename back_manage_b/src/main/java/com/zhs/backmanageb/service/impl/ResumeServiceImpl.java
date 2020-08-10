@@ -95,6 +95,9 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         }
         // 对page进行处理
         List<Resume> records = page.getRecords();
+        if(records.size()==0){
+            return resumeVOPage;
+        }
         List<Long> resumeIds = records.stream().map(Resume::getId).collect(Collectors.toList());
         List<ExperienceRecord>  lastExperienceList = experienceRecordService.queryLastExperience(resumeIds);
         // 工作时间

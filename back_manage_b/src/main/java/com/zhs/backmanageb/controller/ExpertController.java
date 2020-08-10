@@ -81,6 +81,8 @@ public class ExpertController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current",value = "当前页",required = true),
             @ApiImplicitParam(name = "size",value = "每页多少条",required = true),
+            @ApiImplicitParam(name = "updateTimeBegin",value = "更新开始时间"),
+            @ApiImplicitParam(name = "updateTimeEnd",value = "更新结束时间"),
     })
     @PostMapping("search/list")
     @ApiOperationSupport(ignoreParameters = {"deleted"})

@@ -85,6 +85,8 @@ public class ContactsController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current",value = "当前页",required = true),
             @ApiImplicitParam(name = "size",value = "每页多少条",required = true),
+            @ApiImplicitParam(name = "updateTimeBegin",value = "更新开始时间"),
+            @ApiImplicitParam(name = "updateTimeEnd",value = "更新结束时间"),
     })
     @ApiOperationSupport(ignoreParameters = {"deleted"})
     public Result<Page<ContactsVO>> searchListByPage(Contacts contacts, Date updateTimeBegin, Date updateTimeEnd, @RequestParam Integer current, @RequestParam Integer size){

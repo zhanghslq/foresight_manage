@@ -115,7 +115,7 @@ public class ContactsController {
         contactsQueryWrapper.like(!StringUtils.isEmpty(contacts.getLevelName()),"level_name",contacts.getLevelName());
         contactsQueryWrapper.eq(!StringUtils.isEmpty(contacts.getLevelId()),"level_id",contacts.getLevelId());
         //更新时间
-        if(Objects.isNull(contacts.getUpdateTime())){
+        if(!Objects.isNull(contacts.getUpdateTime())){
             contactsQueryWrapper.ge("update_time", DateUtil.beginOfDay(contacts.getUpdateTime()));
             contactsQueryWrapper.le("update_time",DateUtil.endOfDay(contacts.getUpdateTime()));
         }

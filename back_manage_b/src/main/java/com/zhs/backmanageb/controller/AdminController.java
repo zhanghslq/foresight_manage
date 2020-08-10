@@ -68,8 +68,8 @@ public class AdminController {
 
     @PostMapping("update")
     @ApiOperation(value = "修改用户信息以及角色",tags = "修改")
-    public Result<Boolean> update(@RequestParam Long adminId,@RequestParam String username,@RequestParam String password,String realName,String mobile,Long roleId){
-        adminService.updateUserAndRole(adminId,username,password,realName,mobile,roleId);
+    public Result<Boolean> update(@RequestParam Long adminId,@RequestParam String username,String realName,String mobile,Long roleId){
+        adminService.updateUserAndRole(adminId,username,realName,mobile,roleId);
         return Result.success(true);
     }
     @PostMapping("delete")

@@ -16,7 +16,7 @@ import com.zhs.backmanageb.model.vo.ResumeVO;
  */
 public interface ResumeService extends IService<Resume> {
 
-    Page<ResumeVO> pageSelf(Page<Resume> resumePage);
+    Page<ResumeVO> pageSelf(Resume resume, Page<Resume> resumePage);
 
     ResumeDTO dealWord(String filename);
 }

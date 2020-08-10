@@ -176,10 +176,9 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     }
 
     @Override
-    public void updateUserAndRole(Long adminId, String username, String password, String realName, String mobile, Long roleId) {
+    public void updateUserAndRole(Long adminId, String username, String realName, String mobile, Long roleId) {
         Admin admin = getById(adminId);
-        String salt = admin.getSalt();
-
+        // 修改的时候不能修改密码
         Admin admin1 = queryByUserName(username);
         if(!Objects.isNull(admin1)&&!admin1.getId().equals(admin.getId())){
             throw new MyException("用户名已存在");
@@ -190,9 +189,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
                 throw new MyException("手机号已存在");
             }
         }
-        String newPassword = SecureUtil.md5(password + salt);
         admin.setUsername(username);
-        admin.setPassword(newPassword);
         admin.setRealName(realName);
         admin.setMobile(mobile);
         updateById(admin);

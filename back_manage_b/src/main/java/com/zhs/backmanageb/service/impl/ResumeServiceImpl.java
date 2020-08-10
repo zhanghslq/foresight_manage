@@ -4,12 +4,10 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sun.corba.se.spi.ior.ObjectKey;
 import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
 import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.ExperienceRecord;
@@ -25,8 +23,6 @@ import com.zhs.backmanageb.service.ResumeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.backmanageb.util.AsposeWordUtil;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.jsqlparser.statement.drop.Drop;
-import org.apache.poi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -59,14 +55,44 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
     private RestTemplate restTemplate;
 
     @Override
-    public Page<ResumeVO> pageSelf(Page<Resume> resumePage) {
+    public Page<ResumeVO> pageSelf(Resume resume, Page<Resume> resumePage) {
         QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
         commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.RESUME_LEVEL.getId());
         List<CommonData> list = commonDataService.list(commonDataQueryWrapper);
         Map<Long, String> map = list.stream().collect(Collectors.toMap(CommonData::getId, CommonData::getName));
         List<ResumeVO> resumeVOS = new ArrayList<>();
         Page<ResumeVO> resumeVOPage = new Page<>();
-        Page<Resume> page = page(resumePage);
+        Page<Resume> page;
+        if(Objects.isNull(resume)){
+            page = page(resumePage);
+        }else {
+            QueryWrapper<Resume> resumeQueryWrapper = new QueryWrapper<>();
+            // 简历编号
+            if(!Objects.isNull(resume.getId())){
+                resumeQueryWrapper.eq("id",resume.getId());
+            }
+            //姓名
+            resumeQueryWrapper.like(!StringUtils.isEmpty(resume.getRealName()),"real_name",resume.getRealName());
+            // 行政级别
+            resumeQueryWrapper.like(!StringUtils.isEmpty(resume.getLevelId()),"level_id",resume.getLevelId());
+            resumeQueryWrapper.like(!StringUtils.isEmpty(resume.getLevelName()),"level_name",resume.getLevelName());
+            //现任单位
+            resumeQueryWrapper.like(!StringUtils.isEmpty(resume.getCompany()),"company",resume.getCompany());
+            //现任职位
+            resumeQueryWrapper.like(!StringUtils.isEmpty(resume.getJob()),"job",resume.getJob());
+            //现任职时间
+
+            // 这俩跟别的不算同一个维度的，
+            //在职时间
+
+            //出生地
+            resumeQueryWrapper.eq(!StringUtils.isEmpty(resume.getAreaId()),"area_id",resume.getAreaId());
+            resumeQueryWrapper.like(StringUtils.isEmpty(resume.getAreaName()),"area_name",resume.getAreaName());
+            //目前状态
+            resumeQueryWrapper.eq(!StringUtils.isEmpty(resume.getCurrentStatus()),"current_status",resume.getCurrentStatus());
+            resumeQueryWrapper.eq(!StringUtils.isEmpty(resume.getCurrentStatusId()),"current_status_id",resume.getCurrentStatusId());
+            page = page(resumePage,resumeQueryWrapper);
+        }
         // 对page进行处理
         List<Resume> records = page.getRecords();
         List<Long> resumeIds = records.stream().map(Resume::getId).collect(Collectors.toList());

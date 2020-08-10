@@ -11,13 +11,11 @@ import com.zhs.backmanageb.model.dto.ResumeDTO;
 import com.zhs.backmanageb.model.vo.ResumeVO;
 import com.zhs.backmanageb.service.ExperienceRecordService;
 import com.zhs.backmanageb.service.ResumeService;
-import com.zhs.backmanageb.util.AsposeWordUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -51,7 +49,21 @@ public class ResumeController {
     public Result<Page<ResumeVO>> list(@RequestParam Integer current,@RequestParam Integer size){
         Page<Resume> resumePage = new Page<>(current, size);
 
-        Page<ResumeVO> pageSelf =resumeService.pageSelf(resumePage);
+        Page<ResumeVO> pageSelf =resumeService.pageSelf(null, resumePage);
+
+        return Result.success(pageSelf);
+    }
+    @ApiOperation(value = "简历列表",tags = "查询")
+    @PostMapping("search/list")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current",value = "当前页",required = true),
+            @ApiImplicitParam(name = "size",value = "每页多少条",required = true),
+    })
+    @ApiOperationSupport(ignoreParameters = {"deleted"})
+    public Result<Page<ResumeVO>> searchList(Resume resume,@RequestParam Integer current,@RequestParam Integer size){
+        Page<Resume> resumePage = new Page<>(current, size);
+
+        Page<ResumeVO> pageSelf =resumeService.pageSelf(resume,resumePage);
 
         return Result.success(pageSelf);
     }

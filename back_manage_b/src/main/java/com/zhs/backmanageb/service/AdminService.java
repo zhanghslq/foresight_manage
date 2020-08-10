@@ -27,7 +27,7 @@ public interface AdminService extends IService<Admin> {
 
     void register(String username, String password, String realName, String mobile, Long roleId);
 
-    void updateUserAndRole(Long adminId, String username, String password, String realName, String mobile, Long roleId);
+    void updateUserAndRole(Long adminId, String username, String realName, String mobile, Long roleId);
 
     void updatePassword(Long adminId, String oldPassword, String password);
 

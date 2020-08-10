@@ -30,10 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -87,7 +84,7 @@ public class ExpertController {
     })
     @PostMapping("search/list")
     @ApiOperationSupport(ignoreParameters = {"deleted"})
-    public Result<Page<ExpertVO>> searchList(Expert expert,@RequestParam Integer current,@RequestParam Integer size){
+    public Result<Page<ExpertVO>> searchList(Expert expert, Date updateTimeBegin,Date updateTimeEnd, @RequestParam Integer current, @RequestParam Integer size){
         Page<Expert> expertPage = new Page<>(current, size);
         QueryWrapper<Expert> expertQueryWrapper = new QueryWrapper<>();
         // 专家编号
@@ -106,9 +103,9 @@ public class ExpertController {
         expertQueryWrapper.like(!StringUtils.isEmpty(expert.getLevelId()),"level_id",expert.getLevelId());
         expertQueryWrapper.like(!StringUtils.isEmpty(expert.getLevelName()),"level_name",expert.getLevelName());
         // 更新时间
-        if(!Objects.isNull(expert.getUpdateTime())){
-            expertQueryWrapper.ge("update_time",DateUtil.beginOfDay(expert.getUpdateTime()));
-            expertQueryWrapper.le("update_time",DateUtil.endOfDay(expert.getUpdateTime()));
+        if(!Objects.isNull(updateTimeBegin)&&!Objects.isNull(updateTimeEnd)){
+            expertQueryWrapper.ge("update_time", updateTimeBegin);
+            expertQueryWrapper.le("update_time",updateTimeEnd);
         }
         //从事领域
         expertQueryWrapper.like(!StringUtils.isEmpty(expert.getWorkArea()),"work_area",expert.getWorkArea());

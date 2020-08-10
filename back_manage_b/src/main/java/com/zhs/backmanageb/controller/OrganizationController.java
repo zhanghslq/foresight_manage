@@ -8,6 +8,8 @@ import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Organization;
 import com.zhs.backmanageb.entity.OrganizationTag;
 import com.zhs.backmanageb.model.bo.OrganizationModuleBO;
+import com.zhs.backmanageb.model.bo.OrganizationTagBO;
+import com.zhs.backmanageb.model.dto.OrganizationDTO;
 import com.zhs.backmanageb.model.vo.OrganizationVO;
 import com.zhs.backmanageb.service.OrganizationService;
 import com.zhs.backmanageb.service.OrganizationTagService;
@@ -78,7 +80,7 @@ public class OrganizationController {
                 OrganizationTag organizationTag = new OrganizationTag();
                 organizationTag.setIsCompany(0);
                 organizationTag.setName(tag);
-                organizationTag.setOragnizationId(organization.getId());
+                organizationTag.setOrganizationId(organization.getId());
                 organizationTags.add(organizationTag);
             }
             organizationTagService.saveBatch(organizationTags);
@@ -89,8 +91,9 @@ public class OrganizationController {
     @PostMapping("update")
     @ApiOperation(value = "修改",tags = "修改")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
-    public Result<Boolean> update(@RequestBody Organization organization){
-        return Result.success(organizationService.updateById(organization));
+    public Result<Boolean> update(@RequestBody OrganizationDTO organizationDTO){
+        organizationService.dealTags(organizationDTO.getOrganization().getId(),organizationDTO.getTags());
+        return Result.success(organizationService.updateById(organizationDTO.getOrganization()));
     }
 
     // 查一个组织的时候会查组织详情和领导人，以及联系人

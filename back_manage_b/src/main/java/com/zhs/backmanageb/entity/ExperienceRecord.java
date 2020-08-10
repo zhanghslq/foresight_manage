@@ -45,9 +45,15 @@ public class ExperienceRecord implements Serializable {
     @ApiModelProperty(value = "开始时间")
     private Date beginDate;
 
+    @ApiModelProperty(value = "开始时间的字符串形式")
+    private String beginDateString;
+
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @ApiModelProperty(value = "结束时间")
     private Date endDate;
+
+    @ApiModelProperty(value = "结束时间的字符串形式")
+    private String endDateString;
 
     @ApiModelProperty(value = "删除标志")
     @TableLogic

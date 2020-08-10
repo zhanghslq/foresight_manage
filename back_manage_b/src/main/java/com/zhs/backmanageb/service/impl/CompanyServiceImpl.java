@@ -1,25 +1,21 @@
 package com.zhs.backmanageb.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.backmanageb.common.constant.ModuleTypeEnum;
 import com.zhs.backmanageb.common.constant.RootTypeEnum;
 import com.zhs.backmanageb.entity.*;
 import com.zhs.backmanageb.mapper.CompanyMapper;
 import com.zhs.backmanageb.model.bo.CompanyModuleBO;
-import com.zhs.backmanageb.model.bo.OrganizationModuleBO;
+import com.zhs.backmanageb.model.bo.OrganizationTagBO;
 import com.zhs.backmanageb.model.vo.CompanyVO;
-import com.zhs.backmanageb.model.vo.OrganizationVO;
 import com.zhs.backmanageb.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.zip.CheckedOutputStream;
 
 /**
  * <p>
@@ -42,6 +38,9 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
 
     @Autowired
     private OrganizationModuleService organizationModuleService;
+
+    @Autowired
+    private OrganizationTagService organizationTagService;
 
 
     @Override
@@ -83,6 +82,37 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
         return companyVO;
     }
 
+    @Override
+    public void dealTags(Long id, List<OrganizationTagBO> tags) {
+        if(Objects.isNull(tags)||tags.size()==0){
+            QueryWrapper<OrganizationTag> organizationTagQueryWrapper = new QueryWrapper<>();
+            organizationTagQueryWrapper.eq("organization_id",id);
+            organizationTagQueryWrapper.eq("is_company",1);
+            organizationTagService.remove(organizationTagQueryWrapper);
+            return;
+        }
+        QueryWrapper<OrganizationTag> organizationTagQueryWrapper = new QueryWrapper<>();
+        organizationTagQueryWrapper.eq("organization_id",id);
+        organizationTagQueryWrapper.eq("is_company",1);
+        List<OrganizationTag> organizationTags = organizationTagService.list(organizationTagQueryWrapper);
+        List<Long> tagIds = organizationTags.stream().map(OrganizationTag::getId).collect(Collectors.toList());
+        List<Long> boIds = tags.stream().filter(organizationTagBO -> !Objects.isNull(organizationTagBO.getId())).map(OrganizationTagBO::getId).collect(Collectors.toList());
+        tagIds.removeAll(boIds);
+        if(tagIds.size()>0){
+            organizationTagService.removeByIds(tagIds);
+        }
+        List<OrganizationTag> organizationTagArrayList = new ArrayList<>();
+        for (OrganizationTagBO tag : tags) {
+            OrganizationTag organizationTag = new OrganizationTag();
+            organizationTag.setId(tag.getId());
+            organizationTag.setName(tag.getName());
+            organizationTag.setIsCompany(1);
+            organizationTag.setOrganizationId(id);
+            organizationTagArrayList.add(organizationTag);
+        }
+        organizationTagService.saveOrUpdateBatch(organizationTagArrayList);
+    }
+
     private void getContactAndLeader(CompanyVO companyVO, Long organizationId) {
         QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();
         companyQueryWrapper.eq("parent_id",organizationId);
@@ -96,6 +126,19 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
             return item.getModuleId();
         }));
 
+        QueryWrapper<OrganizationTag> organizationTagQueryWrapper = new QueryWrapper<>();
+        organizationTagQueryWrapper.eq("organization_id",organizationId);
+        organizationTagQueryWrapper.eq("is_company",1);
+        List<OrganizationTag> list = organizationTagService.list(organizationTagQueryWrapper);
+        if(list.size()>0){
+            ArrayList<OrganizationTagBO> organizationTagBOS = new ArrayList<>();
+            for (OrganizationTag organizationTag : list) {
+                OrganizationTagBO organizationTagBO = new OrganizationTagBO();
+                BeanUtil.copyProperties(organizationTag,organizationTagBO);
+                organizationTagBOS.add(organizationTagBO);
+            }
+            companyVO.setTags(organizationTagBOS);
+        }
 
         QueryWrapper<Contacts> contactsQueryWrapper = new QueryWrapper<>();
         contactsQueryWrapper.eq("organization_id", organizationId);
@@ -133,16 +176,23 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
             companyModuleBO.setModuleId(organizationModule.getId());
             if(ModuleTypeEnum.LEADER.getId().equals(organizationModule.getType())){
                 companyModuleBO.setType(ModuleTypeEnum.LEADER.getId());
-                companyModuleBO.setLeaders(leaderMap.get(organizationModule.getId()));
-            }/*else if(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(organizationModule.getType())){
-                companyModuleBO.setType(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId());
-                companyModuleBO.setCompanyChildren(companyMap.get(organizationModule.getId()));
-            }*/else if(ModuleTypeEnum.CONTACTS.getId().equals(organizationModule.getType())){
+                List<Leader> leaders = leaderMap.get(organizationModule.getId());
+                if(!Objects.isNull(leaders)){
+                    companyModuleBO.setLeaders(leaders.stream().sorted(Comparator.comparingInt(Leader::getSeq)).collect(Collectors.toList()));
+                }
+            }else if(ModuleTypeEnum.CONTACTS.getId().equals(organizationModule.getType())){
                 companyModuleBO.setType(ModuleTypeEnum.CONTACTS.getId());
-                companyModuleBO.setContacts(contactsMap.get(organizationModule.getId()));
+                List<Contacts> contacts = contactsMap.get(organizationModule.getId());
+                if(!Objects.isNull(contacts)){
+                    companyModuleBO.setContacts(contacts.stream().sorted(Comparator.comparingInt(Contacts::getSeq)).collect(Collectors.toList()));
+                }
             }else if(ModuleTypeEnum.COMPANY_CHILDREN.getId().equals(organizationModule.getType())){
                 companyModuleBO.setType(ModuleTypeEnum.COMPANY_CHILDREN.getId());
-                companyModuleBO.setCompanyChildren(companyMap.get(organizationModule.getId()));
+                List<Company> companies = companyMap.get(organizationModule.getId());
+                if(!Objects.isNull(companies)){
+                    companyModuleBO.setCompanyChildren(companies.stream().sorted(Comparator.comparingInt(Company::getSeq)).collect(Collectors.toList()));
+
+                }
             }
             companyModuleBOS.add(companyModuleBO);
         }

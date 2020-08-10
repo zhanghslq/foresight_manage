@@ -36,6 +36,8 @@ public class FileController {
     public String getTemplate(HttpServletResponse response,@RequestParam String fileName,@RequestParam(defaultValue = "0",required = false) Integer isInline){
         if(System.getProperty("os.name").toLowerCase().startsWith("win")){
             prefix = "c://data/file/";
+        }else {
+            prefix = "/data/file/";
         }
         try {
             File file = new File(prefix + fileName);
@@ -77,6 +79,8 @@ public class FileController {
     public Result<String> listUpload(@RequestParam("file") MultipartFile file){
         if(System.getProperty("os.name").toLowerCase().startsWith("win")){
             prefix = "c://data/file/";
+        }else {
+            prefix = "/data/file/";
         }
         if (file.isEmpty()) {
             return Result.fail(500,"文件不能为空","");

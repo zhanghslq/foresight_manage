@@ -8,18 +8,26 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
 import com.zhs.backmanageb.entity.CommonData;
+import com.zhs.backmanageb.entity.Contacts;
 import com.zhs.backmanageb.entity.Expert;
 import com.zhs.backmanageb.model.vo.ExpertVO;
 import com.zhs.backmanageb.service.CommonDataService;
 import com.zhs.backmanageb.service.ExpertService;
+import com.zhs.backmanageb.util.EasyExcelUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -110,6 +118,41 @@ public class ExpertController {
     @ApiImplicitParam(name = "ids",value = "多个逗号相隔",required = true)
     public Result<Boolean> deleteByIds(@RequestParam List<Long> ids){
         return Result.success(expertService.removeByIds(ids));
+    }
+    @ApiOperation(value = "上传文件进行批量插入",tags = "新增")
+    @PostMapping("listUpload")
+    public Result<String> listUpload(@RequestParam("file") MultipartFile file){
+        //批量添加
+        String fileName = file.getOriginalFilename();
+        if (StringUtils.isEmpty(fileName)){
+            return Result.fail(500,"文件不能为空","");
+        }
+        // 获取文件后缀
+        String prefix=fileName.substring(fileName.lastIndexOf("."));
+        if (!prefix.toLowerCase().contains("xls") && !prefix.toLowerCase().contains("xlsx") ){
+            return Result.fail(500,"文件格式异常，请上传Excel文件格式","");
+        }
+        // 防止生成的临时文件重复-建议使用UUID
+        final File excelFile;
+        try {
+            excelFile = File.createTempFile(System.currentTimeMillis()+"", prefix);
+            file.transferTo(excelFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Result.fail(500,"文件上传失败","");
+        }
+
+        FileInputStream fileInputStream;
+        try {
+            fileInputStream = new FileInputStream(excelFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return Result.fail(500,"文件上传失败","");
+        }
+        List<Expert> readBooks = EasyExcelUtil.readListFrom(fileInputStream, Expert.class);
+        excelFile.delete();
+        expertService.saveBatchSelf(readBooks);
+        return Result.success("");
     }
 }
 

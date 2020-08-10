@@ -14,19 +14,23 @@ import com.zhs.backmanageb.model.vo.ContactsVO;
 import com.zhs.backmanageb.model.vo.ExpertVO;
 import com.zhs.backmanageb.service.CommonDataService;
 import com.zhs.backmanageb.service.ContactsService;
+import com.zhs.backmanageb.util.EasyExcelUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +84,7 @@ public class ContactsController {
     @PostMapping("update")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     @ApiOperation(value = "修改联系人",tags = "修改")
-    public Result<Boolean> update(Contacts contacts){
+    public Result<Boolean> update(@RequestBody Contacts contacts){
         // 这样更改会显得属性有点多，后面可以针对性的进行精简
         return Result.success(contactsService.updateById(contacts));
     }
@@ -121,6 +125,42 @@ public class ContactsController {
     @ApiImplicitParam(name = "ids",value = "多个逗号相隔",required = true)
     public Result<Boolean> deleteByIds(@RequestParam List<Long> ids){
         return Result.success(contactsService.removeByIds(ids));
+    }
+
+    @ApiOperation(value = "上传文件进行批量插入",tags = "新增")
+    @PostMapping("listUpload")
+    public Result<String> listUpload(@RequestParam("file") MultipartFile file){
+        //批量添加
+        String fileName = file.getOriginalFilename();
+        if (StringUtils.isEmpty(fileName)){
+            return Result.fail(500,"文件不能为空","");
+        }
+        // 获取文件后缀
+        String prefix=fileName.substring(fileName.lastIndexOf("."));
+        if (!prefix.toLowerCase().contains("xls") && !prefix.toLowerCase().contains("xlsx") ){
+            return Result.fail(500,"文件格式异常，请上传Excel文件格式","");
+        }
+        // 防止生成的临时文件重复-建议使用UUID
+        final File excelFile;
+        try {
+            excelFile = File.createTempFile(System.currentTimeMillis()+"", prefix);
+            file.transferTo(excelFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Result.fail(500,"文件上传失败","");
+        }
+
+        FileInputStream fileInputStream;
+        try {
+            fileInputStream = new FileInputStream(excelFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return Result.fail(500,"文件上传失败","");
+        }
+        List<Contacts> readBooks = EasyExcelUtil.readListFrom(fileInputStream, Contacts.class);
+        excelFile.delete();
+        contactsService.saveBatchSelf(readBooks);
+        return Result.success("");
     }
 }
 

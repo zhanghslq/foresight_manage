@@ -5,6 +5,8 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Company;
 import com.zhs.backmanageb.entity.OrganizationTag;
+import com.zhs.backmanageb.model.bo.OrganizationTagBO;
+import com.zhs.backmanageb.model.dto.CompanyDTO;
 import com.zhs.backmanageb.model.vo.CompanyVO;
 import com.zhs.backmanageb.model.vo.OrganizationVO;
 import com.zhs.backmanageb.service.CompanyService;
@@ -41,7 +43,7 @@ public class CompanyController {
     @PostMapping("insert")
     @ApiOperation(value = "插入企业",tags = "新增")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
-    public Result<Boolean> insert(@RequestBody Company company, List<String> tags){
+    public Result<Boolean> insert(@RequestBody Company company,@RequestParam(value = "tags",required = false) List<String> tags){
         // 插入的时候需要记录操作人id
         try {
             Object principal = SecurityUtils.getSubject().getPrincipal();
@@ -57,7 +59,7 @@ public class CompanyController {
                 OrganizationTag organizationTag = new OrganizationTag();
                 organizationTag.setIsCompany(1);
                 organizationTag.setName(tag);
-                organizationTag.setOragnizationId(company.getId());
+                organizationTag.setOrganizationId(company.getId());
                 organizationTags.add(organizationTag);
             }
             organizationTagService.saveBatch(organizationTags);
@@ -68,8 +70,10 @@ public class CompanyController {
     @PostMapping("update")
     @ApiOperation(value = "修改企业",tags = "修改")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
-    public Result<Boolean> update(@RequestBody Company company){
-        return Result.success(companyService.updateById(company));
+    public Result<Boolean> update(@RequestBody CompanyDTO companyDTO){
+        companyService.dealTags(companyDTO.getCompany().getId(),companyDTO.getTags());
+
+        return Result.success(companyService.updateById(companyDTO.getCompany()));
     }
 
     @PostMapping("delete")

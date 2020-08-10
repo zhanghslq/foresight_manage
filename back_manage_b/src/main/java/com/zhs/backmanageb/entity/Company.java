@@ -35,11 +35,23 @@ public class Company implements Serializable {
     @ApiModelProperty(value = "企业名称")
     private String name;
 
+    @ApiModelProperty(value = "其他名称")
+    private String otherName;
+
     @ApiModelProperty(value = "完善度")
     private Integer perfectValue;
 
     @ApiModelProperty(value = "企业行政级别")
     private Long companyLevelId;
+
+    @ApiModelProperty(value = "企业行政级别名称")
+    private String companyLevelName;
+
+    @ApiModelProperty("企业类别id")
+    private Long companyTypeId;
+
+    @ApiModelProperty("企业类别名称")
+    private String companyTypeName;
 
     @ApiModelProperty(value = "上级关系类型")
     private Long relationshipTypeId;
@@ -47,7 +59,12 @@ public class Company implements Serializable {
     @ApiModelProperty(value = "是否上市")
     private Integer isMarket;
 
+    @ApiModelProperty("上市类型id")
     private Long marketTypeId;
+
+
+    @ApiModelProperty("上市类型名称")
+    private String marketTypeName;
 
     @ApiModelProperty(value = "上市代码")
     private String markedCode;
@@ -86,6 +103,9 @@ public class Company implements Serializable {
 
     @ApiModelProperty("管理员id")
     private Long adminId;
+
+    @ApiModelProperty("排序")
+    private Integer seq;
 
     @JsonIgnore
     @ApiModelProperty(value = "删除标志")

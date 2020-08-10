@@ -1,20 +1,19 @@
 package com.zhs.backmanageb.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.backmanageb.common.constant.ModuleTypeEnum;
 import com.zhs.backmanageb.entity.*;
 import com.zhs.backmanageb.mapper.OrganizationMapper;
 import com.zhs.backmanageb.model.bo.OrganizationModuleBO;
+import com.zhs.backmanageb.model.bo.OrganizationTagBO;
 import com.zhs.backmanageb.model.vo.OrganizationVO;
 import com.zhs.backmanageb.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +38,9 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
     @Autowired
     private OrganizationTypeService organizationTypeService;
+
+    @Autowired
+    private OrganizationTagService organizationTagService;
 
 
     @Override
@@ -79,6 +81,38 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         getContactAndLeader(organizationVO,id);
         return organizationVO;
     }
+
+    @Override
+    public void dealTags(Long id, List<OrganizationTagBO> tags) {
+        if(Objects.isNull(tags)||tags.size()==0){
+            QueryWrapper<OrganizationTag> organizationTagQueryWrapper = new QueryWrapper<>();
+            organizationTagQueryWrapper.eq("organization_id",id);
+            organizationTagQueryWrapper.eq("is_company",0);
+            organizationTagService.remove(organizationTagQueryWrapper);
+            return;
+        }
+        QueryWrapper<OrganizationTag> organizationTagQueryWrapper = new QueryWrapper<>();
+        organizationTagQueryWrapper.eq("organization_id",id);
+        organizationTagQueryWrapper.eq("is_company",0);
+        List<OrganizationTag> organizationTags = organizationTagService.list(organizationTagQueryWrapper);
+        List<Long> tagIds = organizationTags.stream().map(OrganizationTag::getId).collect(Collectors.toList());
+        List<Long> boIds = tags.stream().filter(organizationTagBO -> !Objects.isNull(organizationTagBO.getId())).map(OrganizationTagBO::getId).collect(Collectors.toList());
+        tagIds.removeAll(boIds);
+        if(tagIds.size()>0){
+            organizationTagService.removeByIds(tagIds);
+        }
+        List<OrganizationTag> organizationTagArrayList = new ArrayList<>();
+        for (OrganizationTagBO tag : tags) {
+            OrganizationTag organizationTag = new OrganizationTag();
+            organizationTag.setId(tag.getId());
+            organizationTag.setName(tag.getName());
+            organizationTag.setIsCompany(0);
+            organizationTag.setOrganizationId(id);
+            organizationTagArrayList.add(organizationTag);
+        }
+        organizationTagService.saveOrUpdateBatch(organizationTagArrayList);
+    }
+
     private void getContactAndLeader(OrganizationVO organizationVO, Long organizationId) {
         QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
         organizationQueryWrapper.eq("parent_id",organizationId);
@@ -91,6 +125,21 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             }
             return item.getModuleId();
         }));
+
+        QueryWrapper<OrganizationTag> organizationTagQueryWrapper = new QueryWrapper<>();
+        organizationTagQueryWrapper.eq("organization_id",organizationId);
+        organizationTagQueryWrapper.eq("is_company",0);
+        List<OrganizationTag> list = organizationTagService.list(organizationTagQueryWrapper);
+        if(list.size()>0){
+            ArrayList<OrganizationTagBO> organizationTagBOS = new ArrayList<>();
+            for (OrganizationTag organizationTag : list) {
+                OrganizationTagBO organizationTagBO = new OrganizationTagBO();
+                BeanUtil.copyProperties(organizationTag,organizationTagBO);
+                organizationTagBOS.add(organizationTagBO);
+            }
+            organizationVO.setTags(organizationTagBOS);
+        }
+
 
 
         QueryWrapper<Contacts> contactsQueryWrapper = new QueryWrapper<>();
@@ -126,13 +175,22 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             organizationModuleBO.setModuleId(organizationModule.getId());
             if(ModuleTypeEnum.LEADER.getId().equals(organizationModule.getType())){
                 organizationModuleBO.setType(ModuleTypeEnum.LEADER.getId());
-                organizationModuleBO.setLeaders(leaderMap.get(organizationModule.getId()));
+                List<Leader> leaders = leaderMap.get(organizationModule.getId());
+                if(!Objects.isNull(leaders)){
+                    organizationModuleBO.setLeaders(leaders.stream().sorted(Comparator.comparingInt(Leader::getSeq)).collect(Collectors.toList()));
+                }
             }else if(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(organizationModule.getType())){
                 organizationModuleBO.setType(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId());
-                organizationModuleBO.setOrganizationChildren(organizationMap.get(organizationModule.getId()));
+                List<Organization> organizations = organizationMap.get(organizationModule.getId());
+                if(!Objects.isNull(organizations)){
+                    organizationModuleBO.setOrganizationChildren(organizations.stream().sorted(Comparator.comparingInt(Organization::getSeq)).collect(Collectors.toList()));
+                }
             }else if(ModuleTypeEnum.CONTACTS.getId().equals(organizationModule.getType())){
                 organizationModuleBO.setType(ModuleTypeEnum.CONTACTS.getId());
-                organizationModuleBO.setContacts(contactsMap.get(organizationModule.getId()));
+                List<Contacts> contacts = contactsMap.get(organizationModule.getId());
+                if(!Objects.isNull(contacts)){
+                    organizationModuleBO.setContacts(contacts.stream().sorted(Comparator.comparingInt(Contacts::getSeq)).collect(Collectors.toList()));
+                }
             }
             organizationModuleBOS.add(organizationModuleBO);
         }

@@ -31,7 +31,7 @@ public class OrganizationTag implements Serializable {
     private Long id;
 
     @ApiModelProperty(value = "关联组织id")
-    private Long oragnizationId;
+    private Long organizationId;
 
     @ApiModelProperty(value = "标签名称")
     private String name;

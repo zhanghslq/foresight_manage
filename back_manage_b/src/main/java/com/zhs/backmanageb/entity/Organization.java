@@ -35,6 +35,9 @@ public class Organization implements Serializable {
     @ApiModelProperty(value = "机构名称")
     private String name;
 
+    @ApiModelProperty("其他名称")
+    private String otherName;
+
     @ApiModelProperty(value = "重要性")
     private Integer importance;
 

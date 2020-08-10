@@ -45,6 +45,9 @@ public class Resume implements Serializable {
     @ApiModelProperty("出生日期 yyyy-MM-dd")
     private Date birthday;
 
+    @ApiModelProperty(value = "出生日期")
+    private String birthdayString;
+
     @ApiModelProperty("地区id")
     private Long areaId;
 
@@ -60,11 +63,20 @@ public class Resume implements Serializable {
     @ApiModelProperty(value = "民族")
     private Long nation;
 
+    @ApiModelProperty("民族字符串")
+    private String nationName;
+
     @ApiModelProperty(value = "党派")
     private Long parties;
 
+    @ApiModelProperty(value = "党派名称")
+    private String partiesName;
+
     @ApiModelProperty(value = "0女，1男")
     private Integer sex;
+
+    @ApiModelProperty(value = "性别名称")
+    private String sexName;
 
     @ApiModelProperty(value = "当前职务")
     private String job;
@@ -86,6 +98,9 @@ public class Resume implements Serializable {
 
     @ApiModelProperty(value = "管理员id")
     private Long adminId;
+
+    @ApiModelProperty(value = "文件url标志")
+    private String wordUrl;
 
     @JsonIgnore
     @TableLogic

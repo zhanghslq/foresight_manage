@@ -1,6 +1,8 @@
 package com.zhs.backmanageb.controller;
 
 
+import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>
@@ -45,6 +48,38 @@ public class ConcatRecordController {
     public Result<Page<ConcatRecord>> listByPage(@RequestParam Integer current, @RequestParam Integer size){
         Page<ConcatRecord> contactsPage = new Page<>(current, size);
         Page<ConcatRecord> page1 = concatRecordService.page(contactsPage);
+        return Result.success(page1);
+    }
+    @PostMapping("search/list")
+    @ApiOperation(value = "根据条件联系记录列表",tags = "查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current",value = "当前页",required = true),
+            @ApiImplicitParam(name = "size",value = "每页多少条",required = true),
+    })
+    @ApiOperationSupport(ignoreParameters = {"deleted"})
+    public Result<Page<ConcatRecord>> searchListByPage(ConcatRecord concatRecord, @RequestParam Integer current, @RequestParam Integer size){
+        QueryWrapper<ConcatRecord> concatRecordQueryWrapper = new QueryWrapper<>();
+        // 编号
+        concatRecordQueryWrapper.like(!Objects.isNull(concatRecord.getId()),"id",concatRecord.getId());
+        // 发布时间 // 需要得到开始时间结束时间，然后用大小进行判断
+        if(!Objects.isNull(concatRecord.getCreateTime())){
+            concatRecordQueryWrapper.ge("create_time", DateUtil.beginOfDay(concatRecord.getCreateTime()));
+            concatRecordQueryWrapper.le("create_time",DateUtil.endOfDay(concatRecord.getCreateTime()));
+        }
+        // 联络人
+        concatRecordQueryWrapper.like(!Objects.isNull(concatRecord.getOperatorName()),"operator_name",concatRecord.getOperatorName());
+        //姓名
+        concatRecordQueryWrapper.like(!Objects.isNull(concatRecord.getConcatPersonName()),"concat_person_name",concatRecord.getConcatPersonName());
+        //单位
+        concatRecordQueryWrapper.like(!Objects.isNull(concatRecord.getCompanyName()),"company_name",concatRecord.getCompanyName());
+        //职务
+        concatRecordQueryWrapper.like(!Objects.isNull(concatRecord.getJob()),"job",concatRecord.getJob());
+        //沟通类型
+        concatRecordQueryWrapper.eq(!Objects.isNull(concatRecord.getConcatType()),"concat_type",concatRecord.getConcatType());
+        //沟通频率
+        concatRecordQueryWrapper.eq(!Objects.isNull(concatRecord.getConcatCount()),"concat_count",concatRecord.getConcatCount());
+        Page<ConcatRecord> contactsPage = new Page<>(current, size);
+        Page<ConcatRecord> page1 = concatRecordService.page(contactsPage,concatRecordQueryWrapper);
         return Result.success(page1);
     }
     @PostMapping("delete")

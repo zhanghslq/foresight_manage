@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * <p>
@@ -35,12 +36,23 @@ public class ConcatRecord implements Serializable {
     @ApiModelProperty(value = "联络人(主动联系别人)")
     private Long operatorId;
 
+    @ApiModelProperty(value = "联络人姓名")
+    private String operatorName;
+
     @ApiModelProperty(value = "被联系人")
     private Long concatPersonId;
+
+    @ApiModelProperty(value = "被联系人姓名")
+    private String concatPersonName;
+
 
     @ApiModelProperty(value = "单位(关联组织）")
     private Long companyId;
 
+    @ApiModelProperty(value = "单位名称（字符串）")
+    private String companyName;
+
+    @ApiModelProperty("职位")
     private String job;
 
     @ApiModelProperty(value = "联系类型")
@@ -54,6 +66,7 @@ public class ConcatRecord implements Serializable {
     @TableLogic
     private Integer deleted;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 

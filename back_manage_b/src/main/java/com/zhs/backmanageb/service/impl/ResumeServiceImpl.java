@@ -87,7 +87,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
 
             //出生地
             resumeQueryWrapper.eq(!StringUtils.isEmpty(resume.getAreaId()),"area_id",resume.getAreaId());
-            resumeQueryWrapper.like(StringUtils.isEmpty(resume.getAreaName()),"area_name",resume.getAreaName());
+            resumeQueryWrapper.like(!StringUtils.isEmpty(resume.getAreaName()),"area_name",resume.getAreaName());
             //目前状态
             resumeQueryWrapper.eq(!StringUtils.isEmpty(resume.getCurrentStatus()),"current_status",resume.getCurrentStatus());
             resumeQueryWrapper.eq(!StringUtils.isEmpty(resume.getCurrentStatusId()),"current_status_id",resume.getCurrentStatusId());

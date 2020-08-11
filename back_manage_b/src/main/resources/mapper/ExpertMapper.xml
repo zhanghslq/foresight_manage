@@ -3,7 +3,7 @@
 <mapper namespace="com.zhs.backmanageb.mapper.ExpertMapper">
 
     <select id="countByClassificationId" resultType="com.zhs.backmanageb.model.bo.CommonCountBO">
-        select classification_id,count(1) from expert
+        select classification_id as id,count(1) as count from expert
         where classification_id is not null
         group by classification_id
     </select>

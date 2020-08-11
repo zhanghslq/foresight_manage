@@ -123,6 +123,8 @@ public class ExpertController {
         QueryWrapper<Expert> expertQueryWrapper = new QueryWrapper<>();
         // 专家编号
         expertQueryWrapper.eq(!StringUtils.isEmpty(expert.getId()),"id",expert.getId());
+        // 专家类别
+        expertQueryWrapper.eq(!StringUtils.isEmpty(expert.getClassificationId()),"classification_id",expert.getClassificationId());
         // 姓名
         expertQueryWrapper.like(!StringUtils.isEmpty(expert.getRealName()),"real_name",expert.getRealName());
         // 单位

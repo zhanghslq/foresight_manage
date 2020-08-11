@@ -146,7 +146,7 @@ public class ExpertController {
         //从事领域
         expertQueryWrapper.like(!StringUtils.isEmpty(expert.getWorkArea()),"work_area",expert.getWorkArea());
         expertQueryWrapper.eq(!StringUtils.isEmpty(expert.getWorkAreaId()),"work_area_id",expert.getWorkAreaId());
-        Page<Expert> page = expertService.page(expertPage);
+        Page<Expert> page = expertService.page(expertPage,expertQueryWrapper);
         // 领导人行政级别
 
         QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();

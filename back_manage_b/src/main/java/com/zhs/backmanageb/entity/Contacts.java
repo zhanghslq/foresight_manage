@@ -34,28 +34,15 @@ public class Contacts implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty("组织体系，军政法等")
-    private Integer type;
 
     @ExcelProperty(index = 1)
     @ApiModelProperty("联系人姓名")
     private String realName;
 
-    @ApiModelProperty("是否是企业的联系人，默认0，否")
-    private Integer isCompany;
-
-    @ApiModelProperty(value = "哪个机构的联系人")
-    private Long organizationId;
-
-    @ApiModelProperty(value = "单位id")
-    private Long companyId;
-
     @ExcelProperty(index = 3)
     @ApiModelProperty(value = "单位名字")
     private String companyName;
 
-    @ApiModelProperty(value = "部门id")
-    private Long departmentId;
 
     @ExcelProperty(index = 4)
     @ApiModelProperty(value = "部门名称")
@@ -93,8 +80,7 @@ public class Contacts implements Serializable {
     @JsonIgnore
     private Integer pushed;
 
-    @ApiModelProperty("模块id")
-    private Long moduleId;
+
 
     @ApiModelProperty("管理员id")
     private Long adminId;
@@ -112,6 +98,5 @@ public class Contacts implements Serializable {
     @ApiModelProperty(value = "更新时间")
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
-
 
 }

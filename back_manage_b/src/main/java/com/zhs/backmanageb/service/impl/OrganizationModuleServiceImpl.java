@@ -86,6 +86,7 @@ public class OrganizationModuleServiceImpl extends ServiceImpl<OrganizationModul
             }
             organizationService.updateBatchById(result);
         }else if(ModuleTypeEnum.CONTACTS.getId().equals(type)){
+            // todo 这里修改顺序就不是修改联系人的了，是修改模块联系人关系表
             List<Contacts> result = new ArrayList<>();
             for (OrganizationModuleSeqDTO organizationModuleSeqDTO : organizationModuleSeqDTOList) {
                 Contacts contacts = new Contacts();

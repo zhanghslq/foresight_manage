@@ -2,18 +2,14 @@ package com.zhs.backmanageb.controller;
 
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
 import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.Contacts;
-import com.zhs.backmanageb.entity.Expert;
 import com.zhs.backmanageb.model.vo.ContactsVO;
-import com.zhs.backmanageb.model.vo.ExpertVO;
 import com.zhs.backmanageb.service.CommonDataService;
 import com.zhs.backmanageb.service.ContactsService;
 import com.zhs.backmanageb.util.EasyExcelUtil;
@@ -101,10 +97,8 @@ public class ContactsController {
 
         //单位
         contactsQueryWrapper.like(!StringUtils.isEmpty(contacts.getCompanyName()),"company_name",contacts.getCompanyName());
-        contactsQueryWrapper.eq(!StringUtils.isEmpty(contacts.getCompanyId()),"company_id",contacts.getCompanyId());
         //部门
         contactsQueryWrapper.like(!StringUtils.isEmpty(contacts.getDepartmentName()),"department_name",contacts.getDepartmentName());
-        contactsQueryWrapper.eq(!StringUtils.isEmpty(contacts.getDepartmentId()),"department_id",contacts.getDepartmentId());
 
         //职务
         contactsQueryWrapper.like(!StringUtils.isEmpty(contacts.getJob()),"job",contacts.getJob());

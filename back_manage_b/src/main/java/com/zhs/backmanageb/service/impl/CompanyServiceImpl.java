@@ -42,6 +42,9 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
     @Autowired
     private OrganizationTagService organizationTagService;
 
+    @Autowired
+    private ModuleContactsService moduleContactsService;
+
 
     @Override
     public CompanyVO queryByOrganizationType(Long organizationTypeId, Long areaId) {
@@ -140,17 +143,6 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
             companyVO.setTags(organizationTagBOS);
         }
 
-        QueryWrapper<Contacts> contactsQueryWrapper = new QueryWrapper<>();
-        contactsQueryWrapper.eq("organization_id", organizationId);
-        contactsQueryWrapper.eq("type", RootTypeEnum.COMPANY.getId());
-        List<Contacts> contactsList = contactsService.list(contactsQueryWrapper);
-        Map<Long, List<Contacts>> contactsMap = contactsList.stream().collect(Collectors.groupingBy(item -> {
-            if (item.getModuleId() == null) {
-                return 0L;
-            }
-            return item.getModuleId();
-        }));
-
 
         QueryWrapper<Leader> leaderQueryWrapper = new QueryWrapper<>();
         leaderQueryWrapper.eq("organization_id", organizationId);
@@ -182,10 +174,33 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
                 }
             }else if(ModuleTypeEnum.CONTACTS.getId().equals(organizationModule.getType())){
                 companyModuleBO.setType(ModuleTypeEnum.CONTACTS.getId());
-                List<Contacts> contacts = contactsMap.get(organizationModule.getId());
-                if(!Objects.isNull(contacts)){
-                    companyModuleBO.setContacts(contacts.stream().sorted(Comparator.comparingInt(Contacts::getSeq)).collect(Collectors.toList()));
+
+                // 可以直接根据moduleId进行查询
+                QueryWrapper<ModuleContacts> moduleContactsQueryWrapper = new QueryWrapper<>();
+                moduleContactsQueryWrapper.eq("module_id",organizationModule.getId());
+
+                List<ModuleContacts> moduleContactsList = moduleContactsService.list(moduleContactsQueryWrapper);
+                // 根据模块联系人查
+                List<Contacts> contactsArrayList = new ArrayList<>();
+                if(moduleContactsList.size()>0){
+                    Map<Long, Integer> map = moduleContactsList.stream().collect(Collectors.toMap(ModuleContacts::getContactId, ModuleContacts::getSeq));
+                    // 查contact集合
+                    List<Long> contactIds = moduleContactsList.stream().map(ModuleContacts::getContactId).collect(Collectors.toList());
+                    List<Contacts> contacts = contactsService.listByIds(contactIds);
+                    contactsArrayList = contacts.stream().sorted(Comparator.comparing(Contacts::getId, (x, y) -> {
+                        Integer integer = map.get(x);
+                        Integer integerY = map.get(y);
+                        if (Objects.isNull(integer)) {
+                            integer = 0;
+                        }
+                        if (Objects.isNull(integerY)) {
+                            integerY = 0;
+                        }
+                        return integer.compareTo(integerY);
+                    })).collect(Collectors.toList());
+
                 }
+                companyModuleBO.setContacts(contactsArrayList);
             }else if(ModuleTypeEnum.COMPANY_CHILDREN.getId().equals(organizationModule.getType())){
                 companyModuleBO.setType(ModuleTypeEnum.COMPANY_CHILDREN.getId());
                 List<Company> companies = companyMap.get(organizationModule.getId());

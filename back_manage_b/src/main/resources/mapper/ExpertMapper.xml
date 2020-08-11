@@ -4,7 +4,7 @@
 
     <select id="countByClassificationId" resultType="com.zhs.backmanageb.model.bo.CommonCountBO">
         select classification_id as id,count(1) as count from expert
-        where classification_id is not null
+        where classification_id is not null and deleted=0
         group by classification_id
     </select>
 </mapper>

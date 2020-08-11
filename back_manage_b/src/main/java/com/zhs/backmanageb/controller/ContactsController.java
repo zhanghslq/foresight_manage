@@ -32,10 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -88,9 +85,11 @@ public class ContactsController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current",value = "当前页",required = true),
             @ApiImplicitParam(name = "size",value = "每页多少条",required = true),
+            @ApiImplicitParam(name = "updateTimeBegin",value = "更新开始时间"),
+            @ApiImplicitParam(name = "updateTimeEnd",value = "更新结束时间"),
     })
     @ApiOperationSupport(ignoreParameters = {"deleted"})
-    public Result<Page<ContactsVO>> searchListByPage(Contacts contacts, @RequestParam Integer current, @RequestParam Integer size){
+    public Result<Page<ContactsVO>> searchListByPage(Contacts contacts, Date updateTimeBegin, Date updateTimeEnd, @RequestParam Integer current, @RequestParam Integer size){
         Page<Contacts> contactsPage = new Page<>(current, size);
         QueryWrapper<Contacts> contactsQueryWrapper = new QueryWrapper<>();
 
@@ -115,9 +114,9 @@ public class ContactsController {
         contactsQueryWrapper.like(!StringUtils.isEmpty(contacts.getLevelName()),"level_name",contacts.getLevelName());
         contactsQueryWrapper.eq(!StringUtils.isEmpty(contacts.getLevelId()),"level_id",contacts.getLevelId());
         //更新时间
-        if(!Objects.isNull(contacts.getUpdateTime())){
-            contactsQueryWrapper.ge("update_time", DateUtil.beginOfDay(contacts.getUpdateTime()));
-            contactsQueryWrapper.le("update_time",DateUtil.endOfDay(contacts.getUpdateTime()));
+        if(!Objects.isNull(updateTimeBegin)&&!Objects.isNull(updateTimeEnd)){
+            contactsQueryWrapper.ge("update_time", updateTimeBegin);
+            contactsQueryWrapper.le("update_time",updateTimeEnd);
         }
         //渠道
         Page<Contacts> page = contactsService.page(contactsPage,contactsQueryWrapper);

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -64,9 +65,10 @@ public class ConcatRecordController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current",value = "当前页",required = true),
             @ApiImplicitParam(name = "size",value = "每页多少条",required = true),
+            @ApiImplicitParam(name = "isToday",value = "是否是今天，默认是1，查询今天，0查询历史"),
     })
     @ApiOperationSupport(ignoreParameters = {"deleted"})
-    public Result<Page<ConcatRecord>> searchListByPage(ConcatRecord concatRecord, @RequestParam Integer current, @RequestParam Integer size){
+    public Result<Page<ConcatRecord>> searchListByPage(ConcatRecord concatRecord,@RequestParam(defaultValue = "1") Integer isToday, @RequestParam Integer current, @RequestParam Integer size){
         QueryWrapper<ConcatRecord> concatRecordQueryWrapper = new QueryWrapper<>();
         // 编号
         concatRecordQueryWrapper.like(!Objects.isNull(concatRecord.getId()),"id",concatRecord.getId());
@@ -87,6 +89,15 @@ public class ConcatRecordController {
         concatRecordQueryWrapper.eq(!Objects.isNull(concatRecord.getConcatType()),"concat_type",concatRecord.getConcatType());
         //沟通频率
         concatRecordQueryWrapper.eq(!Objects.isNull(concatRecord.getConcatCount()),"concat_count",concatRecord.getConcatCount());
+        // 是否是今天
+        if(isToday==0){
+            // 查历史的
+            concatRecordQueryWrapper.lt("create_time",DateUtil.beginOfDay(new Date()));
+        }else {
+            // 查今天的
+            concatRecordQueryWrapper.ge("create_time",DateUtil.beginOfDay(new Date()));
+            concatRecordQueryWrapper.le("create_time",DateUtil.endOfDay(new Date()));
+        }
         Page<ConcatRecord> contactsPage = new Page<>(current, size);
         Page<ConcatRecord> page1 = concatRecordService.page(contactsPage,concatRecordQueryWrapper);
         return Result.success(page1);
@@ -127,7 +138,9 @@ public class ConcatRecordController {
 
     @PostMapping(value = "export/excel_by_condition")
     @ApiOperation(value = "导出联系记录",tags = "查询",produces="application/octet-stream")
-    public void exportExcel(HttpServletResponse response,@RequestParam(required = false) List<Long> recordIds,ConcatRecord concatRecord){
+    public void exportExcel(HttpServletResponse response,
+                            @RequestParam(defaultValue = "1") Integer isToday,
+                            @RequestParam(required = false) List<Long> recordIds,ConcatRecord concatRecord){
         List<ConcatRecord> list;
         if(Objects.isNull(recordIds)||recordIds.size()==0){
             QueryWrapper<ConcatRecord> concatRecordQueryWrapper = new QueryWrapper<>();
@@ -150,6 +163,15 @@ public class ConcatRecordController {
             concatRecordQueryWrapper.eq(!Objects.isNull(concatRecord.getConcatType()),"concat_type",concatRecord.getConcatType());
             //沟通频率
             concatRecordQueryWrapper.eq(!Objects.isNull(concatRecord.getConcatCount()),"concat_count",concatRecord.getConcatCount());
+            // 是否是今天
+            if(isToday==0){
+                // 查历史的
+                concatRecordQueryWrapper.lt("create_time",DateUtil.beginOfDay(new Date()));
+            }else {
+                // 查今天的
+                concatRecordQueryWrapper.ge("create_time",DateUtil.beginOfDay(new Date()));
+                concatRecordQueryWrapper.le("create_time",DateUtil.endOfDay(new Date()));
+            }
             list = concatRecordService.list(concatRecordQueryWrapper);
         }else {
             list = concatRecordService.listByIds(recordIds);

@@ -80,6 +80,37 @@ public class ExpertController {
         expertVOPage.setRecords(expertVOS);
         return Result.success(expertVOPage);
     }
+
+    @ApiOperation(value = "根据专家类别获取专家列表",tags = "查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current",value = "当前页",required = true),
+            @ApiImplicitParam(name = "size",value = "每页多少条",required = true),
+            @ApiImplicitParam(name = "classificationId",value = "专家类别id",required = true),
+    })
+    @PostMapping("list/by_classificationId")
+    public Result<Page<ExpertVO>> listByClassification(@RequestParam Long classificationId, @RequestParam Integer current,@RequestParam Integer size){
+        Page<Expert> expertPage = new Page<>(current, size);
+        QueryWrapper<Expert> expertQueryWrapper = new QueryWrapper<>();
+        expertQueryWrapper.eq("classification_id",classificationId);
+        Page<Expert> page = expertService.page(expertPage);
+        // 领导人行政级别
+        QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
+        commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.EXPERT_LEVEL.getId());
+        List<CommonData> commonDataList = commonDataService.list(commonDataQueryWrapper);
+        Map<Long, String> map = commonDataList.stream().collect(Collectors.toMap(CommonData::getId, CommonData::getName));
+        Page<ExpertVO> expertVOPage = new Page<>();
+        BeanUtil.copyProperties(page,expertVOPage);
+        List<Expert> records = page.getRecords();
+        List<ExpertVO> expertVOS = new ArrayList<>();
+        for (Expert record : records) {
+            ExpertVO expertVO = new ExpertVO();
+            BeanUtil.copyProperties(record,expertVO);
+            expertVO.setLevelName(map.get(record.getLevelId()));
+            expertVOS.add(expertVO);
+        }
+        expertVOPage.setRecords(expertVOS);
+        return Result.success(expertVOPage);
+    }
     @ApiOperation(value = "根据条件获取专家列表",tags = "查询")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current",value = "当前页",required = true),
@@ -176,7 +207,7 @@ public class ExpertController {
     }
     @ApiOperation(value = "上传文件进行批量插入",tags = "新增")
     @PostMapping("listUpload")
-    public Result<String> listUpload(@RequestParam("file") MultipartFile file){
+    public Result<String> listUpload(@RequestParam Long classificationId ,@RequestParam("file") MultipartFile file){
         //批量添加
         String fileName = file.getOriginalFilename();
         if (StringUtils.isEmpty(fileName)){
@@ -206,7 +237,7 @@ public class ExpertController {
         }
         List<Expert> readBooks = EasyExcelUtil.readListFrom(fileInputStream, Expert.class);
         excelFile.delete();
-        expertService.saveBatchSelf(readBooks);
+        expertService.saveBatchSelf(classificationId,readBooks);
         return Result.success("");
     }
 }

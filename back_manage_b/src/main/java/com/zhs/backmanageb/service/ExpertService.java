@@ -15,5 +15,5 @@ import java.util.List;
  */
 public interface ExpertService extends IService<Expert> {
 
-    void saveBatchSelf(List<Expert> readBooks);
+    void saveBatchSelf(Long classificationId, List<Expert> readBooks);
 }

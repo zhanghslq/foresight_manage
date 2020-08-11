@@ -62,6 +62,12 @@ public class Expert implements Serializable {
     @ApiModelProperty(value = "联系电话")
     private String mobile;
 
+    @ApiModelProperty(value = "专家类别id")
+    private Long classificationId;
+
+    @ApiModelProperty(value = "专家类别名称")
+    private String classificationName;
+
     @ApiModelProperty(value = "级别")
     private Long levelId;
 

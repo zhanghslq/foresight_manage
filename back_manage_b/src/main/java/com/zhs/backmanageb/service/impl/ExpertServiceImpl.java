@@ -3,13 +3,12 @@ package com.zhs.backmanageb.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
 import com.zhs.backmanageb.entity.CommonData;
-import com.zhs.backmanageb.entity.Contacts;
 import com.zhs.backmanageb.entity.Expert;
+import com.zhs.backmanageb.exception.MyException;
 import com.zhs.backmanageb.mapper.ExpertMapper;
 import com.zhs.backmanageb.service.CommonDataService;
 import com.zhs.backmanageb.service.ExpertService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import io.swagger.annotations.Authorization;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,11 @@ public class ExpertServiceImpl extends ServiceImpl<ExpertMapper, Expert> impleme
     @Autowired
     private CommonDataService commonDataService;
     @Override
-    public void saveBatchSelf(List<Expert> readBooks) {
+    public void saveBatchSelf(Long classificationId, List<Expert> readBooks) {
+        CommonData byId = commonDataService.getById(classificationId);
+        if(Objects.isNull(byId)){
+            throw new MyException("专家类别不存在");
+        }
         // 需要对字段进行处理，id，name等的
         QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
         commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.EXPERT_LEVEL.getId());
@@ -57,6 +60,8 @@ public class ExpertServiceImpl extends ServiceImpl<ExpertMapper, Expert> impleme
         Map<String, Long> mapField = listField.stream().collect(Collectors.toMap(CommonData::getName, CommonData::getId, (k1, k2) -> k2));
 
         for (Expert readBook : readBooks) {
+            readBook.setClassificationId(classificationId);
+            readBook.setClassificationName(byId.getName());
             readBook.setAdminId(adminId);
             String sexName = readBook.getSexName();
             if(!Objects.isNull(sexName)){

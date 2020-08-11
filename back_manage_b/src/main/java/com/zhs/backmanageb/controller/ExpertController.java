@@ -90,7 +90,7 @@ public class ExpertController {
         Page<Expert> expertPage = new Page<>(current, size);
         QueryWrapper<Expert> expertQueryWrapper = new QueryWrapper<>();
         expertQueryWrapper.eq("classification_id",classificationId);
-        Page<Expert> page = expertService.page(expertPage);
+        Page<Expert> page = expertService.page(expertPage,expertQueryWrapper);
         // 领导人行政级别
         QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
         commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.EXPERT_LEVEL.getId());

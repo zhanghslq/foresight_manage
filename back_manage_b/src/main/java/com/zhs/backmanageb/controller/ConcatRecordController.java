@@ -136,6 +136,7 @@ public class ConcatRecordController {
         return Result.success(concatRecordService.removeByIds(ids));
     }
 
+    @ApiImplicitParam(name = "isToday",value = "是否是今天，默认是1，查询今天，0查询历史")
     @PostMapping(value = "export/excel_by_condition")
     @ApiOperation(value = "导出联系记录",tags = "查询",produces="application/octet-stream")
     public void exportExcel(HttpServletResponse response,

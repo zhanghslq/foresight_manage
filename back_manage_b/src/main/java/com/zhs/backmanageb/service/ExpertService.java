@@ -2,6 +2,7 @@ package com.zhs.backmanageb.service;
 
 import com.zhs.backmanageb.entity.Expert;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zhs.backmanageb.model.vo.ExpertInputStatisticsVO;
 
 import java.util.List;
 
@@ -16,4 +17,7 @@ import java.util.List;
 public interface ExpertService extends IService<Expert> {
 
     void saveBatchSelf(Long classificationId, List<Expert> readBooks);
+
+    List<ExpertInputStatisticsVO> expertInputStatistics();
+
 }

@@ -12,6 +12,7 @@ import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
 import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.Contacts;
 import com.zhs.backmanageb.entity.Expert;
+import com.zhs.backmanageb.model.vo.ExpertInputStatisticsVO;
 import com.zhs.backmanageb.model.vo.ExpertVO;
 import com.zhs.backmanageb.service.CommonDataService;
 import com.zhs.backmanageb.service.ExpertService;
@@ -238,6 +239,12 @@ public class ExpertController {
         excelFile.delete();
         expertService.saveBatchSelf(classificationId,readBooks);
         return Result.success("");
+    }
+    @ApiOperation(value = "专家录入统计",tags = "查询")
+    @PostMapping("expert_input/statistics")
+    public Result<List<ExpertInputStatisticsVO>> expertInputStatistics(){
+        List<ExpertInputStatisticsVO> expertInputStatisticsVO = expertService.expertInputStatistics();
+        return Result.success(expertInputStatisticsVO);
     }
 }
 

@@ -59,4 +59,17 @@ public class ContactsServiceImpl extends ServiceImpl<ContactsMapper, Contacts> i
         }
         saveBatch(readBooks);
     }
+
+    @Override
+    public void bindingOrganization(Integer isCompany, Long organizationId, List<Long> contactIds) {
+        // 先放一下，待确定
+        if(isCompany==1){
+            // 企业
+
+        }else {
+            // 组织
+
+        }
+
+    }
 }

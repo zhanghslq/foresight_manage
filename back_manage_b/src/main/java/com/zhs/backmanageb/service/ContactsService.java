@@ -17,4 +17,5 @@ public interface ContactsService extends IService<Contacts> {
 
     void saveBatchSelf(List<Contacts> readBooks);
 
+    void bindingOrganization(Integer isCompany, Long organizationId, List<Long> contactIds);
 }

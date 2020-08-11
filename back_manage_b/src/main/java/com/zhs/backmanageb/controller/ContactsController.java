@@ -6,6 +6,7 @@ import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
 import com.zhs.backmanageb.entity.CommonData;
@@ -184,6 +185,13 @@ public class ContactsController {
     @ApiImplicitParam(name = "ids",value = "多个逗号相隔",required = true)
     public Result<Boolean> deleteByIds(@RequestParam List<Long> ids){
         return Result.success(contactsService.removeByIds(ids));
+    }
+
+    @ApiOperation(value = "绑定",tags = "修改")
+    @PostMapping("binding/organization")
+    public Result<Boolean> bindOrganization(@RequestParam Integer isCompany,@RequestParam Long organizationId,@RequestParam(required = false) List<Long> contactIds){
+        contactsService.bindingOrganization(isCompany,organizationId,contactIds);
+        return Result.success(true);
     }
 
     @ApiOperation(value = "上传文件进行批量插入",tags = "新增")

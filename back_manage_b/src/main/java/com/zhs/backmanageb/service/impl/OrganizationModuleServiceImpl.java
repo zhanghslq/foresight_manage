@@ -86,7 +86,7 @@ public class OrganizationModuleServiceImpl extends ServiceImpl<OrganizationModul
             for (OrganizationModuleSeqDTO organizationModuleSeqDTO : organizationModuleSeqDTOList) {
                 Organization organization = new Organization();
                 BeanUtil.copyProperties(organizationModuleSeqDTO,organization);
-                result.add(organization);RF
+                result.add(organization);
             }
             organizationService.updateBatchById(result);
         }else if(ModuleTypeEnum.CONTACTS.getId().equals(type)){

@@ -65,6 +65,12 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.RESUME_LEVEL.getId());
         List<CommonData> list = commonDataService.list(commonDataQueryWrapper);
         Map<Long, String> map = list.stream().collect(Collectors.toMap(CommonData::getId, CommonData::getName));
+
+
+        commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.RESUME_STATUS.getId());
+        List<CommonData> statusList = commonDataService.list(commonDataQueryWrapper);
+        Map<Long, String> statusMap = statusList.stream().collect(Collectors.toMap(CommonData::getId, CommonData::getName));
+
         List<ResumeVO> resumeVOS = new ArrayList<>();
         Page<ResumeVO> resumeVOPage = new Page<>();
         Page<Resume> page;
@@ -125,6 +131,9 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                 long day = DateUtil.between(date, new Date(), DateUnit.DAY);
                 resumeVO.setWorkingDays(day+"天");
                 resumeVO.setBeginWorkingTime(date);
+            }
+            if(Objects.isNull(record.getCurrentStatus())&&!Objects.isNull(record.getCurrentStatusId())){
+                resumeVO.setCurrentStatus(statusMap.get(record.getCurrentStatusId()));
             }
             resumeVOS.add(resumeVO);
         }

@@ -41,6 +41,9 @@ public class OrganizationModuleServiceImpl extends ServiceImpl<OrganizationModul
     @Autowired
     private CompanyService companyService;
 
+    @Autowired
+    private ModuleContactsService moduleContactsService;
+
     @Override
     public void deleteDataAboutThis(Long id) {
         // 删除模块id相关的
@@ -83,18 +86,18 @@ public class OrganizationModuleServiceImpl extends ServiceImpl<OrganizationModul
             for (OrganizationModuleSeqDTO organizationModuleSeqDTO : organizationModuleSeqDTOList) {
                 Organization organization = new Organization();
                 BeanUtil.copyProperties(organizationModuleSeqDTO,organization);
-                result.add(organization);
+                result.add(organization);RF
             }
             organizationService.updateBatchById(result);
         }else if(ModuleTypeEnum.CONTACTS.getId().equals(type)){
-            // todo 这里修改顺序就不是修改联系人的了，是修改模块联系人关系表
-
             List<Contacts> result = new ArrayList<>();
             for (OrganizationModuleSeqDTO organizationModuleSeqDTO : organizationModuleSeqDTOList) {
-                ModuleContacts moduleContacts = new ModuleContacts();
-                new UpdateWrapper<ModuleContacts>();
+                UpdateWrapper<ModuleContacts> moduleContactsUpdateWrapper = new UpdateWrapper<>();
+                moduleContactsUpdateWrapper.set("seq", organizationModuleSeqDTO.getSeq());
+                moduleContactsUpdateWrapper.eq("module_id",organizationModuleSeqDTO.getModuleId());
+                moduleContactsUpdateWrapper.eq("organization_id",organizationModuleSeqDTO.getId());
+                moduleContactsService.update(moduleContactsUpdateWrapper);
             }
-            contactsService.updateBatchById(result);
         }else if(ModuleTypeEnum.COMPANY_CHILDREN.getId().equals(type)){
             List<Company> result = new ArrayList<>();
             for (OrganizationModuleSeqDTO organizationModuleSeqDTO : organizationModuleSeqDTOList) {

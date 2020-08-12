@@ -2,6 +2,7 @@ package com.zhs.backmanageb.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.google.common.collect.Maps;
 import com.zhs.backmanageb.common.constant.ModuleTypeEnum;
@@ -87,11 +88,11 @@ public class OrganizationModuleServiceImpl extends ServiceImpl<OrganizationModul
             organizationService.updateBatchById(result);
         }else if(ModuleTypeEnum.CONTACTS.getId().equals(type)){
             // todo 这里修改顺序就不是修改联系人的了，是修改模块联系人关系表
+
             List<Contacts> result = new ArrayList<>();
             for (OrganizationModuleSeqDTO organizationModuleSeqDTO : organizationModuleSeqDTOList) {
-                Contacts contacts = new Contacts();
-                BeanUtil.copyProperties(organizationModuleSeqDTO,contacts);
-                result.add(contacts);
+                ModuleContacts moduleContacts = new ModuleContacts();
+                new UpdateWrapper<ModuleContacts>();
             }
             contactsService.updateBatchById(result);
         }else if(ModuleTypeEnum.COMPANY_CHILDREN.getId().equals(type)){

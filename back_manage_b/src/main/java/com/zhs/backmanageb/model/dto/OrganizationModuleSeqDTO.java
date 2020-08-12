@@ -1,5 +1,6 @@
 package com.zhs.backmanageb.model.dto;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -9,6 +10,10 @@ import lombok.Data;
  */
 @Data
 public class OrganizationModuleSeqDTO {
+    @ApiModelProperty("需要排序的id，联系人，领导人，下属机构等")
     private Long id;
+    @ApiModelProperty("模块id")
+    private Long moduleId;
+    @ApiModelProperty("排序")
     private Integer seq;
 }

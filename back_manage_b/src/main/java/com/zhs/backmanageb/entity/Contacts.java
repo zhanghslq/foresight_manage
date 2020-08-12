@@ -83,6 +83,9 @@ public class Contacts implements Serializable {
     @ApiModelProperty(value = "简历id")
     private Long resumeId;
 
+    @ApiModelProperty(value = "是否与机构关联，默认0未关联，1关联")
+    private Integer associatedWithOrganization;
+
     @JsonIgnore
     @ApiModelProperty(value = "删除标志")
     @TableLogic

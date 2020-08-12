@@ -8,6 +8,7 @@ import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.ExperienceRecord;
 import com.zhs.backmanageb.entity.Resume;
 import com.zhs.backmanageb.model.dto.ResumeDTO;
+import com.zhs.backmanageb.model.vo.InputStatisticsVO;
 import com.zhs.backmanageb.model.vo.ResumeVO;
 import com.zhs.backmanageb.service.ExperienceRecordService;
 import com.zhs.backmanageb.service.ResumeService;
@@ -136,5 +137,14 @@ public class ResumeController {
         return Result.success(resumeDTO);
 
     }
+
+
+    @ApiOperation(value = "简历列表分类统计",tags = "查询")
+    @PostMapping("resume_input/statistics")
+    public Result<List<InputStatisticsVO>> expertInputStatistics(){
+        List<InputStatisticsVO> inputStatisticsVO = resumeService.expertInputStatistics();
+        return Result.success(inputStatisticsVO);
+    }
+
 }
 

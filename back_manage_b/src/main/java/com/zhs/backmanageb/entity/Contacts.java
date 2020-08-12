@@ -77,8 +77,6 @@ public class Contacts implements Serializable {
     @JsonIgnore
     private Integer pushed;
 
-
-
     @ApiModelProperty("管理员id")
     private Long adminId;
 

@@ -1,6 +1,5 @@
 package com.zhs.backmanageb.service.impl;
 
-import cn.hutool.core.util.NumberUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
 import com.zhs.backmanageb.entity.CommonData;
@@ -8,7 +7,7 @@ import com.zhs.backmanageb.entity.Expert;
 import com.zhs.backmanageb.exception.MyException;
 import com.zhs.backmanageb.mapper.ExpertMapper;
 import com.zhs.backmanageb.model.bo.CommonCountBO;
-import com.zhs.backmanageb.model.vo.ExpertInputStatisticsVO;
+import com.zhs.backmanageb.model.vo.InputStatisticsVO;
 import com.zhs.backmanageb.service.CommonDataService;
 import com.zhs.backmanageb.service.ExpertService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -16,7 +15,6 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.NumberUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,19 +91,19 @@ public class ExpertServiceImpl extends ServiceImpl<ExpertMapper, Expert> impleme
     }
 
     @Override
-    public List<ExpertInputStatisticsVO> expertInputStatistics() {
+    public List<InputStatisticsVO> expertInputStatistics() {
         QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
         commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.EXPERT_CLASSIFICATION.getId());
         List<CommonData> list = commonDataService.list(commonDataQueryWrapper);
         List<CommonCountBO> commonCountBOS = expertMapper.countByClassificationId();
         Map<Long, Integer> map = commonCountBOS.stream().collect(Collectors.toMap(CommonCountBO::getId, CommonCountBO::getCount, (k1, k2) -> k2));
-        ArrayList<ExpertInputStatisticsVO> result = new ArrayList<>();
+        ArrayList<InputStatisticsVO> result = new ArrayList<>();
         for (CommonData commonData : list) {
-            ExpertInputStatisticsVO expertInputStatisticsVO = new ExpertInputStatisticsVO();
-            expertInputStatisticsVO.setId(commonData.getId());
-            expertInputStatisticsVO.setName(commonData.getName());
-            expertInputStatisticsVO.setCount(map.get(commonData.getId()));
-            result.add(expertInputStatisticsVO);
+            InputStatisticsVO inputStatisticsVO = new InputStatisticsVO();
+            inputStatisticsVO.setId(commonData.getId());
+            inputStatisticsVO.setName(commonData.getName());
+            inputStatisticsVO.setCount(map.get(commonData.getId()));
+            result.add(inputStatisticsVO);
         }
         return result;
     }

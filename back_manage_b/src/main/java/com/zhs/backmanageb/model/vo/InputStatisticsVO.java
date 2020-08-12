@@ -8,11 +8,11 @@ import lombok.Data;
  * @date: 2020/8/11 12:24
  */
 @Data
-public class ExpertInputStatisticsVO {
-    @ApiModelProperty("专家类别id")
+public class InputStatisticsVO {
+    @ApiModelProperty("类别id")
     private Long id;
-    @ApiModelProperty("专家类别名称")
+    @ApiModelProperty("类别名称")
     private String name;
-    @ApiModelProperty(value = "录入数量")
+    @ApiModelProperty(value = "数量")
     private Integer count;
 }

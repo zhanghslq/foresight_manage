@@ -13,9 +13,11 @@ import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.ExperienceRecord;
 import com.zhs.backmanageb.entity.Resume;
 import com.zhs.backmanageb.mapper.ResumeMapper;
+import com.zhs.backmanageb.model.bo.CommonCountBO;
 import com.zhs.backmanageb.model.dto.ExpierenceRecordConvertDTO;
 import com.zhs.backmanageb.model.dto.ResumeConvertDTO;
 import com.zhs.backmanageb.model.dto.ResumeDTO;
+import com.zhs.backmanageb.model.vo.InputStatisticsVO;
 import com.zhs.backmanageb.model.vo.ResumeVO;
 import com.zhs.backmanageb.service.CommonDataService;
 import com.zhs.backmanageb.service.ExperienceRecordService;
@@ -53,6 +55,9 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
     private ExperienceRecordService experienceRecordService;
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private ResumeMapper resumeMapper;
 
     @Override
     public Page<ResumeVO> pageSelf(Resume resume, Page<Resume> resumePage) {
@@ -213,5 +218,23 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
 
         }
         return resumeDTO;
+    }
+
+    @Override
+    public List<InputStatisticsVO> expertInputStatistics() {
+        QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
+        commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.RESUME_STATUS.getId());
+        List<CommonData> list = commonDataService.list(commonDataQueryWrapper);
+        List<CommonCountBO> commonCountBOS = resumeMapper.countByCurrentStatusId();
+        Map<Long, Integer> map = commonCountBOS.stream().collect(Collectors.toMap(CommonCountBO::getId, CommonCountBO::getCount, (k1, k2) -> k2));
+        ArrayList<InputStatisticsVO> result = new ArrayList<>();
+        for (CommonData commonData : list) {
+            InputStatisticsVO inputStatisticsVO = new InputStatisticsVO();
+            inputStatisticsVO.setId(commonData.getId());
+            inputStatisticsVO.setName(commonData.getName());
+            inputStatisticsVO.setCount(map.get(commonData.getId()));
+            result.add(inputStatisticsVO);
+        }
+        return result;
     }
 }

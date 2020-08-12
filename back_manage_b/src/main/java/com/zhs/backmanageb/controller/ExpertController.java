@@ -2,17 +2,14 @@ package com.zhs.backmanageb.controller;
 
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import com.sun.org.apache.regexp.internal.RE;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
 import com.zhs.backmanageb.entity.CommonData;
-import com.zhs.backmanageb.entity.Contacts;
 import com.zhs.backmanageb.entity.Expert;
-import com.zhs.backmanageb.model.vo.ExpertInputStatisticsVO;
+import com.zhs.backmanageb.model.vo.InputStatisticsVO;
 import com.zhs.backmanageb.model.vo.ExpertVO;
 import com.zhs.backmanageb.service.CommonDataService;
 import com.zhs.backmanageb.service.ExpertService;
@@ -244,9 +241,9 @@ public class ExpertController {
     }
     @ApiOperation(value = "专家录入统计",tags = "查询")
     @PostMapping("expert_input/statistics")
-    public Result<List<ExpertInputStatisticsVO>> expertInputStatistics(){
-        List<ExpertInputStatisticsVO> expertInputStatisticsVO = expertService.expertInputStatistics();
-        return Result.success(expertInputStatisticsVO);
+    public Result<List<InputStatisticsVO>> expertInputStatistics(){
+        List<InputStatisticsVO> inputStatisticsVO = expertService.expertInputStatistics();
+        return Result.success(inputStatisticsVO);
     }
 }
 

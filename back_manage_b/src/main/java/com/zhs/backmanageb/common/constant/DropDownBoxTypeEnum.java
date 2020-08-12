@@ -55,7 +55,8 @@ public enum DropDownBoxTypeEnum {
     RESUME_LEVEL(35,"简历行政级别"),
     RESUME_STATUS(36,"简历状态"),
     ////////////专家分类，用于专家列表的顶部分类///////////
-    EXPERT_CLASSIFICATION(37,"专家分类");
+    EXPERT_CLASSIFICATION(37,"专家分类"),
+    RESUME_RELATION(38,"简历之间特殊关联");
 
     private final Integer id;
     private final String name;

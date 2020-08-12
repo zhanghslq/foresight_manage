@@ -66,9 +66,9 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         List<CommonData> list = commonDataService.list(commonDataQueryWrapper);
         Map<Long, String> map = list.stream().collect(Collectors.toMap(CommonData::getId, CommonData::getName));
 
-
-        commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.RESUME_STATUS.getId());
-        List<CommonData> statusList = commonDataService.list(commonDataQueryWrapper);
+        QueryWrapper<CommonData> commonDataStatusQueryWrapper = new QueryWrapper<>();
+        commonDataStatusQueryWrapper.eq("type", DropDownBoxTypeEnum.RESUME_STATUS.getId());
+        List<CommonData> statusList = commonDataService.list(commonDataStatusQueryWrapper);
         Map<Long, String> statusMap = statusList.stream().collect(Collectors.toMap(CommonData::getId, CommonData::getName));
 
         List<ResumeVO> resumeVOS = new ArrayList<>();

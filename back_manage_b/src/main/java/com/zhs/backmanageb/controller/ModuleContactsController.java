@@ -55,7 +55,7 @@ public class ModuleContactsController {
 
         return Result.success(true);
     }
-    @ApiOperation(value = "绑定联系人",tags = "修改")
+    @ApiOperation(value = "取消绑定联系人",tags = "修改")
     @PostMapping("cancel/binding/contacts")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "moduleId",value = "模块id",required = true),

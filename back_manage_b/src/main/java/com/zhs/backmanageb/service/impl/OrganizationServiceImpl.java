@@ -193,7 +193,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
                 // 根据模块联系人查
                 List<Contacts> contactsArrayList = new ArrayList<>();
                 if(moduleContactsList.size()>0){
-                    Map<Long, Integer> map = moduleContactsList.stream().collect(Collectors.toMap(ModuleContacts::getContactId, ModuleContacts::getSeq));
+                    Map<Long, Integer> map = moduleContactsList.stream().collect(Collectors.toMap(ModuleContacts::getContactId, ModuleContacts::getSeq,(k1,k2)->k1));
                     // 查contact集合
                     List<Long> contactIds = moduleContactsList.stream().map(ModuleContacts::getContactId).collect(Collectors.toList());
                     List<Contacts> contacts = contactsService.listByIds(contactIds);

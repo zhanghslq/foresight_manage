@@ -41,19 +41,7 @@ public class ResumeController {
     @Resource
     private ExperienceRecordService experienceRecordService;
 
-    @ApiOperation(value = "简历列表",tags = "查询")
-    @PostMapping("list")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "current",value = "当前页",required = true),
-            @ApiImplicitParam(name = "size",value = "每页多少条",required = true),
-    })
-    public Result<Page<ResumeVO>> list(@RequestParam Integer current,@RequestParam Integer size){
-        Page<Resume> resumePage = new Page<>(current, size);
 
-        Page<ResumeVO> pageSelf =resumeService.pageSelf(null, resumePage);
-
-        return Result.success(pageSelf);
-    }
     @ApiOperation(value = "按照条件查询简历列表",tags = "查询")
     @PostMapping("search/list")
     @ApiImplicitParams({

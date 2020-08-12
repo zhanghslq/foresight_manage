@@ -53,6 +53,9 @@ public class Leader implements Serializable {
     @ApiModelProperty("排序")
     private Integer seq;
 
+    @ApiModelProperty("简历id")
+    private Long resumeId;
+
     @JsonIgnore
     @ApiModelProperty(value = "删除标志")
     @TableLogic

@@ -56,6 +56,9 @@ public class Contacts implements Serializable {
     @ApiModelProperty(value = "联系电话")
     private String concatPhone;
 
+    @ApiModelProperty(value = "默认电话")
+    private String defaultPhone;
+
     @ApiModelProperty(value = "级别id")
     private Long levelId;
 

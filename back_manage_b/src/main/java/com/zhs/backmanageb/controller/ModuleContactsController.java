@@ -75,11 +75,11 @@ public class ModuleContactsController {
         Assert.notEmpty(contactIds,"联系人id不能为空");
         QueryWrapper<ModuleContacts> moduleContactsQueryWrapper = new QueryWrapper<>();
         moduleContactsQueryWrapper.eq("module_id",moduleId);
-        moduleContactsQueryWrapper.in("contacts_id",contactIds);
+        moduleContactsQueryWrapper.in("contact_id",contactIds);
         moduleContactsService.remove(moduleContactsQueryWrapper);
         // 取消绑定需要看是否还关联有组织
         QueryWrapper<ModuleContacts> moduleQueryWrapper = new QueryWrapper<>();
-        moduleQueryWrapper.in("contacts_id",contactIds);
+        moduleQueryWrapper.in("contact_id",contactIds);
         List<ModuleContacts> moduleContacts = moduleContactsService.list(moduleQueryWrapper);
         List<Long> contactIdList = moduleContacts.stream().map(ModuleContacts::getContactId).collect(Collectors.toList());
         contactIds.removeAll(contactIdList);

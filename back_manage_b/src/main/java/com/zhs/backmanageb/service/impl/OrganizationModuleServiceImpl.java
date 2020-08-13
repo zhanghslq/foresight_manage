@@ -59,9 +59,9 @@ public class OrganizationModuleServiceImpl extends ServiceImpl<OrganizationModul
             organizationQueryWrapper.eq("module_id",id);
             organizationService.remove(organizationQueryWrapper);
         }else if(ModuleTypeEnum.CONTACTS.getId().equals(type)){
-            QueryWrapper<Contacts> contactsQueryWrapper = new QueryWrapper<>();
+            QueryWrapper<ModuleContacts> contactsQueryWrapper = new QueryWrapper<>();
             contactsQueryWrapper.eq("module_id",id);
-            contactsService.remove(contactsQueryWrapper);
+            moduleContactsService.remove(contactsQueryWrapper);
         }else if(ModuleTypeEnum.COMPANY_CHILDREN.getId().equals(type)){
             QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();
             companyQueryWrapper.eq("module_id",id);

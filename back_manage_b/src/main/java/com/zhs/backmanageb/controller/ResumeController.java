@@ -1,15 +1,22 @@
 package com.zhs.backmanageb.controller;
 
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
+import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
+import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.ExperienceRecord;
 import com.zhs.backmanageb.entity.Resume;
 import com.zhs.backmanageb.model.dto.ResumeDTO;
+import com.zhs.backmanageb.model.dto.ResumeDetailDTO;
 import com.zhs.backmanageb.model.vo.InputStatisticsVO;
 import com.zhs.backmanageb.model.vo.ResumeVO;
+import com.zhs.backmanageb.service.CommonDataService;
 import com.zhs.backmanageb.service.ExperienceRecordService;
 import com.zhs.backmanageb.service.ResumeService;
 import io.swagger.annotations.Api;
@@ -17,11 +24,13 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Objects;
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -40,6 +49,8 @@ public class ResumeController {
     private ResumeService resumeService;
     @Resource
     private ExperienceRecordService experienceRecordService;
+    @Autowired
+    private CommonDataService commonDataService;
 
 
     @ApiOperation(value = "按照条件查询简历列表",tags = "查询")
@@ -107,6 +118,51 @@ public class ResumeController {
         resumeDTO.setResume(resume);
         resumeDTO.setExperienceRecordList(experienceRecordList);
         return Result.success(resumeDTO);
+    }
+    @PostMapping("query_detail/by_Id")
+    @ApiOperation(value = "查询简历详细信息",tags = "查询")
+    @ApiImplicitParam(name = "id",value = "编号",required = true)
+    public Result<ResumeDetailDTO> queryDetailById(@RequestParam Long id){
+        Resume resume = resumeService.getById(id);
+        QueryWrapper<ExperienceRecord> experienceRecordQueryWrapper = new QueryWrapper<>();
+        experienceRecordQueryWrapper.eq("resume_id",id);
+        List<ExperienceRecord> experienceRecordList = experienceRecordService.list(experienceRecordQueryWrapper);
+        ResumeDetailDTO resumeDetailDTO = new ResumeDetailDTO();
+        ResumeVO resumeVO = new ResumeVO();
+
+        List<ExperienceRecord>  lastExperienceList = experienceRecordService.queryLastExperience(Collections.singletonList(id));
+        // 工作时间
+        Map<Long, Date> workMap = lastExperienceList.stream().collect(Collectors.toMap(ExperienceRecord::getResumeId, ExperienceRecord::getBeginDate));
+        BeanUtil.copyProperties(resume,resumeVO);
+        // 然后把字段值填上
+        // 行政级别
+        if(!Objects.isNull(resumeVO.getLevelId())){
+            CommonData byId = commonDataService.getById(resume.getLevelId());
+            if(!Objects.isNull(byId)){
+                resumeVO.setLevelName(byId.getName());
+            }
+        }
+        Date birthday = resume.getBirthday();
+        if(!Objects.isNull(birthday)){
+            int age = DateUtil.ageOfNow(birthday);
+            resumeVO.setAge(age);
+        }
+        // 获取最后一段经历计算在职时间
+        Date date = workMap.get(resume.getId());
+        if(!Objects.isNull(date)){
+            long day = DateUtil.between(date, new Date(), DateUnit.DAY);
+            resumeVO.setWorkingDays(day+"天");
+            resumeVO.setBeginWorkingTime(date);
+        }
+        if(Objects.isNull(resume.getCurrentStatus())&&!Objects.isNull(resume.getCurrentStatusId())){
+            CommonData byId = commonDataService.getById(resume.getCurrentStatusId());
+            if(!Objects.isNull(byId)){
+                resumeVO.setCurrentStatus(byId.getName());
+            }
+        }
+        resumeDetailDTO.setResumeVO(resumeVO);
+        resumeDetailDTO.setExperienceRecordList(experienceRecordList);
+        return Result.success(resumeDetailDTO);
     }
 
     @ApiOperation(value = "批量删除",tags = "删除")

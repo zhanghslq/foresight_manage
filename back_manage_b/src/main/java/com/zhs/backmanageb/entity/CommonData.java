@@ -38,6 +38,9 @@ public class CommonData implements Serializable {
     @ApiModelProperty(value = "名称")
     private String name;
 
+    @ApiModelProperty(value = "排序")
+    private Integer seq;
+
     @JsonIgnore
     @ApiModelProperty(value = "删除标志")
     @TableLogic

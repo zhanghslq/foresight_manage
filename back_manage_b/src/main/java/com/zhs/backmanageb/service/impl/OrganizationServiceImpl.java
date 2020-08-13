@@ -147,6 +147,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         QueryWrapper<OrganizationModule> organizationModuleQueryWrapper = new QueryWrapper<>();
         organizationModuleQueryWrapper.eq("organization_id",organizationId);
         organizationModuleQueryWrapper.eq("is_company",0);
+        organizationModuleQueryWrapper.orderByAsc("seq");
         List<OrganizationModule> organizationModuleList = organizationModuleService.list(organizationModuleQueryWrapper);
 
 

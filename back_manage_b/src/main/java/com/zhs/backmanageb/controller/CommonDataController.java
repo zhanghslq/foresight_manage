@@ -20,9 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +46,7 @@ public class CommonDataController {
     public Result<List<CommonData>> listByType(@RequestParam Integer type){
         QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
         commonDataQueryWrapper.eq("type",type);
+        commonDataQueryWrapper.orderByAsc("seq");
         List<CommonData> list = commonDataService.list(commonDataQueryWrapper);
         return Result.success(list);
     }
@@ -62,8 +61,11 @@ public class CommonDataController {
             CommonTypeVO commonTypeVO = new CommonTypeVO();
             commonTypeVO.setId(Long.valueOf(value.getId()));
             commonTypeVO.setName(value.getName());
-            List<CommonData> commonData = map.get(value.getId());
-            commonTypeVO.setChildren(commonData);
+            List<CommonData> commonDataList = map.get(value.getId());
+            if(!Objects.isNull(commonDataList)){
+                List<CommonData> commonData = commonDataList.stream().sorted(Comparator.comparingInt(CommonData::getSeq)).collect(Collectors.toList());
+                commonTypeVO.setChildren(commonData);
+            }
             result.add(commonTypeVO);
         }
         return Result.success(result);

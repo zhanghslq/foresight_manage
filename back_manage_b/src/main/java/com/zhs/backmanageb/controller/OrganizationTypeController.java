@@ -48,13 +48,14 @@ public class OrganizationTypeController {
             @ApiImplicitParam(name = "type",value = "所属分类（军，政，等）",required = true),
             @ApiImplicitParam(name = "hasLocation",value = "是否需要关联地区，0否，1是",required = true)
     })
-    public Result<Boolean> insert(@RequestParam Integer hasLocation,String detail,@RequestParam String name,@RequestParam Long parentId,@RequestParam Integer type){
+    public Result<Boolean> insert(@RequestParam Integer hasLocation,String detail,@RequestParam String name,@RequestParam Long parentId,@RequestParam Integer type,@RequestParam(defaultValue = "0") Integer seq){
         OrganizationType organizationType = new OrganizationType();
         organizationType.setDetail(detail);
         organizationType.setName(name);
         organizationType.setParentId(parentId);
         organizationType.setType(type);
         organizationType.setHasLocation(hasLocation);
+        organizationType.setSeq(seq);
         organizationTypeService.save(organizationType);
         return Result.success(true);
     }
@@ -67,12 +68,13 @@ public class OrganizationTypeController {
             @ApiImplicitParam(name = "type",value = "所属分类（军，政，等）",required = true),
             @ApiImplicitParam(name = "hasLocation",value = "是否需要关联地区，0否，1是",required = true)
     })
-    public Result<Boolean> insertBatch(@RequestParam Integer hasLocation,String content,@RequestParam String name,@RequestParam Long parentId,@RequestParam Integer type){
+    public Result<Boolean> insertBatch(@RequestParam Integer hasLocation,String content,@RequestParam String name,@RequestParam Long parentId,@RequestParam Integer type,Integer seq){
         OrganizationType organizationType = new OrganizationType();
         organizationType.setName(name);
         organizationType.setParentId(parentId);
         organizationType.setType(type);
         organizationType.setHasLocation(hasLocation);
+        organizationType.setSeq(seq);
         organizationTypeService.save(organizationType);
         if(!StringUtils.isEmpty(content)){
             organizationTypeService.insertBatch(content,type,organizationType.getId(),hasLocation);
@@ -83,7 +85,9 @@ public class OrganizationTypeController {
     @PostMapping("/list")
     @ApiOperation(value = "全部组织",tags = "查询")
     public Result<List<OrganizationType>> list(){
-        List<OrganizationType> list = organizationTypeService.list();
+        QueryWrapper<OrganizationType> organizationTypeQueryWrapper = new QueryWrapper<>();
+        organizationTypeQueryWrapper.orderByAsc("seq");
+        List<OrganizationType> list = organizationTypeService.list(organizationTypeQueryWrapper);
         return Result.success(list);
     }
     @PostMapping("/listData/byType")
@@ -93,6 +97,7 @@ public class OrganizationTypeController {
         QueryWrapper<OrganizationType> wrapper = new QueryWrapper<>();
         wrapper.eq("type",type);
         wrapper.eq("parent_id",0);
+        wrapper.orderByAsc("seq");
         List<OrganizationType> list = organizationTypeService.list(wrapper);
         return Result.success(list);
     }

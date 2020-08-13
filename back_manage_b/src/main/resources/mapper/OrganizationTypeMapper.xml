@@ -16,10 +16,11 @@
         <result property="hasLocation" column="has_location"/>
         <result property="detail" javaType="java.lang.String" column="detail"/>
         <result property="parentId" javaType="long" column="parent_id"/>
+        <result property="seq" javaType="integer" column="seq"/>
         <collection property="children" javaType="list"  ofType="com.zhs.backmanageb.model.bo.OrganizationTypeBO" column="id" select="selectFirstTreeByParentId" />
     </resultMap>
     <sql id="baseSQl">
-            id,name,type,detail,has_location,parent_id
+            id,name,type,detail,has_location,parent_id,seq
     </sql>
     <select id="selectAllTree" resultMap="myTreeMap">
         select <include refid="baseSQl"/> from organization_type
@@ -27,29 +28,31 @@
         <if test="type!=null ">
             and type =#{type,jdbcType=INTEGER}
         </if>
+        order by seq
     </select>
     <select id="selectFirstTreeByParentId" resultType="com.zhs.backmanageb.model.bo.OrganizationTypeBO" >
-        select id,name,type,detail,has_location,parent_id from organization_type
-        where parent_id=#{parentId,jdbcType=BIGINT} and deleted=0
+        select id,name,type,detail,has_location,parent_id,seq from organization_type
+        where parent_id=#{parentId,jdbcType=BIGINT} and deleted=0 order by seq
     </select>
     <select id="selectAllTreeByParentId" resultMap="myTreeMap" >
-        select id,name,type,detail,has_location,parent_id from organization_type
-        where parent_id=#{parentId,jdbcType=BIGINT} and deleted=0
+        select id,name,type,detail,has_location,parent_id,seq from organization_type
+        where parent_id=#{parentId,jdbcType=BIGINT} and deleted=0 order by seq
     </select>
     <select id="selectAllIdHasChild" resultType="java.lang.Long">
         select distinct parent_id from organization_type
         where deleted=0 and parent_id!=0
     </select>
     <select id="selectAllHasChild" resultMap="myFirstTreeMap">
-        select id,name,type,detail,has_location,parent_id from organization_type
+        select id,name,type,detail,has_location,parent_id,seq from organization_type
         where deleted=0 and id in
         <foreach collection="parentIds" separator="," open="(" close=")" item="pid">
             #{pid,jdbcType=BIGINT}
         </foreach>
+        order by seq
     </select>
     <select id="listByParentIdZero" resultType="com.zhs.backmanageb.model.bo.OrganizationTypeBO">
-        select id,name,type,detail,has_location,parent_id from organization_type
-        where deleted=0 and parent_id=0
+        select id,name,type,detail,has_location,parent_id,seq from organization_type
+        where deleted=0 and parent_id=0 order by seq
     </select>
 
 

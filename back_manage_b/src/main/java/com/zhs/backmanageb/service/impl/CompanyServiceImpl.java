@@ -132,6 +132,7 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
         QueryWrapper<OrganizationTag> organizationTagQueryWrapper = new QueryWrapper<>();
         organizationTagQueryWrapper.eq("organization_id",organizationId);
         organizationTagQueryWrapper.eq("is_company",1);
+        organizationTagQueryWrapper.orderByAsc("seq");
         List<OrganizationTag> list = organizationTagService.list(organizationTagQueryWrapper);
         if(list.size()>0){
             ArrayList<OrganizationTagBO> organizationTagBOS = new ArrayList<>();

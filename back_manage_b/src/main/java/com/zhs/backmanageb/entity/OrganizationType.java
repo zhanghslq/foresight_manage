@@ -48,6 +48,9 @@ public class OrganizationType implements Serializable {
     @ApiModelProperty(value = "是否需要关联地区，0否，1是")
     private Integer hasLocation;
 
+    @ApiModelProperty(value = "排序")
+    private Integer seq;
+
 
     @JsonIgnore
     @ApiModelProperty(value = "删除标志")

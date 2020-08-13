@@ -32,6 +32,9 @@ public class OrganizationTypeBO {
     @ApiModelProperty(value = "地区名称")
     private String areaName;
 
+    @ApiModelProperty("排序")
+    private Integer seq;
+
     private List<OrganizationTypeBO> children;
 
     private Long parentId;

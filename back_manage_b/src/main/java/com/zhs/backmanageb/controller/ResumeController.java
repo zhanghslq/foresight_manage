@@ -80,6 +80,8 @@ public class ResumeController {
         } catch (NumberFormatException e) {
             resume.setAdminId(0L);
         }
+        // 前台添加的默认1以确认
+        resume.setIsConfirm(1);
         boolean save = resumeService.save(resume);
         List<ExperienceRecord> experienceRecordList = resumeDTO.getExperienceRecordList();
         if(!Objects.isNull(experienceRecordList)&&experienceRecordList.size()>0){

@@ -11,11 +11,7 @@ import com.zhs.backmanageb.service.ResumeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -47,6 +43,14 @@ public class ResumeRelationshipController {
     public Result<Boolean> addRelationShip(ResumeRelationship resumeRelationship){
         resumeRelationshipService.save(resumeRelationship);
 
+        return Result.success(true);
+    }
+
+    @PostMapping("add_batch/relation_ship")
+    @ApiOperation(value = "批量添加特殊关联",tags = "新增")
+    @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
+    public Result<Boolean> addBatchRelationShip(@RequestBody List<ResumeRelationship> resumeRelationshipList){
+        resumeRelationshipService.saveBatch(resumeRelationshipList);
         return Result.success(true);
     }
 

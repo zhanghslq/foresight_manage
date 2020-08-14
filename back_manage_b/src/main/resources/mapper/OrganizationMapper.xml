@@ -7,6 +7,6 @@
         <association property="parent" javaType="com.zhs.backmanageb.model.bo.OrganizationHasParentBO" column="parent_id" select="listParentById"/>
     </resultMap>
     <select id="listParentById" resultMap="baseMap">
-        select id,name,parent_id from organization_type where id=#{organizationId,jdbcType=BIGINT}
+        select id,name,parent_id from organization where id=#{organizationId,jdbcType=BIGINT}
     </select>
 </mapper>

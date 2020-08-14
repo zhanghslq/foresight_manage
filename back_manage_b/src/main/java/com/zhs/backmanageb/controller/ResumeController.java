@@ -5,6 +5,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
@@ -190,6 +191,14 @@ public class ResumeController {
     public Result<List<InputStatisticsVO>> expertInputStatistics(){
         List<InputStatisticsVO> inputStatisticsVO = resumeService.expertInputStatistics();
         return Result.success(inputStatisticsVO);
+    }
+    @PostMapping("confirm")
+    @ApiOperation("确认简历")
+    public Result<Boolean> confirm(@RequestParam Long resumeId){
+        Resume resume = new Resume();
+        resume.setId(resumeId);
+        resume.setIsConfirm(1);
+        return Result.success(resumeService.updateById(resume));
     }
 
 }

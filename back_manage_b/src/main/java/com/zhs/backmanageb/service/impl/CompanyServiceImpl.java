@@ -143,7 +143,7 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
         QueryWrapper<OrganizationTag> organizationTagQueryWrapper = new QueryWrapper<>();
         organizationTagQueryWrapper.eq("organization_id",organizationId);
         organizationTagQueryWrapper.eq("is_company",1);
-        organizationTagQueryWrapper.orderByAsc("seq");
+
         List<OrganizationTag> list = organizationTagService.list(organizationTagQueryWrapper);
         if(list.size()>0){
             ArrayList<OrganizationTagBO> organizationTagBOS = new ArrayList<>();
@@ -171,7 +171,7 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
         QueryWrapper<OrganizationModule> organizationModuleQueryWrapper = new QueryWrapper<>();
         organizationModuleQueryWrapper.eq("organization_id",organizationId);
         organizationModuleQueryWrapper.eq("is_company",1);
-
+        organizationModuleQueryWrapper.orderByAsc("seq");
         List<OrganizationModule> organizationModuleList = organizationModuleService.list(organizationModuleQueryWrapper);
         List<CompanyModuleBO> companyModuleBOS = new ArrayList<>();
         for (OrganizationModule organizationModule : organizationModuleList) {

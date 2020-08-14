@@ -2,6 +2,7 @@ package com.zhs.backmanageb.service;
 
 import com.zhs.backmanageb.entity.Company;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zhs.backmanageb.model.bo.OrganizationHasParentBO;
 import com.zhs.backmanageb.model.bo.OrganizationTagBO;
 import com.zhs.backmanageb.model.vo.CompanyVO;
 
@@ -22,6 +23,8 @@ public interface CompanyService extends IService<Company> {
     CompanyVO queryByParentId(Long id);
 
     void dealTags(Long id, List<OrganizationTagBO> tags);
+
+    OrganizationHasParentBO listParentById(Long organizationId);
 
 
 }

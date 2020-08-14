@@ -7,6 +7,7 @@ import com.zhs.backmanageb.common.constant.RootTypeEnum;
 import com.zhs.backmanageb.entity.*;
 import com.zhs.backmanageb.mapper.CompanyMapper;
 import com.zhs.backmanageb.model.bo.CompanyModuleBO;
+import com.zhs.backmanageb.model.bo.OrganizationHasParentBO;
 import com.zhs.backmanageb.model.bo.OrganizationTagBO;
 import com.zhs.backmanageb.model.vo.CompanyVO;
 import com.zhs.backmanageb.service.*;
@@ -44,6 +45,9 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
 
     @Autowired
     private ModuleContactsService moduleContactsService;
+
+    @Autowired
+    private CompanyMapper companyMapper;
 
 
     @Override
@@ -114,6 +118,13 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
             organizationTagArrayList.add(organizationTag);
         }
         organizationTagService.saveOrUpdateBatch(organizationTagArrayList);
+    }
+
+    @Override
+    public OrganizationHasParentBO listParentById(Long organizationId) {
+        OrganizationHasParentBO organizationHasParentBO = companyMapper.listParentById(organizationId);
+
+        return organizationHasParentBO;
     }
 
     private void getContactAndLeader(CompanyVO companyVO, Long organizationId) {

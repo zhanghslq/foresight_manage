@@ -2,6 +2,8 @@ package com.zhs.backmanageb.mapper;
 
 import com.zhs.backmanageb.entity.Organization;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zhs.backmanageb.model.bo.OrganizationHasParentBO;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface OrganizationMapper extends BaseMapper<Organization> {
 
+    OrganizationHasParentBO listParentById(@Param("organizationId") Long organizationId);
 }

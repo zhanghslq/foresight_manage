@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.backmanageb.common.constant.ModuleTypeEnum;
 import com.zhs.backmanageb.entity.*;
 import com.zhs.backmanageb.mapper.OrganizationMapper;
+import com.zhs.backmanageb.model.bo.OrganizationHasParentBO;
 import com.zhs.backmanageb.model.bo.OrganizationModuleBO;
 import com.zhs.backmanageb.model.bo.OrganizationTagBO;
 import com.zhs.backmanageb.model.vo.OrganizationVO;
@@ -45,6 +46,9 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
     @Autowired
     private ModuleContactsService moduleContactsService;
+
+    @Autowired
+    private OrganizationMapper organizationMapper;
 
     @Override
     public OrganizationVO queryByOrganizationType(Long organizationTypeId, Long areaId) {
@@ -114,6 +118,13 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             organizationTagArrayList.add(organizationTag);
         }
         organizationTagService.saveOrUpdateBatch(organizationTagArrayList);
+    }
+
+    @Override
+    public OrganizationHasParentBO listParentById(Long organizationId) {
+        OrganizationHasParentBO organizationHasParentBO = organizationMapper.listParentById(organizationId);
+
+        return organizationHasParentBO;
     }
 
     private void getContactAndLeader(OrganizationVO organizationVO, Long organizationId) {

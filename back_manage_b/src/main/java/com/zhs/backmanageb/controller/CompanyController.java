@@ -5,6 +5,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Company;
 import com.zhs.backmanageb.entity.OrganizationTag;
+import com.zhs.backmanageb.model.bo.OrganizationHasParentBO;
 import com.zhs.backmanageb.model.bo.OrganizationTagBO;
 import com.zhs.backmanageb.model.dto.CompanyDTO;
 import com.zhs.backmanageb.model.vo.CompanyVO;
@@ -101,6 +102,13 @@ public class CompanyController {
     public Result<CompanyVO> queryById(@RequestParam Long id){
         CompanyVO companyVO = companyService.queryByParentId(id);
         return Result.success(companyVO);
+    }
+
+    @ApiOperation(value = "根据组织id查所有父类",tags = "查询")
+    @PostMapping("list_parent/by_organization_id")
+    public Result<OrganizationHasParentBO> listParentById(@RequestParam Long organizationId){
+        OrganizationHasParentBO organizationHasParentBO = companyService.listParentById(organizationId);
+        return Result.success(organizationHasParentBO);
     }
 
 }

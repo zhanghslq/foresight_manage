@@ -193,7 +193,7 @@ public class ResumeController {
         return Result.success(inputStatisticsVO);
     }
     @PostMapping("confirm")
-    @ApiOperation("确认简历")
+    @ApiOperation(value = "确认简历",tags = "修改")
     public Result<Boolean> confirm(@RequestParam Long resumeId){
         Resume resume = new Resume();
         resume.setId(resumeId);

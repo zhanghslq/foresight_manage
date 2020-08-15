@@ -207,6 +207,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             resume.setAreaName(resumeConvertDTO.getBirthplace());
             resume.setNationName(resumeConvertDTO.getNation());
             resume.setPartiesName(resumeConvertDTO.getParties());
+            resume.setWordUrl(filename);
             save(resume);
             Object o1 = jsonArray.get(1);
             List<ExpierenceRecordConvertDTO> expierenceRecordConvertDTOS = JSONArray.parseArray(o1.toString(), ExpierenceRecordConvertDTO.class);
@@ -221,7 +222,9 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                 experienceRecord.setCompanyName(expierenceRecordConvertDTO.getPosition());
                 experienceRecords.add(experienceRecord);
             }
-            experienceRecordService.saveBatch(experienceRecords);
+            if(experienceRecords.size()>0){
+                experienceRecordService.saveBatch(experienceRecords);
+            }
             resumeDTO.setExperienceRecordList(experienceRecords);
             resumeDTO.setResume(resume);
 

@@ -1,11 +1,8 @@
 package com.zhs.backmanageb.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -48,6 +45,7 @@ public class ExperienceRecord implements Serializable {
     @ApiModelProperty(value = "开始时间的字符串形式")
     private String beginDateString;
 
+    @TableField(updateStrategy = FieldStrategy.IGNORED)
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @ApiModelProperty(value = "结束时间")
     private Date endDate;

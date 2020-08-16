@@ -21,7 +21,7 @@ public interface ResumeService extends IService<Resume> {
 
     Page<ResumeVO> pageSelf(Resume resume, Page<Resume> resumePage);
 
-    ResumeDTO dealWord(String filename);
+    ResumeDTO dealWord(String filename, Long currentStatusId);
 
     List<InputStatisticsVO> expertInputStatistics();
 

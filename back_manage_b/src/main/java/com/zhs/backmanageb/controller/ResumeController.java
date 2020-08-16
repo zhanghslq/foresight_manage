@@ -176,11 +176,14 @@ public class ResumeController {
     }
 
 
-    @ApiOperation(value = "简历文件获取简历内容",tags = "查询")
+    @ApiOperation(value = "简历文件获取简历内容",tags = "新增")
     @PostMapping("get/text")
-    @ApiImplicitParam(name = "filename",value = "上传简历文件得到的文件名",required = true)
-    public Result<ResumeDTO> getText(@RequestParam String filename){
-        ResumeDTO resumeDTO = resumeService.dealWord(filename);
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "filename",value = "上传简历文件得到的文件名",required = true),
+            @ApiImplicitParam(name = "currentStatusId",value = "状态id，来源与系统配置",required = true)
+    })
+    public Result<ResumeDTO> getText(@RequestParam String filename,@RequestParam Long currentStatusId){
+        ResumeDTO resumeDTO = resumeService.dealWord(filename,currentStatusId);
         return Result.success(resumeDTO);
 
     }

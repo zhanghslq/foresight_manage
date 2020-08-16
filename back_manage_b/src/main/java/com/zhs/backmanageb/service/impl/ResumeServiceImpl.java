@@ -31,6 +31,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
@@ -142,7 +143,9 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
     }
 
     @Override
-    public ResumeDTO dealWord(String filename) {
+    public ResumeDTO dealWord(String filename, Long currentStatusId) {
+        CommonData byId = commonDataService.getById(currentStatusId);
+        Assert.notNull(byId,"状态不存在");
         ResumeDTO resumeDTO = new ResumeDTO();
 
         String text = AsposeWordUtil.getText(filename);
@@ -208,6 +211,8 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             resume.setNationName(resumeConvertDTO.getNation());
             resume.setPartiesName(resumeConvertDTO.getParties());
             resume.setWordUrl(filename);
+            resume.setCurrentStatusId(currentStatusId);
+            resume.setCurrentStatus(byId.getName());
             save(resume);
             Object o1 = jsonArray.get(1);
             List<ExpierenceRecordConvertDTO> expierenceRecordConvertDTOS = JSONArray.parseArray(o1.toString(), ExpierenceRecordConvertDTO.class);

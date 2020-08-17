@@ -12,6 +12,7 @@ import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
 import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.ExperienceRecord;
 import com.zhs.backmanageb.entity.Resume;
+import com.zhs.backmanageb.entity.ResumeCompany;
 import com.zhs.backmanageb.mapper.ResumeMapper;
 import com.zhs.backmanageb.model.bo.CommonCountBO;
 import com.zhs.backmanageb.model.dto.ExpierenceRecordConvertDTO;
@@ -21,6 +22,7 @@ import com.zhs.backmanageb.model.vo.InputStatisticsVO;
 import com.zhs.backmanageb.model.vo.ResumeVO;
 import com.zhs.backmanageb.service.CommonDataService;
 import com.zhs.backmanageb.service.ExperienceRecordService;
+import com.zhs.backmanageb.service.ResumeCompanyService;
 import com.zhs.backmanageb.service.ResumeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.backmanageb.util.AsposeWordUtil;
@@ -59,6 +61,9 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
 
     @Autowired
     private ResumeMapper resumeMapper;
+
+    @Autowired
+    private ResumeCompanyService resumeCompanyService;
 
     @Override
     public Page<ResumeVO> pageSelf(Resume resume, Page<Resume> resumePage) {
@@ -115,10 +120,19 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         // 工作时间
         Map<Long, Date> workMap = lastExperienceList.stream().collect(Collectors.toMap(ExperienceRecord::getResumeId, ExperienceRecord::getBeginDate));
         BeanUtil.copyProperties(page,resumeVOPage);
+
+        // 查一下对应的单位职务
+        QueryWrapper<ResumeCompany> resumeCompanyQueryWrapper = new QueryWrapper<>();
+        resumeCompanyQueryWrapper.in("resume_id",resumeIds);
+        List<ResumeCompany> resumeCompanyList = resumeCompanyService.list(resumeCompanyQueryWrapper);
+        Map<Long, List<ResumeCompany>> resumeCompanyMap = resumeCompanyList.stream().collect(Collectors.groupingBy(ResumeCompany::getResumeId));
+
+
         for (Resume record : records) {
             ResumeVO resumeVO = new ResumeVO();
             BeanUtil.copyProperties(record,resumeVO);
             // 然后把字段值填上
+            resumeVO.setResumeCompanyList(resumeCompanyMap.get(record.getId()));
             // 行政级别
             resumeVO.setLevelName(map.get(resumeVO.getLevelId()));
             Date birthday = record.getBirthday();
@@ -162,6 +176,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         ResponseEntity<String> entity = restTemplate.postForEntity("http://resume.carltrip.com/api/resume/index", request, String.class);
         //获取3方接口返回的数据通过entity.getBody();它返回的是一个字符串；
         String body = entity.getBody();
+        // todo 简历对应的单位和职务改为多个
         if(!StringUtils.isEmpty(body)){
             JSONArray jsonArray = JSONArray.parseArray(body);
             /*

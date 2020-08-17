@@ -2,6 +2,7 @@ package com.zhs.backmanageb.model.dto;
 
 import com.zhs.backmanageb.entity.ExperienceRecord;
 import com.zhs.backmanageb.entity.Resume;
+import com.zhs.backmanageb.entity.ResumeCompany;
 import lombok.Data;
 import org.aspectj.lang.annotation.DeclareAnnotation;
 
@@ -21,4 +22,7 @@ public class ResumeDTO {
      * 工作经历
      */
     private List<ExperienceRecord> experienceRecordList;
+
+
+    private List<ResumeCompany> resumeCompanyList;
 }

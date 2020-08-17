@@ -13,12 +13,14 @@ import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
 import com.zhs.backmanageb.entity.CommonData;
 import com.zhs.backmanageb.entity.ExperienceRecord;
 import com.zhs.backmanageb.entity.Resume;
+import com.zhs.backmanageb.entity.ResumeCompany;
 import com.zhs.backmanageb.model.dto.ResumeDTO;
 import com.zhs.backmanageb.model.dto.ResumeDetailDTO;
 import com.zhs.backmanageb.model.vo.InputStatisticsVO;
 import com.zhs.backmanageb.model.vo.ResumeVO;
 import com.zhs.backmanageb.service.CommonDataService;
 import com.zhs.backmanageb.service.ExperienceRecordService;
+import com.zhs.backmanageb.service.ResumeCompanyService;
 import com.zhs.backmanageb.service.ResumeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -52,6 +54,8 @@ public class ResumeController {
     private ExperienceRecordService experienceRecordService;
     @Autowired
     private CommonDataService commonDataService;
+    @Autowired
+    private ResumeCompanyService resumeCompanyService;
 
 
     @ApiOperation(value = "按照条件查询简历列表",tags = "查询")
@@ -91,6 +95,14 @@ public class ResumeController {
             }
             experienceRecordService.saveBatch(experienceRecordList);
         }
+        List<ResumeCompany> resumeCompanyList = resumeDTO.getResumeCompanyList();
+        if(!Objects.isNull(resumeCompanyList)&&resumeCompanyList.size()>0){
+            for (ResumeCompany resumeCompany : resumeCompanyList) {
+                resumeCompany.setResumeId(resume.getId());
+            }
+            resumeCompanyService.saveBatch(resumeCompanyList);
+        }
+
         return Result.success(save);
     }
 
@@ -107,6 +119,13 @@ public class ResumeController {
             }
             experienceRecordService.saveOrUpdateBatch(experienceRecordList);
         }
+        List<ResumeCompany> resumeCompanyList = resumeDTO.getResumeCompanyList();
+        if(!Objects.isNull(resumeCompanyList)&&resumeCompanyList.size()>0){
+            for (ResumeCompany resumeCompany : resumeCompanyList) {
+                resumeCompany.setResumeId(resume.getId());
+            }
+            resumeCompanyService.saveOrUpdateBatch(resumeCompanyList);
+        }
         return Result.success(save);
     }
     @PostMapping("queryById")
@@ -117,9 +136,14 @@ public class ResumeController {
         QueryWrapper<ExperienceRecord> experienceRecordQueryWrapper = new QueryWrapper<>();
         experienceRecordQueryWrapper.eq("resume_id",id);
         List<ExperienceRecord> experienceRecordList = experienceRecordService.list(experienceRecordQueryWrapper);
+
+        QueryWrapper<ResumeCompany> resumeCompanyQueryWrapper = new QueryWrapper<>();
+        resumeCompanyQueryWrapper.eq("resume_id",id);
+        List<ResumeCompany> resumeCompanyList = resumeCompanyService.list(resumeCompanyQueryWrapper);
         ResumeDTO resumeDTO = new ResumeDTO();
         resumeDTO.setResume(resume);
         resumeDTO.setExperienceRecordList(experienceRecordList);
+        resumeDTO.setResumeCompanyList(resumeCompanyList);
         return Result.success(resumeDTO);
     }
     @PostMapping("query_detail/by_Id")
@@ -163,7 +187,12 @@ public class ResumeController {
                 resumeVO.setCurrentStatus(byId.getName());
             }
         }
+        QueryWrapper<ResumeCompany> resumeCompanyQueryWrapper = new QueryWrapper<>();
+        resumeCompanyQueryWrapper.eq("resume_id",id);
+        List<ResumeCompany> resumeCompanyList = resumeCompanyService.list(resumeCompanyQueryWrapper);
+        resumeVO.setResumeCompanyList(resumeCompanyList);
         resumeDetailDTO.setResumeVO(resumeVO);
+
         resumeDetailDTO.setExperienceRecordList(experienceRecordList);
         return Result.success(resumeDetailDTO);
     }

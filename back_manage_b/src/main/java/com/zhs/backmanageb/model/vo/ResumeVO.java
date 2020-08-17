@@ -81,6 +81,9 @@ public class ResumeVO {
     @ApiModelProperty(value = "年龄")
     private Integer age;
 
+    @ApiModelProperty(value = "是否确认，默认0待确认，1已确认")
+    private Integer isConfirm;
+
 
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;

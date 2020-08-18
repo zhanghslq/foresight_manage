@@ -95,7 +95,7 @@ public class OrganizationModuleServiceImpl extends ServiceImpl<OrganizationModul
                 UpdateWrapper<ModuleContacts> moduleContactsUpdateWrapper = new UpdateWrapper<>();
                 moduleContactsUpdateWrapper.set("seq", organizationModuleSeqDTO.getSeq());
                 moduleContactsUpdateWrapper.eq("module_id",organizationModuleSeqDTO.getModuleId());
-                moduleContactsUpdateWrapper.eq("organization_id",organizationModuleSeqDTO.getId());
+                moduleContactsUpdateWrapper.eq("contact_id",organizationModuleSeqDTO.getId());
                 moduleContactsService.update(moduleContactsUpdateWrapper);
             }
         }else if(ModuleTypeEnum.COMPANY_CHILDREN.getId().equals(type)){

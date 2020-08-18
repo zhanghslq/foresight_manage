@@ -7,6 +7,7 @@ import com.zhs.backmanageb.common.constant.RootTypeEnum;
 import com.zhs.backmanageb.entity.*;
 import com.zhs.backmanageb.mapper.CompanyMapper;
 import com.zhs.backmanageb.model.bo.CompanyModuleBO;
+import com.zhs.backmanageb.model.bo.ContactsBO;
 import com.zhs.backmanageb.model.bo.OrganizationHasParentBO;
 import com.zhs.backmanageb.model.bo.OrganizationTagBO;
 import com.zhs.backmanageb.model.vo.CompanyVO;
@@ -194,6 +195,7 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
                 List<ModuleContacts> moduleContactsList = moduleContactsService.list(moduleContactsQueryWrapper);
                 // 根据模块联系人查
                 List<Contacts> contactsArrayList = new ArrayList<>();
+                ArrayList<ContactsBO> contactsBOS = new ArrayList<>();
                 if(moduleContactsList.size()>0){
                     Map<Long, Integer> map = moduleContactsList.stream().collect(Collectors.toMap(ModuleContacts::getContactId, ModuleContacts::getSeq));
                     // 查contact集合
@@ -210,9 +212,14 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
                         }
                         return integer.compareTo(integerY);
                     })).collect(Collectors.toList());
-
+                    for (Contacts contact : contactsArrayList) {
+                        ContactsBO contactsBO = new ContactsBO();
+                        BeanUtil.copyProperties(contact,contactsBO);
+                        contactsBO.setSeq(map.get(contact.getId()));
+                        contactsBOS.add(contactsBO);
+                    }
                 }
-                companyModuleBO.setContacts(contactsArrayList);
+                companyModuleBO.setContacts(contactsBOS);
             }else if(ModuleTypeEnum.COMPANY_CHILDREN.getId().equals(organizationModule.getType())){
                 companyModuleBO.setType(ModuleTypeEnum.COMPANY_CHILDREN.getId());
                 List<Company> companies = companyMap.get(organizationModule.getId());

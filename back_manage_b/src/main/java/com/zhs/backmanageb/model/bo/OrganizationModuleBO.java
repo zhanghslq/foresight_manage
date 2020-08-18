@@ -41,7 +41,7 @@ public class OrganizationModuleBO {
     /**
      * 联系人
      */
-    private List<Contacts> contacts;
+    private List<ContactsBO> contacts;
 
     /**
      * 组织机构本身

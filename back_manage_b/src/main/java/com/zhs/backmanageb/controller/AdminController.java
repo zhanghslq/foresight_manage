@@ -82,8 +82,8 @@ public class AdminController {
 
     @PostMapping("updatePassword")
     @ApiOperation(value = "修改密码",tags = "修改")
-    public Result<Boolean> updatePassword(@RequestParam Long adminId,@RequestParam String oldPassword,@RequestParam String password){
-        adminService.updatePassword(adminId,oldPassword,password);
+    public Result<Boolean> updatePassword(@RequestParam Long adminId,@RequestParam String password){
+        adminService.updatePassword(adminId,password);
         return Result.success(true);
     }
     @PostMapping("freezeUser")

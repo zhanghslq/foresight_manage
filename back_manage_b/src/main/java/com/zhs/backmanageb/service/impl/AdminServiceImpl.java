@@ -219,16 +219,13 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     }
 
     @Override
-    public void updatePassword(Long adminId, String oldPassword, String password) {
+    public void updatePassword(Long adminId,  String password) {
         Admin byId = getById(adminId);
         if(Objects.isNull(byId)){
             throw new MyException("用户不存在");
         }
         String salt = byId.getSalt();
-        String oldPass = SecureUtil.md5(oldPassword + salt);
-        if(!oldPass.equals(byId.getPassword())){
-            throw new MyException("原密码输入错误，修改失败");
-        }
+
         String newPassword = SecureUtil.md5(password + salt);
         byId.setPassword(newPassword);
         updateById(byId);

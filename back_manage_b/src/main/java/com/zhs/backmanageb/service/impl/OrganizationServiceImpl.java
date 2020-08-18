@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.backmanageb.common.constant.ModuleTypeEnum;
 import com.zhs.backmanageb.entity.*;
 import com.zhs.backmanageb.mapper.OrganizationMapper;
+import com.zhs.backmanageb.model.bo.ContactsBO;
 import com.zhs.backmanageb.model.bo.OrganizationHasParentBO;
 import com.zhs.backmanageb.model.bo.OrganizationModuleBO;
 import com.zhs.backmanageb.model.bo.OrganizationTagBO;
@@ -203,7 +204,8 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
                 moduleContactsQueryWrapper.eq("module_id",organizationModule.getId());
                 List<ModuleContacts> moduleContactsList = moduleContactsService.list(moduleContactsQueryWrapper);
                 // 根据模块联系人查
-                List<Contacts> contactsArrayList = new ArrayList<>();
+                List<Contacts> contactsArrayList;
+                ArrayList<ContactsBO> contactsBOS = new ArrayList<>();
                 if(moduleContactsList.size()>0){
                     Map<Long, Integer> map = moduleContactsList.stream().collect(Collectors.toMap(ModuleContacts::getContactId, ModuleContacts::getSeq,(k1,k2)->k1));
                     // 查contact集合
@@ -220,9 +222,15 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
                         }
                         return integer.compareTo(integerY);
                     })).collect(Collectors.toList());
-
+                    for (Contacts contact : contactsArrayList) {
+                        ContactsBO contactsBO = new ContactsBO();
+                        BeanUtil.copyProperties(contact,contactsBO);
+                        contactsBO.setSeq(map.get(contact.getId()));
+                        contactsBOS.add(contactsBO);
+                    }
                 }
-                organizationModuleBO.setContacts(contactsArrayList);
+
+                organizationModuleBO.setContacts(contactsBOS);
             }
             organizationModuleBOS.add(organizationModuleBO);
         }

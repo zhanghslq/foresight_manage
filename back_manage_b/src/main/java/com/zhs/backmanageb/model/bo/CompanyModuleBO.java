@@ -41,6 +41,6 @@ public class CompanyModuleBO {
     /**
      * 联系人
      */
-    private List<Contacts> contacts;
+    private List<ContactsBO> contacts;
 
 }

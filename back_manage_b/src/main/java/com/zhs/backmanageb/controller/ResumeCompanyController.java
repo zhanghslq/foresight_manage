@@ -1,9 +1,17 @@
 package com.zhs.backmanageb.controller;
 
 
+import com.zhs.backmanageb.common.Result;
+import com.zhs.backmanageb.service.ResumeCompanyService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -15,7 +23,16 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/resumeCompany")
+@Api(tags = "简历关联当前单位")
 public class ResumeCompanyController {
 
+    @Resource
+    private ResumeCompanyService resumeCompanyService;
+
+    @ApiOperation(value = "删除简历关联当前单位",tags = "删除")
+    @PostMapping("delete")
+    public Result<Boolean> delete(@RequestParam Long id){
+        return Result.success(resumeCompanyService.removeById(id));
+    }
 }
 

@@ -62,6 +62,9 @@ public class ResumeVO {
     @ApiModelProperty("简历对应的单位职务列表")
     private List<ResumeCompany> resumeCompanyList;
 
+    @ApiModelProperty("简历对应的政治身份职务列表")
+    private List<ResumeCompany> politicsResumeCompanyList;
+
     @ApiModelProperty(value = "照片")
     private String photoUrl;
 

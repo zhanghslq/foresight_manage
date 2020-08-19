@@ -25,4 +25,11 @@ public class ResumeDTO {
 
 
     private List<ResumeCompany> resumeCompanyList;
+
+    /**
+     * 政治身份的单位职务
+     */
+    private List<ResumeCompany> politicsResumeCompanyList;
+
+
 }

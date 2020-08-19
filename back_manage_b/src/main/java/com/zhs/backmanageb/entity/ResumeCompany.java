@@ -42,6 +42,9 @@ public class ResumeCompany implements Serializable {
     @ApiModelProperty(value = "职务")
     private String job;
 
+    @ApiModelProperty(value = "是否是政治身份，0不是，1是")
+    private Integer isPolitics;
+
     @JsonIgnore
     @ApiModelProperty(value = "删除标志，0默认，1删除")
     @TableLogic

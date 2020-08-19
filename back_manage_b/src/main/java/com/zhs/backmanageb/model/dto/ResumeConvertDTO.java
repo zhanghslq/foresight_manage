@@ -36,12 +36,19 @@ public class ResumeConvertDTO {
     private String parties;
     private String level;
     private String company;
+    /**
+     * 这里是当前职务，这里也是多个
+     */
     private String position;
     private String positionDate;
     private String birthday;
     private Integer age;
     private String birthplace;
     private String workStatus;
+    /**
+     * 政治身份职务变成多个
+     */
+    private String politics;
     private String politicsCompany;
     private String politicsPosition;
     private String photo;

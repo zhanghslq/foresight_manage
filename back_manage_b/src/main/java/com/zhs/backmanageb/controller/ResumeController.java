@@ -99,8 +99,18 @@ public class ResumeController {
         if(!Objects.isNull(resumeCompanyList)&&resumeCompanyList.size()>0){
             for (ResumeCompany resumeCompany : resumeCompanyList) {
                 resumeCompany.setResumeId(resume.getId());
+                resumeCompany.setIsPolitics(0);
             }
             resumeCompanyService.saveBatch(resumeCompanyList);
+        }
+        List<ResumeCompany> politicsResumeCompanyList = resumeDTO.getPoliticsResumeCompanyList();
+
+        if(!Objects.isNull(politicsResumeCompanyList)&&politicsResumeCompanyList.size()>0){
+            for (ResumeCompany resumeCompany : politicsResumeCompanyList) {
+                resumeCompany.setResumeId(resume.getId());
+                resumeCompany.setIsPolitics(1);
+            }
+            resumeCompanyService.saveBatch(politicsResumeCompanyList);
         }
 
         return Result.success(save);
@@ -123,9 +133,20 @@ public class ResumeController {
         if(!Objects.isNull(resumeCompanyList)&&resumeCompanyList.size()>0){
             for (ResumeCompany resumeCompany : resumeCompanyList) {
                 resumeCompany.setResumeId(resume.getId());
+                resumeCompany.setIsPolitics(0);
             }
             resumeCompanyService.saveOrUpdateBatch(resumeCompanyList);
         }
+
+        List<ResumeCompany> politicsResumeCompanyList = resumeDTO.getPoliticsResumeCompanyList();
+        if(!Objects.isNull(politicsResumeCompanyList)&&politicsResumeCompanyList.size()>0){
+            for (ResumeCompany resumeCompany : politicsResumeCompanyList) {
+                resumeCompany.setResumeId(resume.getId());
+                resumeCompany.setIsPolitics(1);
+            }
+            resumeCompanyService.saveOrUpdateBatch(politicsResumeCompanyList);
+        }
+
         return Result.success(save);
     }
     @PostMapping("queryById")
@@ -139,11 +160,16 @@ public class ResumeController {
 
         QueryWrapper<ResumeCompany> resumeCompanyQueryWrapper = new QueryWrapper<>();
         resumeCompanyQueryWrapper.eq("resume_id",id);
+        resumeCompanyQueryWrapper.eq("is_politics",0);
         List<ResumeCompany> resumeCompanyList = resumeCompanyService.list(resumeCompanyQueryWrapper);
         ResumeDTO resumeDTO = new ResumeDTO();
         resumeDTO.setResume(resume);
         resumeDTO.setExperienceRecordList(experienceRecordList);
         resumeDTO.setResumeCompanyList(resumeCompanyList);
+
+        resumeCompanyQueryWrapper.eq("is_politics",1);
+        List<ResumeCompany> politicsResumeCompanyList = resumeCompanyService.list(resumeCompanyQueryWrapper);
+        resumeDTO.setPoliticsResumeCompanyList(politicsResumeCompanyList);
         return Result.success(resumeDTO);
     }
     @PostMapping("query_detail/by_Id")
@@ -189,8 +215,14 @@ public class ResumeController {
         }
         QueryWrapper<ResumeCompany> resumeCompanyQueryWrapper = new QueryWrapper<>();
         resumeCompanyQueryWrapper.eq("resume_id",id);
+        resumeCompanyQueryWrapper.eq("is_politics",0);
         List<ResumeCompany> resumeCompanyList = resumeCompanyService.list(resumeCompanyQueryWrapper);
         resumeVO.setResumeCompanyList(resumeCompanyList);
+
+        resumeCompanyQueryWrapper.eq("is_politics",1);
+        List<ResumeCompany> politicsResumeCompanyList = resumeCompanyService.list(resumeCompanyQueryWrapper);
+        resumeVO.setPoliticsResumeCompanyList(politicsResumeCompanyList);
+
         resumeDetailDTO.setResumeVO(resumeVO);
 
         resumeDetailDTO.setExperienceRecordList(experienceRecordList);

@@ -105,6 +105,9 @@ public class Resume implements Serializable {
     @ApiModelProperty(value = "文件url标志")
     private String wordUrl;
 
+    @ApiModelProperty(value = "word解析出来的内容")
+    private String wordContent;
+
     @ApiModelProperty(value = "是否确认，默认0待确认，1已确认")
     private Integer isConfirm;
 

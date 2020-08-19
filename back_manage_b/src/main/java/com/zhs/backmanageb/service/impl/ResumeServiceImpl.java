@@ -15,6 +15,7 @@ import com.zhs.backmanageb.entity.Resume;
 import com.zhs.backmanageb.entity.ResumeCompany;
 import com.zhs.backmanageb.mapper.ResumeMapper;
 import com.zhs.backmanageb.model.bo.CommonCountBO;
+import com.zhs.backmanageb.model.bo.OrganizationConvertBO;
 import com.zhs.backmanageb.model.dto.ExpierenceRecordConvertDTO;
 import com.zhs.backmanageb.model.dto.ResumeConvertDTO;
 import com.zhs.backmanageb.model.dto.ResumeDTO;
@@ -124,8 +125,14 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         // 查一下对应的单位职务
         QueryWrapper<ResumeCompany> resumeCompanyQueryWrapper = new QueryWrapper<>();
         resumeCompanyQueryWrapper.in("resume_id",resumeIds);
+        resumeCompanyQueryWrapper.eq("is_politics",0);
         List<ResumeCompany> resumeCompanyList = resumeCompanyService.list(resumeCompanyQueryWrapper);
         Map<Long, List<ResumeCompany>> resumeCompanyMap = resumeCompanyList.stream().collect(Collectors.groupingBy(ResumeCompany::getResumeId));
+
+
+        resumeCompanyQueryWrapper.eq("is_politics",1);
+        List<ResumeCompany> politicsResumeCompanyList = resumeCompanyService.list(resumeCompanyQueryWrapper);
+        Map<Long, List<ResumeCompany>> politicsResumeCompanyMap = politicsResumeCompanyList.stream().collect(Collectors.groupingBy(ResumeCompany::getResumeId));
 
 
         for (Resume record : records) {
@@ -133,6 +140,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             BeanUtil.copyProperties(record,resumeVO);
             // 然后把字段值填上
             resumeVO.setResumeCompanyList(resumeCompanyMap.get(record.getId()));
+            resumeVO.setPoliticsResumeCompanyList(politicsResumeCompanyMap.get(record.getId()));
             // 行政级别
             resumeVO.setLevelName(map.get(resumeVO.getLevelId()));
             Date birthday = record.getBirthday();
@@ -220,6 +228,9 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             resume.setJob(resumeConvertDTO.getPosition());
             resume.setOrganization(resumeConvertDTO.getPoliticsCompany());
             resume.setOrganizationJob(resumeConvertDTO.getPoliticsPosition());
+
+
+
             resume.setCompany(resumeConvertDTO.getCompany());
             resume.setJob(resumeConvertDTO.getPosition());
             resume.setAreaName(resumeConvertDTO.getBirthplace());
@@ -228,7 +239,41 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             resume.setWordUrl(filename);
             resume.setCurrentStatusId(currentStatusId);
             resume.setCurrentStatus(byId.getName());
+            resume.setWordContent(jsonArray.get(2).toString());
             save(resume);
+
+            String position = resumeConvertDTO.getPosition();
+            // 当前职务
+            List<OrganizationConvertBO> organizationConvertBOS = JSONArray.parseArray(position, OrganizationConvertBO.class);
+            if(organizationConvertBOS.size()>0){
+                List<ResumeCompany> resumeCompanies = new ArrayList<>();
+                for (OrganizationConvertBO organizationConvertBO : organizationConvertBOS) {
+                    ResumeCompany resumeCompany = new ResumeCompany();
+                    resumeCompany.setCompany(organizationConvertBO.getOrganization());
+                    resumeCompany.setResumeId(resume.getId());
+                    resumeCompany.setJob(organizationConvertBO.getJob());
+                    resumeCompany.setIsPolitics(0);
+                    resumeCompanies.add(resumeCompany);
+                }
+                resumeCompanyService.saveBatch(resumeCompanies);
+            }
+            String politics = resumeConvertDTO.getPolitics();
+            // 政治身份
+            List<OrganizationConvertBO> politicsList = JSONArray.parseArray(politics, OrganizationConvertBO.class);
+            if(politicsList.size()>0){
+                List<ResumeCompany> politicsResumeCompanies = new ArrayList<>();
+                for (OrganizationConvertBO organizationConvertBO : politicsList) {
+                    ResumeCompany resumeCompany = new ResumeCompany();
+                    resumeCompany.setCompany(organizationConvertBO.getOrganization());
+                    resumeCompany.setResumeId(resume.getId());
+                    resumeCompany.setJob(organizationConvertBO.getJob());
+                    resumeCompany.setIsPolitics(1);
+                    politicsResumeCompanies.add(resumeCompany);
+                }
+                resumeCompanyService.saveBatch(politicsResumeCompanies);
+            }
+
+
             Object o1 = jsonArray.get(1);
             List<ExpierenceRecordConvertDTO> expierenceRecordConvertDTOS = JSONArray.parseArray(o1.toString(), ExpierenceRecordConvertDTO.class);
             ArrayList<ExperienceRecord> experienceRecords = new ArrayList<>();

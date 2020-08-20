@@ -10,5 +10,5 @@ import org.aspectj.lang.annotation.DeclareAnnotation;
 @Data
 public class OrganizationConvertBO {
     private String organization;
-    private String job;
+    private String position;
 }

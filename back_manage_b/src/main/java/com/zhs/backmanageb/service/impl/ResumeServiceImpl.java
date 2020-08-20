@@ -251,7 +251,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                     ResumeCompany resumeCompany = new ResumeCompany();
                     resumeCompany.setCompany(organizationConvertBO.getOrganization());
                     resumeCompany.setResumeId(resume.getId());
-                    resumeCompany.setJob(organizationConvertBO.getJob());
+                    resumeCompany.setJob(organizationConvertBO.getPosition());
                     resumeCompany.setIsPolitics(0);
                     resumeCompanies.add(resumeCompany);
                 }
@@ -266,7 +266,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                     ResumeCompany resumeCompany = new ResumeCompany();
                     resumeCompany.setCompany(organizationConvertBO.getOrganization());
                     resumeCompany.setResumeId(resume.getId());
-                    resumeCompany.setJob(organizationConvertBO.getJob());
+                    resumeCompany.setJob(organizationConvertBO.getPosition());
                     resumeCompany.setIsPolitics(1);
                     politicsResumeCompanies.add(resumeCompany);
                 }

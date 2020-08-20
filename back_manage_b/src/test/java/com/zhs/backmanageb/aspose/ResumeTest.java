@@ -28,7 +28,7 @@ import java.util.Map;
 public class ResumeTest {
     @Test
     public void test() throws Exception {
-        Document nodes = new Document("D:\\蔡奇.docx");
+        Document nodes = new Document("D:\\王沪宁.docx");
 
         String text = nodes.getText();
         log.info(text);

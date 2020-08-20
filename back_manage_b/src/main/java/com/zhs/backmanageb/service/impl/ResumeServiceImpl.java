@@ -130,8 +130,10 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         Map<Long, List<ResumeCompany>> resumeCompanyMap = resumeCompanyList.stream().collect(Collectors.groupingBy(ResumeCompany::getResumeId));
 
 
-        resumeCompanyQueryWrapper.eq("is_politics",1);
-        List<ResumeCompany> politicsResumeCompanyList = resumeCompanyService.list(resumeCompanyQueryWrapper);
+        QueryWrapper<ResumeCompany> politicsResumeCompanyQueryWrapper = new QueryWrapper<>();
+        politicsResumeCompanyQueryWrapper.in("resume_id",resumeIds);
+        politicsResumeCompanyQueryWrapper.eq("is_politics",1);
+        List<ResumeCompany> politicsResumeCompanyList = resumeCompanyService.list(politicsResumeCompanyQueryWrapper);
         Map<Long, List<ResumeCompany>> politicsResumeCompanyMap = politicsResumeCompanyList.stream().collect(Collectors.groupingBy(ResumeCompany::getResumeId));
 
 

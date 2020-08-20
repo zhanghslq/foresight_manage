@@ -167,8 +167,10 @@ public class ResumeController {
         resumeDTO.setExperienceRecordList(experienceRecordList);
         resumeDTO.setResumeCompanyList(resumeCompanyList);
 
-        resumeCompanyQueryWrapper.eq("is_politics",1);
-        List<ResumeCompany> politicsResumeCompanyList = resumeCompanyService.list(resumeCompanyQueryWrapper);
+        QueryWrapper<ResumeCompany> politicsResumeCompanyQueryWrapper = new QueryWrapper<>();
+        politicsResumeCompanyQueryWrapper.eq("resume_id",id);
+        politicsResumeCompanyQueryWrapper.eq("is_politics",1);
+        List<ResumeCompany> politicsResumeCompanyList = resumeCompanyService.list(politicsResumeCompanyQueryWrapper);
         resumeDTO.setPoliticsResumeCompanyList(politicsResumeCompanyList);
         return Result.success(resumeDTO);
     }
@@ -219,8 +221,10 @@ public class ResumeController {
         List<ResumeCompany> resumeCompanyList = resumeCompanyService.list(resumeCompanyQueryWrapper);
         resumeVO.setResumeCompanyList(resumeCompanyList);
 
-        resumeCompanyQueryWrapper.eq("is_politics",1);
-        List<ResumeCompany> politicsResumeCompanyList = resumeCompanyService.list(resumeCompanyQueryWrapper);
+        QueryWrapper<ResumeCompany> politicsResumeCompanyQueryWrapper = new QueryWrapper<>();
+        politicsResumeCompanyQueryWrapper.eq("resume_id",id);
+        politicsResumeCompanyQueryWrapper.eq("is_politics",1);
+        List<ResumeCompany> politicsResumeCompanyList = resumeCompanyService.list(politicsResumeCompanyQueryWrapper);
         resumeVO.setPoliticsResumeCompanyList(politicsResumeCompanyList);
 
         resumeDetailDTO.setResumeVO(resumeVO);

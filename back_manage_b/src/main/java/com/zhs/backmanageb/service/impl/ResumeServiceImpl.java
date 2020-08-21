@@ -225,6 +225,9 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             resume.setSexName(sex);
             String birthday = resumeConvertDTO.getBirthday();
             Date date = Convert.toDate(birthday);
+            if(Objects.isNull(date)){
+                date=Convert.toDate(birthday+"-01");
+            }
             resume.setBirthday(date);
             resume.setBirthdayString(birthday);
             resume.setJob(resumeConvertDTO.getPosition());
@@ -299,9 +302,17 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             for (ExpierenceRecordConvertDTO expierenceRecordConvertDTO : expierenceRecordConvertDTOS) {
                 ExperienceRecord experienceRecord = new ExperienceRecord();
                 experienceRecord.setResumeId(resume.getId());
-                experienceRecord.setBeginDate(Convert.toDate(expierenceRecordConvertDTO.getStartDate()));
+                Date beginDate = Convert.toDate(expierenceRecordConvertDTO.getStartDate());
+                if(Objects.isNull(beginDate)){
+                    beginDate=Convert.toDate(expierenceRecordConvertDTO.getStartDate()+"-01");
+                }
+                experienceRecord.setBeginDate(beginDate);
                 experienceRecord.setBeginDateString(expierenceRecordConvertDTO.getStartDate());
-                experienceRecord.setEndDate(Convert.toDate(expierenceRecordConvertDTO.getEndDate()));
+                Date endDate = Convert.toDate(expierenceRecordConvertDTO.getEndDate());
+                if(Objects.isNull(endDate)){
+                    endDate=Convert.toDate(expierenceRecordConvertDTO.getEndDate()+"-01");
+                }
+                experienceRecord.setEndDate(endDate);
                 experienceRecord.setBeginDateString(expierenceRecordConvertDTO.getEndDate());
                 experienceRecord.setCompanyName(expierenceRecordConvertDTO.getPosition());
                 experienceRecords.add(experienceRecord);

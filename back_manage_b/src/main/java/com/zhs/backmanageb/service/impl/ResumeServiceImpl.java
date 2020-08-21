@@ -243,7 +243,24 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             resume.setJob(resumeConvertDTO.getPosition());
             resume.setAreaName(resumeConvertDTO.getBirthplace());
             resume.setNationName(resumeConvertDTO.getNation());
+
+            QueryWrapper<CommonData> nationWrapper = new QueryWrapper<>();
+            nationWrapper.eq("type",DropDownBoxTypeEnum.NATION.getId());
+            nationWrapper.eq("name",resumeConvertDTO.getNation());
+            List<CommonData> nationList = commonDataService.list(nationWrapper);
+            if(nationList.size()>0){
+                Long nationId = nationList.get(0).getId();
+                resume.setNation(nationId);
+            }
             resume.setPartiesName(resumeConvertDTO.getParties());
+            QueryWrapper<CommonData> partiesWrapper = new QueryWrapper<>();
+            partiesWrapper.eq("type",DropDownBoxTypeEnum.PARTIES.getId());
+            partiesWrapper.eq("name",resumeConvertDTO.getParties());
+            List<CommonData> partiesList = commonDataService.list(partiesWrapper);
+            if(partiesList.size()>0){
+                Long partiesId = partiesList.get(0).getId();
+                resume.setParties(partiesId);
+            }
             resume.setWordUrl(filename);
             resume.setCurrentStatusId(currentStatusId);
             resume.setCurrentStatus(byId.getName());

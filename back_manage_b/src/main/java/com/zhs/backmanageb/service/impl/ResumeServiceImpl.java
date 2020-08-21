@@ -249,6 +249,9 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             List<OrganizationConvertBO> organizationConvertBOS = JSONArray.parseArray(position, OrganizationConvertBO.class);
             if(organizationConvertBOS.size()>0){
                 List<ResumeCompany> resumeCompanies = new ArrayList<>();
+                StringBuilder stringBuilderCompany = new StringBuilder();
+                StringBuilder stringBuilderJob = new StringBuilder();
+
                 for (OrganizationConvertBO organizationConvertBO : organizationConvertBOS) {
                     ResumeCompany resumeCompany = new ResumeCompany();
                     resumeCompany.setCompany(organizationConvertBO.getOrganization());
@@ -256,7 +259,13 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                     resumeCompany.setJob(organizationConvertBO.getPosition());
                     resumeCompany.setIsPolitics(0);
                     resumeCompanies.add(resumeCompany);
+
+                    stringBuilderCompany.append(organizationConvertBO.getOrganization());
+                    stringBuilderJob.append(organizationConvertBO.getPosition());
                 }
+                resume.setCompany(stringBuilderCompany.toString());
+                resume.setJob(stringBuilderJob.toString());
+                updateById(resume);
                 resumeCompanyService.saveBatch(resumeCompanies);
             }
             String politics = resumeConvertDTO.getPolitics();
@@ -264,6 +273,8 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             List<OrganizationConvertBO> politicsList = JSONArray.parseArray(politics, OrganizationConvertBO.class);
             if(politicsList.size()>0){
                 List<ResumeCompany> politicsResumeCompanies = new ArrayList<>();
+                StringBuilder stringBuilderCompany = new StringBuilder();
+                StringBuilder stringBuilderJob = new StringBuilder();
                 for (OrganizationConvertBO organizationConvertBO : politicsList) {
                     ResumeCompany resumeCompany = new ResumeCompany();
                     resumeCompany.setCompany(organizationConvertBO.getOrganization());
@@ -271,7 +282,13 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                     resumeCompany.setJob(organizationConvertBO.getPosition());
                     resumeCompany.setIsPolitics(1);
                     politicsResumeCompanies.add(resumeCompany);
+
+                    stringBuilderCompany.append(organizationConvertBO.getOrganization());
+                    stringBuilderJob.append(organizationConvertBO.getPosition());
                 }
+                resume.setOrganization(stringBuilderCompany.toString());
+                resume.setOrganizationJob(stringBuilderJob.toString());
+                updateById(resume);
                 resumeCompanyService.saveBatch(politicsResumeCompanies);
             }
 

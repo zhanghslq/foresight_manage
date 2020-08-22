@@ -29,7 +29,7 @@ public interface AdminService extends IService<Admin> {
 
     void updateUserAndRole(Long adminId, String username, String realName, String mobile, Long roleId);
 
-    void updatePassword(Long adminId, String oldPassword, String password);
+    void updatePassword(Long adminId,  String password);
 
     AdminAddDataVO queryAddData(Long adminId);
 }

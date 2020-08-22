@@ -13,7 +13,7 @@ import java.util.Date;
 public class ConvertTest {
     @Test
     public void test(){
-        Date date = Convert.toDate("2020");
+        Date date = Convert.toDate("2020-2-1");
         System.out.println(date);
     }
 }

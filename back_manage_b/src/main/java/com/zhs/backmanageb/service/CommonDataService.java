@@ -18,4 +18,5 @@ public interface CommonDataService extends IService<CommonData> {
      * @param type 类型
      */
     void insertBatch(String content, Integer type);
+
 }

@@ -3,11 +3,14 @@ package com.zhs.backmanageb.model.vo;
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.zhs.backmanageb.entity.ResumeCompany;
+import com.zhs.backmanageb.model.bo.ResumeCompanyBO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author: zhs
@@ -56,6 +59,12 @@ public class ResumeVO {
     @ApiModelProperty(value = "当前职务")
     private String job;
 
+    @ApiModelProperty("简历对应的单位职务列表")
+    private List<ResumeCompany> resumeCompanyList;
+
+    @ApiModelProperty("简历对应的政治身份职务列表")
+    private List<ResumeCompany> politicsResumeCompanyList;
+
     @ApiModelProperty(value = "照片")
     private String photoUrl;
 
@@ -80,6 +89,9 @@ public class ResumeVO {
 
     @ApiModelProperty(value = "年龄")
     private Integer age;
+
+    @ApiModelProperty(value = "是否确认，默认0待确认，1已确认")
+    private Integer isConfirm;
 
 
     @TableField(fill = FieldFill.INSERT)

@@ -1,11 +1,14 @@
 package com.zhs.backmanageb.controller;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.entity.Resume;
 import com.zhs.backmanageb.entity.ResumeRelationship;
+import com.zhs.backmanageb.model.vo.ResumeRelationshipVO;
+import com.zhs.backmanageb.model.vo.ResumeVO;
 import com.zhs.backmanageb.service.ResumeRelationshipService;
 import com.zhs.backmanageb.service.ResumeService;
 import io.swagger.annotations.Api;
@@ -16,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -65,17 +70,32 @@ public class ResumeRelationshipController {
     @PostMapping("list/by_source_resume_id")
     @ApiOperation(value = "根据简历id，获取特殊关联的简历",tags = "查询")
     @ApiImplicitParam(name = "sourceResumeId",value = "简历id")
-    public Result<List<Resume>> listBySourceResumeId(@RequestParam Long sourceResumeId){
+    public Result<List<ResumeRelationshipVO>> listBySourceResumeId(@RequestParam Long sourceResumeId){
         QueryWrapper<ResumeRelationship> resumeRelationshipQueryWrapper = new QueryWrapper<>();
+
         resumeRelationshipQueryWrapper.eq("source_resume_id",sourceResumeId);
         List<ResumeRelationship> list = resumeRelationshipService.list(resumeRelationshipQueryWrapper);
-        List<Resume> resumes = new ArrayList<>();
+        List<ResumeRelationshipVO> resumeVOS = new ArrayList<>();
         if(list.size()==0){
-            return Result.success(resumes);
+            return Result.success(resumeVOS);
         }
         List<Long> resumeIds = list.stream().map(ResumeRelationship::getTargetResumeId).collect(Collectors.toList());
-        resumes = resumeService.listByIds(resumeIds);
-        return Result.success(resumes);
+        List<Resume> resumes = resumeService.listByIds(resumeIds);
+
+        Map<Long, ResumeRelationship> map = list.stream().collect(Collectors.toMap(ResumeRelationship::getTargetResumeId, resumeRelationship -> resumeRelationship, (k1, k2) -> k1));
+        for (Resume resume : resumes) {
+            ResumeRelationshipVO resumeRelationshipVO = new ResumeRelationshipVO();
+            ResumeRelationship resumeRelationship = map.get(resume.getId());
+            if(!Objects.isNull(resumeRelationship)){
+                //不为空的时候
+                BeanUtil.copyProperties(resumeRelationship,resumeRelationshipVO);
+                resumeRelationshipVO.setResume(resume);
+                resumeVOS.add(resumeRelationshipVO);
+            }
+
+        }
+
+        return Result.success(resumeVOS);
 
     }
 

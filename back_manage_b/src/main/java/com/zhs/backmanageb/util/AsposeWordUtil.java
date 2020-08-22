@@ -57,7 +57,7 @@ public class AsposeWordUtil {
                 long currentTimeMillis = System.currentTimeMillis();
                 String saveFilePath = today + "/" + currentTimeMillis + "/";
                 String fileName = String.format("%s%s-%d%s",saveFilePath, System.currentTimeMillis(), imageIndex, ex);
-                File file1 = new File(fileName);
+                File file1 = new File(savePath+fileName);
                 if(!file1.getParentFile().exists()){
                     file1.getParentFile().mkdirs();
                 }

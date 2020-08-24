@@ -205,7 +205,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         ResponseEntity<String> entity = restTemplate.postForEntity("http://resume.carltrip.com/api/resume/index", request, String.class);
         //获取3方接口返回的数据通过entity.getBody();它返回的是一个字符串；
         String body = entity.getBody();
-        // todo 简历对应的单位和职务改为多个
+        //  简历对应的单位和职务改为多个
         if(!StringUtils.isEmpty(body)){
             JSONArray jsonArray = JSONArray.parseArray(body);
             /*
@@ -284,7 +284,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             resume.setCurrentStatusId(currentStatusId);
             resume.setCurrentStatus(byId.getName());
             resume.setWordContent(jsonArray.get(2).toString());
-            save(resume);
+            //save(resume);
 
             String position = resumeConvertDTO.getPosition();
             // 当前职务
@@ -308,8 +308,8 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                     }
                     resume.setCompany(stringBuilderCompany.toString());
                     resume.setJob(stringBuilderJob.toString());
-                    updateById(resume);
-                    resumeCompanyService.saveBatch(resumeCompanies);
+                    // updateById(resume);
+                    // resumeCompanyService.saveBatch(resumeCompanies);
                     resumeDTO.setResumeCompanyList(resumeCompanies);
                 }
             }
@@ -333,8 +333,8 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                 }
                 resume.setOrganization(stringBuilderCompany.toString());
                 resume.setOrganizationJob(stringBuilderJob.toString());
-                updateById(resume);
-                resumeCompanyService.saveBatch(politicsResumeCompanies);
+                // updateById(resume);
+                // resumeCompanyService.saveBatch(politicsResumeCompanies);
                 resumeDTO.setPoliticsResumeCompanyList(politicsResumeCompanies);
             }
 
@@ -367,9 +367,9 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                     experienceRecord.setCompanyName(expierenceRecordConvertDTO.getPosition());
                     experienceRecords.add(experienceRecord);
                 }
-                if(experienceRecords.size()>0){
+                /*if(experienceRecords.size()>0){
                     experienceRecordService.saveBatch(experienceRecords);
-                }
+                }*/
                 resumeDTO.setExperienceRecordList(experienceRecords);
             }
             resumeDTO.setResume(resume);

@@ -241,7 +241,7 @@ public class ResumeController {
     }
 
 
-    @ApiOperation(value = "简历文件获取简历内容",tags = "新增")
+    @ApiOperation(value = "简历文件获取简历内容",tags = "查询")
     @PostMapping("get/text")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "filename",value = "上传简历文件得到的文件名",required = true),

@@ -39,6 +39,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -169,12 +171,28 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
 
     @Override
     public ResumeDTO dealWord(String filename, Long currentStatusId) {
+        String prefix;
+        if(System.getProperty("os.name").toLowerCase().startsWith("win")){
+            prefix = "c://data/file/";
+        }else {
+            prefix = "/data/file/";
+        }
+        Resume resume = new Resume();
         CommonData byId = commonDataService.getById(currentStatusId);
         Assert.notNull(byId,"状态不存在");
         ResumeDTO resumeDTO = new ResumeDTO();
 
         String text = AsposeWordUtil.getText(filename);
         // 拿到text到php进行请求，获取结果
+        try {
+
+            List<String> imageFromWordFile = AsposeWordUtil.exportImageFromWordFile(prefix+filename, prefix);
+            if(imageFromWordFile.size()>0){
+                resume.setPhotoUrl(imageFromWordFile.get(0));
+            }
+        } catch (Exception e) {
+            log.error("获取图片出错,:",e);
+        }
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -197,7 +215,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
              */
             Object o = jsonArray.get(0);
             ResumeConvertDTO resumeConvertDTO = JSONObject.parseObject(o.toString(), ResumeConvertDTO.class);
-            Resume resume = new Resume();
+
             /*
              * name : 林武
              * sex : 男

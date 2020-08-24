@@ -310,6 +310,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                     resume.setJob(stringBuilderJob.toString());
                     updateById(resume);
                     resumeCompanyService.saveBatch(resumeCompanies);
+                    resumeDTO.setResumeCompanyList(resumeCompanies);
                 }
             }
             String politics = resumeConvertDTO.getPolitics();
@@ -334,13 +335,14 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                 resume.setOrganizationJob(stringBuilderJob.toString());
                 updateById(resume);
                 resumeCompanyService.saveBatch(politicsResumeCompanies);
+                resumeDTO.setPoliticsResumeCompanyList(politicsResumeCompanies);
             }
 
 
             Object o1 = jsonArray.get(1);
-            List<ExpierenceRecordConvertDTO> expierenceRecordConvertDTOS = JSONArray.parseArray(o1.toString(), ExpierenceRecordConvertDTO.class);
-            ArrayList<ExperienceRecord> experienceRecords = new ArrayList<>();
-            if(!Objects.isNull(expierenceRecordConvertDTOS)){
+            if(!Objects.isNull(o1)){
+                List<ExpierenceRecordConvertDTO> expierenceRecordConvertDTOS = JSONArray.parseArray(o1.toString(), ExpierenceRecordConvertDTO.class);
+                ArrayList<ExperienceRecord> experienceRecords = new ArrayList<>();
                 for (ExpierenceRecordConvertDTO expierenceRecordConvertDTO : expierenceRecordConvertDTOS) {
                     ExperienceRecord experienceRecord = new ExperienceRecord();
                     experienceRecord.setResumeId(resume.getId());
@@ -365,13 +367,12 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                     experienceRecord.setCompanyName(expierenceRecordConvertDTO.getPosition());
                     experienceRecords.add(experienceRecord);
                 }
+                if(experienceRecords.size()>0){
+                    experienceRecordService.saveBatch(experienceRecords);
+                }
+                resumeDTO.setExperienceRecordList(experienceRecords);
             }
-            if(experienceRecords.size()>0){
-                experienceRecordService.saveBatch(experienceRecords);
-            }
-            resumeDTO.setExperienceRecordList(experienceRecords);
             resumeDTO.setResume(resume);
-
             Object o2 = jsonArray.get(2);
             log.info("word解析出来的内容：{}",o2.toString());
 

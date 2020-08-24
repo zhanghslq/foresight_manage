@@ -248,7 +248,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                 date=Convert.toDate(birthday+"-01");
             }
             if(Objects.isNull(date)){
-                date=Convert.toDate(birthday+"-01-01");
+                date=Convert.toDate(birthday+"-06-01");
             }
             resume.setBirthday(date);
             resume.setBirthdayString(birthday);
@@ -351,7 +351,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                         beginDate=Convert.toDate(expierenceRecordConvertDTO.getStartDate()+"-01");
                     }
                     if(Objects.isNull(beginDate)){
-                        beginDate=Convert.toDate(expierenceRecordConvertDTO.getStartDate()+"-01-01");
+                        beginDate=Convert.toDate(expierenceRecordConvertDTO.getStartDate()+"-06-01");
                     }
                     experienceRecord.setBeginDate(beginDate);
                     experienceRecord.setBeginDateString(expierenceRecordConvertDTO.getStartDate());
@@ -360,7 +360,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                         endDate=Convert.toDate(expierenceRecordConvertDTO.getEndDate()+"-01");
                     }
                     if(Objects.isNull(endDate)){
-                        endDate=Convert.toDate(expierenceRecordConvertDTO.getEndDate()+"-01-01");
+                        endDate=Convert.toDate(expierenceRecordConvertDTO.getEndDate()+"-06-01");
                     }
                     experienceRecord.setEndDate(endDate);
                     experienceRecord.setBeginDateString(expierenceRecordConvertDTO.getEndDate());

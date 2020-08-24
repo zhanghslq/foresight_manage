@@ -27,6 +27,7 @@ import com.zhs.backmanageb.service.ResumeCompanyService;
 import com.zhs.backmanageb.service.ResumeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.backmanageb.util.AsposeWordUtil;
+import javafx.beans.binding.ObjectExpression;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -270,31 +271,33 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             String position = resumeConvertDTO.getPosition();
             // 当前职务
             List<OrganizationConvertBO> organizationConvertBOS = JSONArray.parseArray(position, OrganizationConvertBO.class);
-            if(organizationConvertBOS.size()>0){
-                List<ResumeCompany> resumeCompanies = new ArrayList<>();
-                StringBuilder stringBuilderCompany = new StringBuilder();
-                StringBuilder stringBuilderJob = new StringBuilder();
+            if(!Objects.isNull(organizationConvertBOS)){
+                if(organizationConvertBOS.size()>0){
+                    List<ResumeCompany> resumeCompanies = new ArrayList<>();
+                    StringBuilder stringBuilderCompany = new StringBuilder();
+                    StringBuilder stringBuilderJob = new StringBuilder();
 
-                for (OrganizationConvertBO organizationConvertBO : organizationConvertBOS) {
-                    ResumeCompany resumeCompany = new ResumeCompany();
-                    resumeCompany.setCompany(organizationConvertBO.getOrganization());
-                    resumeCompany.setResumeId(resume.getId());
-                    resumeCompany.setJob(organizationConvertBO.getPosition());
-                    resumeCompany.setIsPolitics(0);
-                    resumeCompanies.add(resumeCompany);
+                    for (OrganizationConvertBO organizationConvertBO : organizationConvertBOS) {
+                        ResumeCompany resumeCompany = new ResumeCompany();
+                        resumeCompany.setCompany(organizationConvertBO.getOrganization());
+                        resumeCompany.setResumeId(resume.getId());
+                        resumeCompany.setJob(organizationConvertBO.getPosition());
+                        resumeCompany.setIsPolitics(0);
+                        resumeCompanies.add(resumeCompany);
 
-                    stringBuilderCompany.append(organizationConvertBO.getOrganization());
-                    stringBuilderJob.append(organizationConvertBO.getPosition());
+                        stringBuilderCompany.append(organizationConvertBO.getOrganization());
+                        stringBuilderJob.append(organizationConvertBO.getPosition());
+                    }
+                    resume.setCompany(stringBuilderCompany.toString());
+                    resume.setJob(stringBuilderJob.toString());
+                    updateById(resume);
+                    resumeCompanyService.saveBatch(resumeCompanies);
                 }
-                resume.setCompany(stringBuilderCompany.toString());
-                resume.setJob(stringBuilderJob.toString());
-                updateById(resume);
-                resumeCompanyService.saveBatch(resumeCompanies);
             }
             String politics = resumeConvertDTO.getPolitics();
             // 政治身份
             List<OrganizationConvertBO> politicsList = JSONArray.parseArray(politics, OrganizationConvertBO.class);
-            if(politicsList.size()>0){
+            if(!Objects.isNull(politicsList)&&politicsList.size()>0){
                 List<ResumeCompany> politicsResumeCompanies = new ArrayList<>();
                 StringBuilder stringBuilderCompany = new StringBuilder();
                 StringBuilder stringBuilderJob = new StringBuilder();
@@ -319,29 +322,31 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             Object o1 = jsonArray.get(1);
             List<ExpierenceRecordConvertDTO> expierenceRecordConvertDTOS = JSONArray.parseArray(o1.toString(), ExpierenceRecordConvertDTO.class);
             ArrayList<ExperienceRecord> experienceRecords = new ArrayList<>();
-            for (ExpierenceRecordConvertDTO expierenceRecordConvertDTO : expierenceRecordConvertDTOS) {
-                ExperienceRecord experienceRecord = new ExperienceRecord();
-                experienceRecord.setResumeId(resume.getId());
-                Date beginDate = Convert.toDate(expierenceRecordConvertDTO.getStartDate());
-                if(Objects.isNull(beginDate)){
-                    beginDate=Convert.toDate(expierenceRecordConvertDTO.getStartDate()+"-01");
+            if(!Objects.isNull(expierenceRecordConvertDTOS)){
+                for (ExpierenceRecordConvertDTO expierenceRecordConvertDTO : expierenceRecordConvertDTOS) {
+                    ExperienceRecord experienceRecord = new ExperienceRecord();
+                    experienceRecord.setResumeId(resume.getId());
+                    Date beginDate = Convert.toDate(expierenceRecordConvertDTO.getStartDate());
+                    if(Objects.isNull(beginDate)){
+                        beginDate=Convert.toDate(expierenceRecordConvertDTO.getStartDate()+"-01");
+                    }
+                    if(Objects.isNull(beginDate)){
+                        beginDate=Convert.toDate(expierenceRecordConvertDTO.getStartDate()+"-01-01");
+                    }
+                    experienceRecord.setBeginDate(beginDate);
+                    experienceRecord.setBeginDateString(expierenceRecordConvertDTO.getStartDate());
+                    Date endDate = Convert.toDate(expierenceRecordConvertDTO.getEndDate());
+                    if(Objects.isNull(endDate)){
+                        endDate=Convert.toDate(expierenceRecordConvertDTO.getEndDate()+"-01");
+                    }
+                    if(Objects.isNull(endDate)){
+                        endDate=Convert.toDate(expierenceRecordConvertDTO.getEndDate()+"-01-01");
+                    }
+                    experienceRecord.setEndDate(endDate);
+                    experienceRecord.setBeginDateString(expierenceRecordConvertDTO.getEndDate());
+                    experienceRecord.setCompanyName(expierenceRecordConvertDTO.getPosition());
+                    experienceRecords.add(experienceRecord);
                 }
-                if(Objects.isNull(beginDate)){
-                    beginDate=Convert.toDate(expierenceRecordConvertDTO.getStartDate()+"-01-01");
-                }
-                experienceRecord.setBeginDate(beginDate);
-                experienceRecord.setBeginDateString(expierenceRecordConvertDTO.getStartDate());
-                Date endDate = Convert.toDate(expierenceRecordConvertDTO.getEndDate());
-                if(Objects.isNull(endDate)){
-                    endDate=Convert.toDate(expierenceRecordConvertDTO.getEndDate()+"-01");
-                }
-                if(Objects.isNull(endDate)){
-                    endDate=Convert.toDate(expierenceRecordConvertDTO.getEndDate()+"-01-01");
-                }
-                experienceRecord.setEndDate(endDate);
-                experienceRecord.setBeginDateString(expierenceRecordConvertDTO.getEndDate());
-                experienceRecord.setCompanyName(expierenceRecordConvertDTO.getPosition());
-                experienceRecords.add(experienceRecord);
             }
             if(experienceRecords.size()>0){
                 experienceRecordService.saveBatch(experienceRecords);

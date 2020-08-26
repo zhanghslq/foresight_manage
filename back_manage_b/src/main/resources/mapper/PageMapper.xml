@@ -12,7 +12,7 @@
         select id,name,description  from page
         where parent_id=0 and deleted=0
     </select>
-    <select id="listByParentId" resultType="com.zhs.backmanageb.model.bo.PageBO">
+    <select id="listByParentId" resultMap="baseMap">
         select id,name,description  from page
         where parent_id=#{parentId,jdbcType=BIGINT} and deleted=0
     </select>

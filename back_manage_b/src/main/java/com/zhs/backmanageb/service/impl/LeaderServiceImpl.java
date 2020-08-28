@@ -5,6 +5,7 @@ import com.zhs.backmanageb.mapper.LeaderMapper;
 import com.zhs.backmanageb.service.LeaderService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -17,4 +18,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class LeaderServiceImpl extends ServiceImpl<LeaderMapper, Leader> implements LeaderService {
 
+    @Override
+    public void listUpload(Long moduleId, MultipartFile file) {
+
+    }
 }

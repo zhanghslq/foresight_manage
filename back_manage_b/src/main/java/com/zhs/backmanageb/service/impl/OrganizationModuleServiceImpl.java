@@ -5,17 +5,22 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.google.common.collect.Maps;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import com.zhs.backmanageb.common.constant.ModuleTypeEnum;
 import com.zhs.backmanageb.entity.*;
+import com.zhs.backmanageb.exception.MyException;
 import com.zhs.backmanageb.mapper.OrganizationModuleMapper;
 import com.zhs.backmanageb.model.dto.OrganizationModuleSeqDTO;
 import com.zhs.backmanageb.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -107,5 +112,50 @@ public class OrganizationModuleServiceImpl extends ServiceImpl<OrganizationModul
             }
             companyService.updateBatchById(result);
         }
+    }
+
+    @Override
+    public void copy(Long sourceModuleId, Long targetModuleId) {
+        OrganizationModule sourceOrganizationModule = getById(sourceModuleId);
+        OrganizationModule targetOrganizationModule = getById(targetModuleId);
+        Assert.notNull(sourceOrganizationModule,"原模块不存在");
+        Assert.notNull(targetOrganizationModule,"目标模块不存在");
+        Integer sourceOrganizationModuleType = sourceOrganizationModule.getType();
+        Integer targetOrganizationModuleType = targetOrganizationModule.getType();
+
+        if(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(sourceOrganizationModuleType)
+                &&ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(targetOrganizationModuleType)){
+            QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
+            organizationQueryWrapper.eq("module_id",sourceModuleId);
+            List<Organization> sourceOrganizationList = organizationService.list(organizationQueryWrapper);
+            for (Organization organization : sourceOrganizationList) {
+                organization.setId(null);
+                Subject subject = SecurityUtils.getSubject();
+                organization.setAdminId(Long.valueOf(subject.getPrincipal().toString()));
+                organization.setParentId(targetOrganizationModule.getOrganizationId());
+                organization.setCreateTime(new Date());
+                organization.setUpdateTime(new Date());
+                organization.setModuleId(targetModuleId);
+            }
+            organizationService.saveBatch(sourceOrganizationList);
+        }else if(ModuleTypeEnum.COMPANY_CHILDREN.getId().equals(sourceOrganizationModuleType)
+        && ModuleTypeEnum.COMPANY_CHILDREN.getId().equals(targetOrganizationModuleType)){
+            QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();
+            companyQueryWrapper.eq("module_id",sourceModuleId);
+            List<Company> sourceOrganizationList = companyService.list(companyQueryWrapper);
+            for (Company company : sourceOrganizationList) {
+                company.setId(null);
+                Subject subject = SecurityUtils.getSubject();
+                company.setAdminId(Long.valueOf(subject.getPrincipal().toString()));
+                company.setParentId(targetOrganizationModule.getOrganizationId());
+                company.setCreateTime(new Date());
+                company.setUpdateTime(new Date());
+                company.setModuleId(targetModuleId);
+            }
+            companyService.saveBatch(sourceOrganizationList);
+        }else {
+            throw new  MyException("模块id错误");
+        }
+
     }
 }

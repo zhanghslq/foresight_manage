@@ -20,4 +20,5 @@ public interface OrganizationModuleService extends IService<OrganizationModule> 
 
     void updateSeq(Long moduleId, List<OrganizationModuleSeqDTO> organizationModuleSeqDTOList);
 
+    void copy(Long sourceModuleId, Long targetModuleId);
 }

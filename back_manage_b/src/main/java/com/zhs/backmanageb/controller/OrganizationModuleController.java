@@ -68,6 +68,12 @@ public class OrganizationModuleController {
         organizationModuleService.updateSeq(moduleId,organizationModuleSeqDTOList);
         return Result.success(true);
     }
+    @ApiOperation(value = "复制下属机构",tags = "新增")
+    @PostMapping("copy")
+    public Result<Boolean> copy(@RequestParam Long sourceModuleId,@RequestParam Long targetModuleId){
+        organizationModuleService.copy(sourceModuleId,targetModuleId);
+        return Result.success(true);
+    }
 
 }
 

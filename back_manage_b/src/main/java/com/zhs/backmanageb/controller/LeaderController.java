@@ -1,6 +1,7 @@
 package com.zhs.backmanageb.controller;
 
 
+import com.aspose.words.BookmarksOutlineLevelCollection;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -67,6 +69,13 @@ public class LeaderController {
         leaderQueryWrapper.eq("organization_id",organizationId);
         List<Leader> list = leaderService.list(leaderQueryWrapper);
         return Result.success(list);
+    }
+    @PostMapping("upload/list")
+    @ApiOperation(value = "导入领导人",tags = "新增")
+    public Result<Boolean> uploadList(@RequestParam Long moduleId,@RequestParam("file") MultipartFile file){
+
+        leaderService.listUpload(moduleId,file);
+        return Result.success(true);
     }
 
 

@@ -60,6 +60,7 @@ public class ReqLogAspect {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
         requestInfo.set(request.getRequestURL().toString());
+
         String requestURL = request.getRequestURL().toString();
         adminOperationLog.setInterfaceAllName(requestURL);
         String ip = getIp(request);
@@ -114,8 +115,10 @@ public class ReqLogAspect {
             }
         }
 
-        adminOperationLogService.save(adminOperationLog);
-        logId.set(adminOperationLog.getId());
+        if(!"查询".equals(adminOperationLog.getOperatorType())){
+            adminOperationLogService.save(adminOperationLog);
+            logId.set(adminOperationLog.getId());
+        }
         log.info(adminOperationLog.toString());
         //记录基本信息
         log.info(requestInfo.get() + " BASIC " +   requestURL + " " + joinPoint.getSignature().getDeclaringTypeName());
@@ -137,16 +140,18 @@ public class ReqLogAspect {
     @AfterReturning(returning = "ret", pointcut = "webLog()")
     public void doAfterReturning(Object ret) {
         Long adminOperatorId = logId.get();
-        String returnString = JSONObject.toJSONString(ret);
         long useTime = System.currentTimeMillis() - startTime.get();
-        if(returnString.length()>5000){
-            returnString=returnString.substring(0,4999);
-        }
-        AdminOperationLog byId = adminOperationLogService.getById(adminOperatorId);
-        byId.setReturnString(returnString);
-        byId.setUseTime(useTime);
+        if(!Objects.isNull(adminOperatorId)){
+            String returnString = JSONObject.toJSONString(ret);
+            if(returnString.length()>5000){
+                returnString=returnString.substring(0,4999);
+            }
+            AdminOperationLog byId = adminOperationLogService.getById(adminOperatorId);
+            byId.setReturnString(returnString);
+            byId.setUseTime(useTime);
 
-        adminOperationLogService.updateById(byId);
+            adminOperationLogService.updateById(byId);
+        }
         // 记录返回结果
         log.info(requestInfo.get() + " RETURN " + (useTime) + " " + JSONObject.toJSONString(ret));
         startTime.remove();

@@ -18,10 +18,10 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import sun.security.pkcs11.Secmod;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -157,5 +157,67 @@ public class OrganizationModuleServiceImpl extends ServiceImpl<OrganizationModul
             throw new  MyException("模块id错误");
         }
 
+    }
+
+    @Override
+    public void randomCopy(Long moduleId) {
+        // 寻找与当前模块同级别的模块
+        OrganizationModule organizationModule = getById(moduleId);
+        Assert.notNull(organizationModule,"模块不存在");
+        Integer type = organizationModule.getType();
+        if(!ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(type)){
+            throw new MyException("当前模块不属于下属机构");
+        }
+        Long organizationId = organizationModule.getOrganizationId();
+        Organization organization = organizationService.getById(organizationId);
+
+        int maxLevel=100;
+        int organizationLevel=0;
+        // 查组织处于第几级
+        while (organization.getParentId()!=0&&organizationLevel<maxLevel){
+            organizationLevel++;
+            organization=organizationService.getById(organization.getParentId());
+        }
+
+        // 查到组织类别
+        Long organizationTypeId = organization.getOrganizationTypeId();
+
+        // 查组织类别下的组织
+        QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
+        organizationQueryWrapper.eq("organization_type",organizationTypeId);
+        // 查到的同类别的组织
+        List<Organization> organizationList = organizationService.list(organizationQueryWrapper);
+        Map<Long, List<Organization>> organizationMap = organizationList.stream().collect(Collectors.groupingBy(Organization::getModuleId));
+
+        for (Organization organ : organizationList) {
+            Organization organUse = new Organization();
+            BeanUtil.copyProperties(organ,organUse);
+            // 查级别
+            int organLevel=0;
+            // 查组织处于第几级
+            while (organUse.getParentId()!=0&&organLevel<maxLevel){
+                organLevel++;
+                organUse=organizationService.getById(organUse.getParentId());
+            }
+            if(organLevel==organizationLevel){
+                // 级别相同，查模块，以及模块下的组织
+                QueryWrapper<OrganizationModule> organizationModuleQueryWrapper = new QueryWrapper<>();
+                organizationModuleQueryWrapper.eq("type",ModuleTypeEnum.ORGANIZATION_CHILDREN.getId());
+                organizationModuleQueryWrapper.eq("organization_id",organ.getId());
+                List<OrganizationModule> list = list(organizationModuleQueryWrapper);
+                if(list.size()!=0){
+                    for (OrganizationModule module : list) {
+                        Long id = module.getId();
+                        List<Organization> organizations = organizationMap.get(id);
+                        if(!Objects.isNull(organizations)){
+                            // 模块下有组织
+                            copy(id,moduleId);
+                            return;
+                        }
+                    }
+                }
+
+            }
+        }
     }
 }

@@ -75,5 +75,13 @@ public class OrganizationModuleController {
         return Result.success(true);
     }
 
+    @PostMapping("/random/copy")
+    @ApiOperation(value = "随机拷贝同级的机构",tags = "新增")
+    public Result<Boolean> randomCopy(@RequestParam Long moduleId){
+
+        organizationModuleService.randomCopy(moduleId);
+        return Result.success(true);
+    }
+
 }
 

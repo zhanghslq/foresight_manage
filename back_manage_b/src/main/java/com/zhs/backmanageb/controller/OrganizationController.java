@@ -20,6 +20,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -133,5 +134,11 @@ public class OrganizationController {
         return Result.success(organizationHasParentBO);
     }
 
+    @ApiOperation(value = "上传文件进行批量插入",tags = "新增")
+    @PostMapping("listUpload")
+    public Result<Boolean> listUpload(@RequestParam Long moduleId,@RequestParam("file") MultipartFile file){
+        organizationService.listUpload(moduleId,file);
+        return Result.success(true);
+    }
 }
 

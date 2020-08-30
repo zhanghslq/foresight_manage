@@ -15,6 +15,8 @@ import com.zhs.backmanageb.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -126,6 +128,17 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         OrganizationHasParentBO organizationHasParentBO = organizationMapper.listParentById(organizationId);
 
         return organizationHasParentBO;
+    }
+
+    @Override
+    public void listUpload(Long moduleId, MultipartFile file) {
+        OrganizationModule organizationModule = organizationModuleService.getById(moduleId);
+        Assert.notNull(organizationModule,"模块不存在");
+        Long parentId = organizationModule.getOrganizationId();
+
+        // 解析Excel
+
+
     }
 
     private void getContactAndLeader(OrganizationVO organizationVO, Long organizationId) {

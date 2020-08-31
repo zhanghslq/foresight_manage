@@ -184,7 +184,7 @@ public class OrganizationModuleServiceImpl extends ServiceImpl<OrganizationModul
 
         // 查组织类别下的组织
         QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
-        organizationQueryWrapper.eq("organization_type",organizationTypeId);
+        organizationQueryWrapper.eq("organization_type_id",organizationTypeId);
         // 查到的同类别的组织
         List<Organization> organizationList = organizationService.list(organizationQueryWrapper);
         Map<Long, List<Organization>> organizationMap = organizationList.stream().collect(Collectors.groupingBy(Organization::getModuleId));

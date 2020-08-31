@@ -3,21 +3,35 @@ package com.zhs.backmanageb.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
 import com.zhs.backmanageb.common.constant.ModuleTypeEnum;
+import com.zhs.backmanageb.common.constant.RootTypeEnum;
 import com.zhs.backmanageb.entity.*;
+import com.zhs.backmanageb.exception.MyException;
 import com.zhs.backmanageb.mapper.OrganizationMapper;
 import com.zhs.backmanageb.model.bo.ContactsBO;
 import com.zhs.backmanageb.model.bo.OrganizationHasParentBO;
 import com.zhs.backmanageb.model.bo.OrganizationModuleBO;
 import com.zhs.backmanageb.model.bo.OrganizationTagBO;
+import com.zhs.backmanageb.model.dto.LeaderImportConvertDTO;
+import com.zhs.backmanageb.model.dto.OrganizationImportConvertDTO;
 import com.zhs.backmanageb.model.vo.OrganizationVO;
 import com.zhs.backmanageb.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zhs.backmanageb.util.EasyExcelUtil;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,6 +66,12 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
     @Autowired
     private OrganizationMapper organizationMapper;
+
+    @Autowired
+    private CommonDataService commonDataService;
+
+    @Autowired
+    private AreaService areaService;
 
     @Override
     public OrganizationVO queryByOrganizationType(Long organizationTypeId, Long areaId) {
@@ -134,11 +154,103 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
     public void listUpload(Long moduleId, MultipartFile file) {
         OrganizationModule organizationModule = organizationModuleService.getById(moduleId);
         Assert.notNull(organizationModule,"模块不存在");
-        Long parentId = organizationModule.getOrganizationId();
+        String fileName = file.getOriginalFilename();
+        if (StringUtils.isEmpty(fileName)){
+            throw new MyException("文件不能为空");
+        }
+        // 获取文件后缀
+        String prefix=fileName.substring(fileName.lastIndexOf("."));
+        if (!prefix.toLowerCase().contains("xls") && !prefix.toLowerCase().contains("xlsx") ){
+            throw new MyException("文件格式异常，请上传Excel文件格式");
+        }
+        // 防止生成的临时文件重复-建议使用UUID
+        final File excelFile;
+        try {
+            excelFile = File.createTempFile(System.currentTimeMillis()+"", prefix);
+            file.transferTo(excelFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new MyException("文件上传失败");
+        }
 
+        FileInputStream fileInputStream;
+        try {
+            fileInputStream = new FileInputStream(excelFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            throw new MyException("文件上传失败");
+        }
+
+        Integer type = organizationModule.getType();
+
+        List<OrganizationImportConvertDTO> readBooks = EasyExcelUtil.readListFrom(fileInputStream, OrganizationImportConvertDTO.class);
+        excelFile.delete();
+        List<Organization> result = new ArrayList<>();
         // 解析Excel
+        for (OrganizationImportConvertDTO readBook : readBooks) {
+            Organization organization = new Organization();
+            organization.setModuleId(moduleId);
+            organization.setParentId(organizationModule.getOrganizationId());
+            Subject subject = SecurityUtils.getSubject();
+            organization.setAdminId(Long.valueOf(subject.getPrincipal().toString()));
+            organization.setAddressDetail(readBook.getAddressDetail());
+            organization.setPerfectValue(readBook.getPerfectValue());
+            organization.setImportance(readBook.getImportance());
+            organization.setSeq(readBook.getSeq());
+            String commonType = readBook.getCommonType();
+            // 这个类型到库里查
+            QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
+            // 需要区分几种类型，来用不同的type查
+            if(RootTypeEnum.PARTY.getId().equals(type)){
+                commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.PARTY_AFFAIRS_ORGANIZATION_TYPE.getId());
+            }else if(RootTypeEnum.GOVERNMENT.getId().equals(type)){
+                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.GOVERNMENT_AFFAIRS_ORGANIZATION_TYPE.getId());
+            }else if(RootTypeEnum.LEGAL.getId().equals(type)){
+                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.LEGAL_AFFAIRS_ORGANIZATION_TYPE.getId());
+            }else if(RootTypeEnum.POLITICAL_PARTICIPATION.getId().equals(type)){
+                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.POLITICAL_PARTICIPATION_ORGANIZATION_TYPE.getId());
+            }else if(RootTypeEnum.MILITARY.getId().equals(type)){
+                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.ARMY_ORGANIZATION_TYPE.getId());
+            }/*else if(RootTypeEnum.COMPANY.getId().equals(type)){
+                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.COMPANY_LEVEL);
+            }*/else {
+                throw new MyException("不属于所属类型");
+            }
+            QueryWrapper<CommonData> commonDataQueryWrapperSystem = new QueryWrapper<>();
+            QueryWrapper<CommonData> commonDataQueryWrapperHierarchy = new QueryWrapper<>();
+            QueryWrapper<CommonData> commonDataQueryWrapperLevel = new QueryWrapper<>();
+            QueryWrapper<CommonData> systemWrapper = commonDataQueryWrapperSystem.eq("name", readBook.getSystem());
+            QueryWrapper<CommonData> hierarchyWrapper = commonDataQueryWrapperHierarchy.eq("name", readBook.getHierarchy());
+            QueryWrapper<CommonData> levelWrapper = commonDataQueryWrapperLevel.eq("name", readBook.getLevelName());
 
-
+            List<CommonData> systemList = commonDataService.list(systemWrapper);
+            List<CommonData> hierarchyList = commonDataService.list(hierarchyWrapper);
+            List<CommonData> levelList = commonDataService.list(levelWrapper);
+            commonDataQueryWrapper.eq("name",commonType);
+            List<CommonData> commonDataList = commonDataService.list(commonDataQueryWrapper);
+            if(commonDataList.size()>0){
+                organization.setCommonTypeId(commonDataList.get(0).getId());
+            }
+            //
+            if(systemList.size()>0){
+                organization.setSystemId(systemList.get(0).getId());
+            }
+            if(hierarchyList.size()>0){
+                organization.setHierarchyId(hierarchyList.get(0).getId());
+            }
+            if(levelList.size()>0){
+                organization.setLevelId(levelList.get(0).getId());
+            }
+            String areaName = readBook.getAreaName();
+            QueryWrapper<Area> areaQueryWrapper = new QueryWrapper<>();
+            areaQueryWrapper.eq("name",areaName);
+            List<Area> list = areaService.list(areaQueryWrapper);
+            if(list.size()>0){
+                organization.setAreaId(list.get(0).getId());
+            }
+            result.add(organization);
+        }
+        saveBatch(result);
     }
 
     private void getContactAndLeader(OrganizationVO organizationVO, Long organizationId) {

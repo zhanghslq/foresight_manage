@@ -56,6 +56,9 @@ public class Leader implements Serializable {
     @ApiModelProperty("简历id")
     private Long resumeId;
 
+    @ApiModelProperty("是否有相同名字的简历")
+    private Integer hasResume;
+
     @JsonIgnore
     @ApiModelProperty(value = "删除标志")
     @TableLogic

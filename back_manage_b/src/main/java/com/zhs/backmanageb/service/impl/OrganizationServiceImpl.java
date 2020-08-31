@@ -263,7 +263,9 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             }
             result.add(organization);
         }
-        saveBatch(result);
+        if(result.size()>0){
+            saveBatch(result);
+        }
     }
 
     private void getContactAndLeader(OrganizationVO organizationVO, Long organizationId) {

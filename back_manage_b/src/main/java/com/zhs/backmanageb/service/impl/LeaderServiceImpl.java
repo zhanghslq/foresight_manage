@@ -123,6 +123,8 @@ public class LeaderServiceImpl extends ServiceImpl<LeaderMapper, Leader> impleme
             }
             result.add(leader);
         }
-        saveBatch(result);
+        if(result.size()>0){
+            saveBatch(result);
+        }
     }
 }

@@ -8,11 +8,8 @@ import com.zhs.backmanageb.entity.*;
 import com.zhs.backmanageb.exception.MyException;
 import com.zhs.backmanageb.mapper.LeaderMapper;
 import com.zhs.backmanageb.model.dto.LeaderImportConvertDTO;
-import com.zhs.backmanageb.service.CommonDataService;
-import com.zhs.backmanageb.service.LeaderService;
+import com.zhs.backmanageb.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zhs.backmanageb.service.OrganizationModuleService;
-import com.zhs.backmanageb.service.ResumeService;
 import com.zhs.backmanageb.util.EasyExcelUtil;
 import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +42,8 @@ public class LeaderServiceImpl extends ServiceImpl<LeaderMapper, Leader> impleme
     private OrganizationModuleService organizationModuleService;
     @Autowired
     private ResumeService resumeService;
+    @Autowired
+    private OrganizationService organizationService;
 
     @Override
     public void listUpload(Long moduleId, MultipartFile file) {
@@ -76,8 +75,9 @@ public class LeaderServiceImpl extends ServiceImpl<LeaderMapper, Leader> impleme
         }
         OrganizationModule organizationModule = organizationModuleService.getById(moduleId);
         Assert.notNull(organizationModule,"下属机构模块不能为空");
-        Integer type = organizationModule.getType();
-
+        Organization organization = organizationService.getById(organizationModule.getOrganizationId());
+        Assert.notNull(organization,"组织不存在");
+        Integer type =organization.getType();
         List<LeaderImportConvertDTO> readBooks = EasyExcelUtil.readListFrom(fileInputStream, LeaderImportConvertDTO.class);
         excelFile.delete();
         // 对数据处理

@@ -1,6 +1,8 @@
 package com.zhs.backmanageb.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
@@ -180,9 +182,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             e.printStackTrace();
             throw new MyException("文件上传失败");
         }
-
         Integer type = organizationModule.getType();
-
         List<OrganizationImportConvertDTO> readBooks = EasyExcelUtil.readListFrom(fileInputStream, OrganizationImportConvertDTO.class);
         excelFile.delete();
         List<Organization> result = new ArrayList<>();
@@ -246,7 +246,19 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             areaQueryWrapper.eq("name",areaName);
             List<Area> list = areaService.list(areaQueryWrapper);
             if(list.size()>0){
-                organization.setAreaId(list.get(0).getId());
+                Area area = list.get(0);
+                organization.setAreaId(area.getId());
+                ArrayList<Long> areaIdList = new ArrayList<>();
+                areaIdList.add(area.getId());
+                int max=10;
+                int i=0;
+                while (area.getParentId()!=0&&i<max){
+                    i++;
+                    area=areaService.getById(area.getParentId());
+                    areaIdList.add(area.getId());
+                }
+                String areaIdString = JSON.toJSONString(areaIdList);
+                organization.setAreaIdArray(areaIdString);
             }
             result.add(organization);
         }

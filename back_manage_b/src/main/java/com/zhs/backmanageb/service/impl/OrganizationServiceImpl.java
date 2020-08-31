@@ -257,6 +257,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
                     area=areaService.getById(area.getParentId());
                     areaIdList.add(area.getId());
                 }
+                Collections.reverse(areaIdList);
                 String areaIdString = JSON.toJSONString(areaIdList);
                 organization.setAreaIdArray(areaIdString);
             }

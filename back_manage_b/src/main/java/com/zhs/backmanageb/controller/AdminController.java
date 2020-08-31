@@ -105,7 +105,7 @@ public class AdminController {
     }
 
     @PostMapping("list_page/by_admin_id")
-    @ApiOperation("根据管理员id查询拥有页面权限")
+    @ApiOperation(value = "根据管理员id查询拥有页面权限",tags = "查询")
     public Result<List<Page>> listPageByAdminId(@RequestParam Long adminId){
         return Result.success(adminService.listPageByAdminId(adminId));
     }

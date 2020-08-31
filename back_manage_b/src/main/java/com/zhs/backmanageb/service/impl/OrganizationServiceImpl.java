@@ -182,7 +182,11 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             e.printStackTrace();
             throw new MyException("文件上传失败");
         }
-        Integer type = organizationModule.getType();
+//        Integer type = organizationModule.getType();
+        Assert.notNull(organizationModule,"下属机构模块不能为空");
+        Organization organizationById = getById(organizationModule.getOrganizationId());
+        Assert.notNull(organizationById,"组织不存在");
+        Integer type =organizationById.getType();
         List<OrganizationImportConvertDTO> readBooks = EasyExcelUtil.readListFrom(fileInputStream, OrganizationImportConvertDTO.class);
         excelFile.delete();
         List<Organization> result = new ArrayList<>();

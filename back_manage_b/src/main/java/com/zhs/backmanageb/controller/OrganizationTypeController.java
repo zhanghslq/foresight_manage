@@ -138,13 +138,13 @@ public class OrganizationTypeController {
     }
 
     @PostMapping("update")
-    @ApiOperation(value = "修改",tags = "修改")
+    @ApiOperation(value = "修改组织类别",tags = "修改")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     public Result<Boolean> update(OrganizationType organizationType){
         return Result.success(organizationTypeService.updateById(organizationType));
     }
     @PostMapping("delete")
-    @ApiOperation(value = "删除",tags = "删除")
+    @ApiOperation(value = "删除组织类别",tags = "删除")
     @ApiImplicitParam(name = "id",value = "组织类别id",required = true)
     public Result<Boolean> delete(@RequestParam Long id){
         return Result.success(organizationTypeService.removeById(id));

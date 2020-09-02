@@ -63,7 +63,7 @@ public class OrganizationController {
         return Result.success(page);
     }
     @PostMapping("insert")
-    @ApiOperation(value = "插入",tags = "新增")
+    @ApiOperation(value = "插入组织",tags = "新增")
     @ApiImplicitParam(name = "tags",value = "标签,多个逗号相隔")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Long> insert(@RequestBody Organization organization,@RequestParam(value = "tags",required = false) List<String> tags){
@@ -91,7 +91,7 @@ public class OrganizationController {
     }
 
     @PostMapping("update")
-    @ApiOperation(value = "修改",tags = "修改")
+    @ApiOperation(value = "修改组织",tags = "修改")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     public Result<Boolean> update(@RequestBody OrganizationDTO organizationDTO){
         organizationService.dealTags(organizationDTO.getOrganization().getId(),organizationDTO.getTags());
@@ -134,7 +134,7 @@ public class OrganizationController {
         return Result.success(organizationHasParentBO);
     }
 
-    @ApiOperation(value = "上传文件进行批量插入",tags = "新增")
+    @ApiOperation(value = "上传文件进行批量插入组织",tags = "新增")
     @PostMapping("listUpload")
     public Result<Boolean> listUpload(@RequestParam Long moduleId,@RequestParam("file") MultipartFile file){
         organizationService.listUpload(moduleId,file);

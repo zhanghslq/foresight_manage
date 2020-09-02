@@ -72,7 +72,7 @@ public class ResumeController {
 
         return Result.success(pageSelf);
     }
-    @ApiOperation(value = "插入",tags = "新增")
+    @ApiOperation(value = "插入简历",tags = "新增")
     @PostMapping("insert")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(@RequestBody ResumeDTO resumeDTO){
@@ -117,7 +117,7 @@ public class ResumeController {
     }
 
     @PostMapping("update")
-    @ApiOperation(value = "修改",tags = "修改")
+    @ApiOperation(value = "修改简历",tags = "修改")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     public Result<Boolean> update(@RequestBody ResumeDTO resumeDTO) {
         Resume resume = resumeDTO.getResume();
@@ -150,7 +150,7 @@ public class ResumeController {
         return Result.success(save);
     }
     @PostMapping("queryById")
-    @ApiOperation(value = "查询详情",tags = "查询")
+    @ApiOperation(value = "查询简历详情",tags = "查询")
     @ApiImplicitParam(name = "id",value = "编号",required = true)
     public Result<ResumeDTO> queryById(@RequestParam Long id){
         Resume resume = resumeService.getById(id);
@@ -233,7 +233,7 @@ public class ResumeController {
         return Result.success(resumeDetailDTO);
     }
 
-    @ApiOperation(value = "批量删除",tags = "删除")
+    @ApiOperation(value = "批量删除简历",tags = "删除")
     @PostMapping("delete/by_ids")
     @ApiImplicitParam(name = "ids",value = "多个逗号相隔",required = true)
     public Result<Boolean> deleteByIds(@RequestParam List<Long> ids){

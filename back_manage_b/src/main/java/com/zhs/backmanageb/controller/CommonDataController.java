@@ -80,7 +80,7 @@ public class CommonDataController {
         return Result.success(commonDataService.save(commonData));
     }
     @PostMapping("insertBatch")
-    @ApiOperation(value = "批量添加",tags = "新增")
+    @ApiOperation(value = "批量添加公共數據",tags = "新增")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "content",value = "文本域内容",required = true),
             @ApiImplicitParam(name = "type",value = "类型",required = true),
@@ -90,13 +90,13 @@ public class CommonDataController {
         return Result.success(true);
     }
 
-    @ApiOperation(value = "修改",tags = "修改")
+    @ApiOperation(value = "修改系统公共配置",tags = "修改")
     @PostMapping("update")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     public Result<Boolean> update(CommonData commonData){
         return Result.success(commonDataService.updateById(commonData));
     }
-    @ApiOperation(value = "删除",tags = "删除")
+    @ApiOperation(value = "删除系统公共配置",tags = "删除")
     @PostMapping("delete")
     public Result<Boolean> delete(@RequestParam Long id){
         return Result.success(commonDataService.removeById(id));

@@ -33,14 +33,14 @@ public class RoleController {
 
 
     @PostMapping("insert")
-    @ApiOperation(value = "插入",tags = "新增")
+    @ApiOperation(value = "插入角色",tags = "新增")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(Role role){
         return Result.success(roleService.save(role));
     }
 
     @PostMapping("update")
-    @ApiOperation(value = "修改",tags = "修改")
+    @ApiOperation(value = "修改角色",tags = "修改")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     public Result<Boolean> update(Role role){
         return Result.success(roleService.updateById(role));

@@ -164,7 +164,7 @@ public class ExpertController {
         return Result.success(expertVOPage);
     }
     @PostMapping("query")
-    @ApiOperation(value = "获取详情",tags = "查询")
+    @ApiOperation(value = "获取专家详情",tags = "查询")
     @ApiImplicitParam(name = "id",value = "编号",required = true)
     public Result<Expert> queryById(@RequestParam Long id){
         Expert expert = expertService.getById(id);
@@ -172,19 +172,19 @@ public class ExpertController {
     }
     @PostMapping("update")
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
-    @ApiOperation(value = "更新方法",tags = "修改")
+    @ApiOperation(value = "更新专家方法",tags = "修改")
     public Result<Boolean> update(@RequestBody Expert expert){
         return Result.success(expertService.updateById(expert));
     }
 
-    @ApiOperation(value = "根据id删除",tags = "删除")
+    @ApiOperation(value = "根据id删除专家",tags = "删除")
     @ApiImplicitParam(name = "id",value = "编号",required = true)
     @PostMapping("delete")
     public Result<Boolean> deleteById(@RequestParam Long id){
         return Result.success(expertService.removeById(id));
     }
     @PostMapping("insert")
-    @ApiOperation(value = "插入",tags = "新增")
+    @ApiOperation(value = "插入专家",tags = "新增")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(@RequestBody Expert expert){
         // 插入的时候需要记录操作人id
@@ -198,13 +198,13 @@ public class ExpertController {
 
         return Result.success(expertService.save(expert));
     }
-    @ApiOperation(value = "批量删除",tags = "删除")
+    @ApiOperation(value = "批量删除专家",tags = "删除")
     @PostMapping("delete/by_ids")
     @ApiImplicitParam(name = "ids",value = "多个逗号相隔",required = true)
     public Result<Boolean> deleteByIds(@RequestParam List<Long> ids){
         return Result.success(expertService.removeByIds(ids));
     }
-    @ApiOperation(value = "上传文件进行批量插入",tags = "新增")
+    @ApiOperation(value = "上传文件进行批量插入专家",tags = "新增")
     @PostMapping("listUpload")
     public Result<String> listUpload(@RequestParam Long classificationId ,@RequestParam("file") MultipartFile file){
         //批量添加

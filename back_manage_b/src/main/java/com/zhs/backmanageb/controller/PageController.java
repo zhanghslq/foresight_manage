@@ -34,7 +34,7 @@ public class PageController {
     private PageService pageService;
 
     @PostMapping("insert")
-    @ApiOperation(value = "插入",tags = "新增")
+    @ApiOperation(value = "插入页面",tags = "新增")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(Page page){
         return Result.success(pageService.save(page));
@@ -61,7 +61,7 @@ public class PageController {
         return Result.success(pageService.updateById(page));
     }
 
-    @ApiOperation(value = "删除",tags = "删除")
+    @ApiOperation(value = "删除页面",tags = "删除")
     @PostMapping("delete")
     @ApiImplicitParam(name = "id",value = "页面id",required = true)
     public Result<Boolean> delete(Long id){

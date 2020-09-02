@@ -39,32 +39,32 @@ public class ExperienceRecordController {
     }
 
     @PostMapping("insertBatch")
-    @ApiOperation(value = "批量插入",tags = "新增")
+    @ApiOperation(value = "批量插入工作记录",tags = "新增")
     public Result<Boolean> insert(@RequestBody List<ExperienceRecord> experienceRecords){
         return Result.success(experienceRecordService.saveBatch(experienceRecords));
     }
     @PostMapping("delete")
-    @ApiOperation(value = "删除",tags = "新增")
+    @ApiOperation(value = "删除工作记录",tags = "新增")
     public Result<Boolean> delete(@RequestParam Long id){
         experienceRecordService.removeById(id);
         return Result.success(true);
     }
     @PostMapping("update")
-    @ApiOperation(value = "根据id修改",tags = "修改")
+    @ApiOperation(value = "根据id修改工作记录",tags = "修改")
     public Result<Boolean> update(@RequestBody ExperienceRecord experienceRecord){
         experienceRecordService.updateById(experienceRecord);
         return Result.success(true);
     }
 
     @PostMapping("updateBatch")
-    @ApiOperation(value = "批量根据id修改",tags = "修改")
+    @ApiOperation(value = "批量根据id修改工作记录",tags = "修改")
     public Result<Boolean> updateBatch(@RequestBody List<ExperienceRecord> experienceRecords){
         experienceRecordService.updateBatchById(experienceRecords);
         return Result.success(true);
     }
 
     @PostMapping("saveOrUpdateBatch")
-    @ApiOperation(value = "批量根据idx新增或修改",tags = "修改")
+    @ApiOperation(value = "批量根据idx新增或修改工作记录",tags = "修改")
     public Result<Boolean> insertOrUpdateBatch(@RequestBody List<ExperienceRecord> experienceRecords){
         experienceRecordService.saveOrUpdateBatch(experienceRecords);
         return Result.success(true);
@@ -77,7 +77,7 @@ public class ExperienceRecordController {
         experienceRecordQueryWrapper.eq("resume_id",resumeId);
         return Result.success(experienceRecordService.list(experienceRecordQueryWrapper));
     }
-    @ApiOperation(value = "批量删除",tags = "删除")
+    @ApiOperation(value = "批量删除工作记录",tags = "删除")
     @PostMapping("delete/by_ids")
     @ApiImplicitParam(name = "ids",value = "多个逗号相隔",required = true)
     public Result<Boolean> deleteByIds(@RequestParam List<Long> ids){

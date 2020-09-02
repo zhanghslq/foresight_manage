@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * @author zhs
  * @since 2020-08-11
  */
-@Api(tags = "组织模块-联系人")
+@Api(tags = "领导")
 @RestController
 @RequestMapping("/moduleContacts")
 public class ModuleContactsController {

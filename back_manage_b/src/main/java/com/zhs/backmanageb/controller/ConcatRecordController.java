@@ -129,7 +129,7 @@ public class ConcatRecordController {
         concatRecordService.save(concatRecord);
         return Result.success(true);
     }
-    @ApiOperation(value = "批量删除",tags = "删除")
+    @ApiOperation(value = "批量删除联系记录",tags = "删除")
     @PostMapping("delete/by_ids")
     @ApiImplicitParam(name = "ids",value = "多个逗号相隔",required = true)
     public Result<Boolean> deleteByIds(@RequestParam List<Long> ids){

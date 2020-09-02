@@ -151,7 +151,7 @@ public class ContactsController {
         return Result.success(contacts);
     }
     @PostMapping("insert")
-    @ApiOperation(value = "插入",tags = "新增")
+    @ApiOperation(value = "插入联系人",tags = "新增")
     @ApiOperationSupport(ignoreParameters = {"id","deleted","createTime","updateTime"})
     public Result<Boolean> insert(Contacts contacts){
         // 插入的时候需要记录操作人id
@@ -167,28 +167,28 @@ public class ContactsController {
 
 
     @PostMapping("delete")
-    @ApiOperation(value = "删除",tags = "删除")
+    @ApiOperation(value = "删除联系人",tags = "删除")
     @ApiImplicitParam(name = "id",value = "联系人id",required = true)
     public Result<Boolean> delete(@RequestParam Long id){
         return Result.success(contactsService.removeById(id));
     }
     // 插入联系人用的是导入文件模板的形式
 
-    @ApiOperation(value = "批量删除",tags = "删除")
+    @ApiOperation(value = "批量删除联系人",tags = "删除")
     @PostMapping("delete/by_ids")
     @ApiImplicitParam(name = "ids",value = "多个逗号相隔",required = true)
     public Result<Boolean> deleteByIds(@RequestParam List<Long> ids){
         return Result.success(contactsService.removeByIds(ids));
     }
 
-    @ApiOperation(value = "绑定",tags = "修改")
+    @ApiOperation(value = "绑定联系人",tags = "修改")
     @PostMapping("binding/organization")
     public Result<Boolean> bindOrganization(@RequestParam Integer isCompany,@RequestParam Long organizationId,@RequestParam(required = false) List<Long> contactIds){
         contactsService.bindingOrganization(isCompany,organizationId,contactIds);
         return Result.success(true);
     }
 
-    @ApiOperation(value = "上传文件进行批量插入",tags = "新增")
+    @ApiOperation(value = "上传文件进行批量插入联系人",tags = "新增")
     @PostMapping("listUpload")
     public Result<String> listUpload(@RequestParam("file") MultipartFile file){
         //批量添加

@@ -221,6 +221,16 @@ public class ResumeController {
         List<ResumeCompany> resumeCompanyList = resumeCompanyService.list(resumeCompanyQueryWrapper);
         resumeVO.setResumeCompanyList(resumeCompanyList);
 
+        if(!Objects.isNull(resumeVO.getParties())){
+            CommonData commonData = commonDataService.getById(resumeVO.getParties());
+            String name = commonData.getName();
+            resumeVO.setPartiesName(name);
+        }
+        if(!Objects.isNull(resumeVO.getNation())){
+            CommonData commonData = commonDataService.getById(resumeVO.getNation());
+            String name = commonData.getName();
+            resumeVO.setNationName(name);
+        }
         QueryWrapper<ResumeCompany> politicsResumeCompanyQueryWrapper = new QueryWrapper<>();
         politicsResumeCompanyQueryWrapper.eq("resume_id",id);
         politicsResumeCompanyQueryWrapper.eq("is_politics",1);

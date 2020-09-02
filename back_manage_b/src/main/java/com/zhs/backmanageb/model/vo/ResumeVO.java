@@ -50,8 +50,14 @@ public class ResumeVO {
     @ApiModelProperty(value = "民族")
     private Long nation;
 
+    @ApiModelProperty(value = "民族名称")
+    private String nationName;
+
     @ApiModelProperty(value = "党派")
     private Long parties;
+
+    @ApiModelProperty(value = "党派名称")
+    private String partiesName;
 
     @ApiModelProperty(value = "0女，1男")
     private Integer sex;

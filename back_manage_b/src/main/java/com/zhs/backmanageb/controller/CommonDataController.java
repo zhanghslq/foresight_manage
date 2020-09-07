@@ -6,8 +6,10 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.backmanageb.common.Result;
 import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
 import com.zhs.backmanageb.entity.CommonData;
+import com.zhs.backmanageb.entity.DropDownBoxType;
 import com.zhs.backmanageb.model.vo.CommonTypeVO;
 import com.zhs.backmanageb.service.CommonDataService;
+import com.zhs.backmanageb.service.DropDownBoxTypeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -40,6 +42,9 @@ public class CommonDataController {
     @Resource
     private CommonDataService commonDataService;
 
+    @Resource
+    private DropDownBoxTypeService dropDownBoxTypeService;
+
     @ApiOperation(value = "根据类别获取列表进行维护,用于下拉框取值",tags = "查询")
     @ApiImplicitParam(name="type",value = "类型",required = true)
     @PostMapping("/list/by_type")
@@ -56,12 +61,13 @@ public class CommonDataController {
         List<CommonTypeVO> result = new ArrayList<>();
         List<CommonData> list = commonDataService.list();
         Map<Integer, List<CommonData>> map = list.stream().collect(Collectors.groupingBy(CommonData::getType));
-        DropDownBoxTypeEnum[] values = DropDownBoxTypeEnum.values();
-        for (DropDownBoxTypeEnum value : values) {
+
+        List<DropDownBoxType> dropDownBoxTypeList = dropDownBoxTypeService.list();
+        for (DropDownBoxType dropDownBoxType : dropDownBoxTypeList) {
             CommonTypeVO commonTypeVO = new CommonTypeVO();
-            commonTypeVO.setId(Long.valueOf(value.getId()));
-            commonTypeVO.setName(value.getName());
-            List<CommonData> commonDataList = map.get(value.getId());
+            commonTypeVO.setId(Long.valueOf(dropDownBoxType.getId()));
+            commonTypeVO.setName(dropDownBoxType.getName());
+            List<CommonData> commonDataList = map.get(dropDownBoxType.getId());
             if(!Objects.isNull(commonDataList)){
                 List<CommonData> commonData = commonDataList.stream().sorted(Comparator.comparingInt(CommonData::getSeq)).collect(Collectors.toList());
                 commonTypeVO.setChildren(commonData);

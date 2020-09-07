@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 
 /**
  * <p>
@@ -64,6 +65,9 @@ public class Organization implements Serializable {
 
     @ApiModelProperty(value = "系统id，系统配置进行维护")
     private Long systemId;
+
+    @ApiModelProperty(value = "冗余给二级联动用，可以用来存系统的上级id，根据这个来判断取哪个下拉框的值")
+    private Integer systemTypeId;
 
     @ApiModelProperty(value = "所属类型(系统配置维护)")
     private Long commonTypeId;

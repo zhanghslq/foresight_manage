@@ -67,7 +67,7 @@ public class Organization implements Serializable {
     private Long systemId;
 
     @ApiModelProperty(value = "冗余给二级联动用，可以用来存系统的上级id，根据这个来判断取哪个下拉框的值")
-    private Integer systemTypeId;
+    private String systemTypeIdString;
 
     @ApiModelProperty(value = "所属类型(系统配置维护)")
     private Long commonTypeId;

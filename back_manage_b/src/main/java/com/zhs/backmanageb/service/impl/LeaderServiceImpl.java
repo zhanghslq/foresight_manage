@@ -88,6 +88,7 @@ public class LeaderServiceImpl extends ServiceImpl<LeaderMapper, Leader> impleme
             leader.setModuleId(moduleId);
             leader.setOrganizationId(organizationModule.getOrganizationId());
             leader.setPosition(readBook.getPosition());
+            leader.setType(type);
             String levelName = readBook.getLevelName();
             QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
             commonDataQueryWrapper.eq("name",levelName);

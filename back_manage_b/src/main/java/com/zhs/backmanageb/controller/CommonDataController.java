@@ -51,7 +51,7 @@ public class CommonDataController {
     public Result<List<CommonData>> listByType(@RequestParam Integer type){
         QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
         commonDataQueryWrapper.eq("type",type);
-        commonDataQueryWrapper.orderByAsc("seq");
+        commonDataQueryWrapper.orderByAsc("seq,id");
         List<CommonData> list = commonDataService.list(commonDataQueryWrapper);
         return Result.success(list);
     }

@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
+import com.zhs.backmanageb.common.constant.ImportanceTypeEnum;
 import com.zhs.backmanageb.common.constant.ModuleTypeEnum;
 import com.zhs.backmanageb.common.constant.RootTypeEnum;
 import com.zhs.backmanageb.entity.*;
@@ -199,7 +200,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             organization.setAdminId(Long.valueOf(subject.getPrincipal().toString()));
             organization.setAddressDetail(readBook.getAddressDetail());
             organization.setPerfectValue(readBook.getPerfectValue());
-            organization.setImportance(readBook.getImportance());
+            organization.setImportance(ImportanceTypeEnum.getIdByName(readBook.getImportance()));
             organization.setSeq(readBook.getSeq());
             organization.setName(readBook.getName());
             organization.setType(type);

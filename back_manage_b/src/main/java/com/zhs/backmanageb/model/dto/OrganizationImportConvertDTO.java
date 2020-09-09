@@ -13,7 +13,7 @@ public class OrganizationImportConvertDTO {
     @ExcelProperty(value = "名字",index = 0)
     private String name;
     @ExcelProperty(value = "重要性",index = 1)
-    private Integer importance;
+    private String importance;
     @ExcelProperty(value = "完善度",index = 2)
     private Integer perfectValue;
     @ExcelProperty(value = "级别",index = 3)

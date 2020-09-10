@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>
@@ -44,6 +45,8 @@ public class LeaderServiceImpl extends ServiceImpl<LeaderMapper, Leader> impleme
     private ResumeService resumeService;
     @Autowired
     private OrganizationService organizationService;
+    @Autowired
+    private CompanyService companyService;
 
     @Override
     public void listUpload(Long moduleId, MultipartFile file) {
@@ -73,11 +76,20 @@ public class LeaderServiceImpl extends ServiceImpl<LeaderMapper, Leader> impleme
             e.printStackTrace();
             throw new MyException("文件上传失败");
         }
+        Integer type;
         OrganizationModule organizationModule = organizationModuleService.getById(moduleId);
+        if(!Objects.isNull(organizationModule.getIsCompany())&&organizationModule.getIsCompany()==1){
+            // 企业
+            Company company = companyService.getById(organizationModule.getOrganizationId());
+            Assert.notNull(company,"企业不存在");
+            type = RootTypeEnum.COMPANY.getId();
+        }else {
+            Organization organization = organizationService.getById(organizationModule.getOrganizationId());
+            Assert.notNull(organization,"组织不存在");
+            type=organization.getType();
+
+        }
         Assert.notNull(organizationModule,"下属机构模块不能为空");
-        Organization organization = organizationService.getById(organizationModule.getOrganizationId());
-        Assert.notNull(organization,"组织不存在");
-        Integer type =organization.getType();
         List<LeaderImportConvertDTO> readBooks = EasyExcelUtil.readListFrom(fileInputStream, LeaderImportConvertDTO.class);
         excelFile.delete();
         // 对数据处理
@@ -94,19 +106,18 @@ public class LeaderServiceImpl extends ServiceImpl<LeaderMapper, Leader> impleme
             commonDataQueryWrapper.eq("name",levelName);
             // 需要区分几种类型，来用不同的type查
             if(RootTypeEnum.PARTY.getId().equals(type)){
-                commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.PARTY_AFFAIRS_ORGANIZATION_LEVEL.getId());
+                commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.PARTY_LEADER_LEVEL.getId());
             }else if(RootTypeEnum.GOVERNMENT.getId().equals(type)){
-                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.GOVERNMENT_AFFAIRS_ORGANIZATION_LEVEL.getId());
+                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.GOVERNMENT_LEADER_LEVEL.getId());
             }else if(RootTypeEnum.LEGAL.getId().equals(type)){
-                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.LEGAL_AFFAIRS_ORGANIZATION_LEVEL.getId());
+                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.LEGAL_LEADER_LEVEL.getId());
             }else if(RootTypeEnum.POLITICAL_PARTICIPATION.getId().equals(type)){
-                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.POLITICAL_PARTICIPATION_ORGANIZATION_LEVEL.getId());
+                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.POLITICAL_LEADER_LEVEL.getId());
             }else if(RootTypeEnum.MILITARY.getId().equals(type)){
-                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.ARMY_ORGANIZATION_LEVEL.getId());
-            }/*else if(RootTypeEnum.COMPANY.getId().equals(type)){
-
-                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.COMPANY_LEVEL);
-            }*/else {
+                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.ARMY_LEADER_LEVEL.getId());
+            }else if(RootTypeEnum.COMPANY.getId().equals(type)){
+                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.COMPANY_LEADER_LEVEL.getId());
+            } else  {
                 throw new MyException("不属于所属类型");
             }
             List<CommonData> list = commonDataService.list(commonDataQueryWrapper);

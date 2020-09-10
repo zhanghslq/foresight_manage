@@ -165,9 +165,13 @@ public class OrganizationModuleServiceImpl extends ServiceImpl<OrganizationModul
         OrganizationModule organizationModule = getById(moduleId);
         Assert.notNull(organizationModule,"模块不存在");
         Integer type = organizationModule.getType();
-        if(!ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(type)){
-            throw new MyException("当前模块不属于下属机构");
+        if(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(type)){
+            copyOrganization(moduleId, organizationModule);
         }
+
+    }
+
+    private void copyOrganization(Long moduleId, OrganizationModule organizationModule) {
         Long organizationId = organizationModule.getOrganizationId();
         Organization organization = organizationService.getById(organizationId);
 
@@ -202,7 +206,7 @@ public class OrganizationModuleServiceImpl extends ServiceImpl<OrganizationModul
             if(organLevel==organizationLevel){
                 // 级别相同，查模块，以及模块下的组织
                 QueryWrapper<OrganizationModule> organizationModuleQueryWrapper = new QueryWrapper<>();
-                organizationModuleQueryWrapper.eq("type",ModuleTypeEnum.ORGANIZATION_CHILDREN.getId());
+                organizationModuleQueryWrapper.eq("type", ModuleTypeEnum.ORGANIZATION_CHILDREN.getId());
                 organizationModuleQueryWrapper.eq("organization_id",organ.getId());
                 List<OrganizationModule> list = list(organizationModuleQueryWrapper);
                 if(list.size()!=0){

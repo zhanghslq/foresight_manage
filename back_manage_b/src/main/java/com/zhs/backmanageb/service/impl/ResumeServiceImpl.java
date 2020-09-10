@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -261,6 +262,21 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             resume.setCompany(resumeConvertDTO.getCompany());
             resume.setJob(resumeConvertDTO.getPosition());
             resume.setAreaName(resumeConvertDTO.getBirthplace());
+            List<Integer> areaIdArray = new ArrayList<>();
+            if(!StringUtils.isEmpty(resumeConvertDTO.getBirthplaceId())){
+                String birthplaceId = resumeConvertDTO.getBirthplaceId();
+                String[] split = birthplaceId.split(",");
+                try {
+                    for (String s : split) {
+                        areaIdArray.add(Integer.valueOf(s));
+                        resume.setAreaId(Long.valueOf(s));
+                    }
+                } catch (NumberFormatException e) {
+                    log.error("解析出错了字符串为:{}",birthplaceId);
+                }
+                resume.setAreaIdArray(JSON.toJSONString(areaIdArray));
+            }
+
             resume.setNationName(resumeConvertDTO.getNation());
 
             QueryWrapper<CommonData> nationWrapper = new QueryWrapper<>();

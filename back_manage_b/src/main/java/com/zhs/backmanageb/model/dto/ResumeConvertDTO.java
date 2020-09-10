@@ -39,6 +39,7 @@ public class ResumeConvertDTO {
     /**
      * 这里是当前职务，这里也是多个
      */
+    private String birthplaceId;
     private String position;
     private String positionDate;
     private String birthday;

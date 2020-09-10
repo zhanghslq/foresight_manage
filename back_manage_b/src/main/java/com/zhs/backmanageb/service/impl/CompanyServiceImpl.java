@@ -224,7 +224,7 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
 
 
             List<CommonData> levelList = commonDataService.list(commonDataQueryWrapperLevel);
-            List<CommonData> typeList = commonDataService.list(commonDataQueryWrapperLevel);
+            List<CommonData> typeList = commonDataService.list(commonDataQueryWrapperType);
             List<CommonData> relationTypeList = commonDataService.list(commonDataQueryWrapperRelationType);
             List<CommonData> marketTypeList = commonDataService.list(commonDataQueryWrapperMarket);
 

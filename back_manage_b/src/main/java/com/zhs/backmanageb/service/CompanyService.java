@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhs.backmanageb.model.bo.OrganizationHasParentBO;
 import com.zhs.backmanageb.model.bo.OrganizationTagBO;
 import com.zhs.backmanageb.model.vo.CompanyVO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,4 +28,5 @@ public interface CompanyService extends IService<Company> {
     OrganizationHasParentBO listParentById(Long organizationId);
 
 
+    void listUpload(Long moduleId, MultipartFile file);
 }

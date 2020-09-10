@@ -1,21 +1,37 @@
 package com.zhs.backmanageb.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zhs.backmanageb.common.constant.DropDownBoxTypeEnum;
+import com.zhs.backmanageb.common.constant.ImportanceTypeEnum;
 import com.zhs.backmanageb.common.constant.ModuleTypeEnum;
 import com.zhs.backmanageb.common.constant.RootTypeEnum;
 import com.zhs.backmanageb.entity.*;
+import com.zhs.backmanageb.exception.MyException;
 import com.zhs.backmanageb.mapper.CompanyMapper;
 import com.zhs.backmanageb.model.bo.CompanyModuleBO;
 import com.zhs.backmanageb.model.bo.ContactsBO;
 import com.zhs.backmanageb.model.bo.OrganizationHasParentBO;
 import com.zhs.backmanageb.model.bo.OrganizationTagBO;
+import com.zhs.backmanageb.model.dto.CompanyImportConvertDTO;
+import com.zhs.backmanageb.model.dto.OrganizationImportConvertDTO;
 import com.zhs.backmanageb.model.vo.CompanyVO;
 import com.zhs.backmanageb.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zhs.backmanageb.util.EasyExcelUtil;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,6 +66,11 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
     @Autowired
     private CompanyMapper companyMapper;
 
+    @Autowired
+    private AreaService areaService;
+
+    @Autowired
+    private CommonDataService commonDataService;
 
     @Override
     public CompanyVO queryByOrganizationType(Long organizationTypeId, Long areaId) {
@@ -126,6 +147,125 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
         OrganizationHasParentBO organizationHasParentBO = companyMapper.listParentById(organizationId);
 
         return organizationHasParentBO;
+    }
+
+    @Override
+    public void listUpload(Long moduleId, MultipartFile file) {
+        OrganizationModule organizationModule = organizationModuleService.getById(moduleId);
+        Assert.notNull(organizationModule,"模块不存在");
+        String fileName = file.getOriginalFilename();
+        if (StringUtils.isEmpty(fileName)){
+            throw new MyException("文件不能为空");
+        }
+        // 获取文件后缀
+        String prefix=fileName.substring(fileName.lastIndexOf("."));
+        if (!prefix.toLowerCase().contains("xls") && !prefix.toLowerCase().contains("xlsx") ){
+            throw new MyException("文件格式异常，请上传Excel文件格式");
+        }
+        // 防止生成的临时文件重复-建议使用UUID
+        final File excelFile;
+        try {
+            excelFile = File.createTempFile(System.currentTimeMillis()+"", prefix);
+            file.transferTo(excelFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new MyException("文件上传失败");
+        }
+
+        FileInputStream fileInputStream;
+        try {
+            fileInputStream = new FileInputStream(excelFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            throw new MyException("文件上传失败");
+        }
+        Assert.notNull(organizationModule,"下属企业模块不能为空");
+        Integer isCompany = organizationModule.getIsCompany();
+        if(Objects.isNull(isCompany)||isCompany!=1){
+            throw new MyException("模块不是企业模块");
+        }
+
+        Company companyById = getById(organizationModule.getOrganizationId());
+        Assert.notNull(companyById,"企业不存在");
+        List<CompanyImportConvertDTO> readBooks = EasyExcelUtil.readListFrom(fileInputStream, CompanyImportConvertDTO.class);
+        excelFile.delete();
+        List<Company> result = new ArrayList<>();
+        // 解析Excel
+        for (CompanyImportConvertDTO readBook : readBooks) {
+            Company company = new Company();
+            company.setModuleId(moduleId);
+            company.setParentId(organizationModule.getOrganizationId());
+            Subject subject = SecurityUtils.getSubject();
+            company.setAdminId(Long.valueOf(subject.getPrincipal().toString()));
+            company.setAddressDetail(readBook.getAddressDetail());
+            company.setPerfectValue(readBook.getPerfectValue());
+            company.setSeq(readBook.getSeq());
+            company.setName(readBook.getName());
+            company.setCompanyTypeName(readBook.getCompanyTypeName());
+            company.setCompanyLevelName(readBook.getLevelName());
+            company.setIsMarket(readBook.getIsMarket());
+            company.setMarkedCode(readBook.getMarkedCode());
+            QueryWrapper<CommonData> commonDataQueryWrapperLevel = new QueryWrapper<>();
+            QueryWrapper<CommonData> commonDataQueryWrapperType = new QueryWrapper<>();
+            QueryWrapper<CommonData> commonDataQueryWrapperRelationType = new QueryWrapper<>();
+            QueryWrapper<CommonData> commonDataQueryWrapperMarket = new QueryWrapper<>();
+
+            commonDataQueryWrapperLevel.eq("name", readBook.getLevelName());
+            commonDataQueryWrapperLevel.eq("type",DropDownBoxTypeEnum.COMPANY_LEVEL.getId());
+
+            commonDataQueryWrapperType.eq("type",DropDownBoxTypeEnum.COMPANY_TYPE.getId());
+            commonDataQueryWrapperType.eq("name", readBook.getCompanyTypeName());
+
+            commonDataQueryWrapperRelationType.eq("type",DropDownBoxTypeEnum.COMPANY_RELATIONSHIP_TYPE.getId());
+            commonDataQueryWrapperRelationType.eq("name",readBook.getRelationshipType());
+
+            commonDataQueryWrapperMarket.eq("type",DropDownBoxTypeEnum.COMPANY_MARKET_SITUATION.getId());
+            commonDataQueryWrapperMarket.eq("name",readBook.getMarketTypeName());
+
+
+            List<CommonData> levelList = commonDataService.list(commonDataQueryWrapperLevel);
+            List<CommonData> typeList = commonDataService.list(commonDataQueryWrapperLevel);
+            List<CommonData> relationTypeList = commonDataService.list(commonDataQueryWrapperRelationType);
+            List<CommonData> marketTypeList = commonDataService.list(commonDataQueryWrapperMarket);
+
+            if(levelList.size()>0){
+                company.setCompanyLevelId(levelList.get(0).getId());
+            }
+            if(typeList.size()>0){
+                company.setCompanyTypeId(typeList.get(0).getId());
+            }
+            if(relationTypeList.size()>0){
+                company.setRelationshipTypeId(relationTypeList.get(0).getId());
+            }
+            if(marketTypeList.size()>0){
+                company.setMarketTypeId(marketTypeList.get(0).getId());
+            }
+
+            String areaName = readBook.getAreaName();
+            QueryWrapper<Area> areaQueryWrapper = new QueryWrapper<>();
+            areaQueryWrapper.eq("name",areaName);
+            List<Area> list = areaService.list(areaQueryWrapper);
+            if(list.size()>0){
+                Area area = list.get(0);
+                company.setAreaId(area.getId());
+                ArrayList<Long> areaIdList = new ArrayList<>();
+                areaIdList.add(area.getId());
+                int max=10;
+                int i=0;
+                while (area.getParentId()!=0&&i<max){
+                    i++;
+                    area=areaService.getById(area.getParentId());
+                    areaIdList.add(area.getId());
+                }
+                Collections.reverse(areaIdList);
+                String areaIdString = JSON.toJSONString(areaIdList);
+                company.setAreaIdArray(areaIdString);
+            }
+            result.add(company);
+        }
+        if(result.size()>0){
+            saveBatch(result);
+        }
     }
 
     private void getContactAndLeader(CompanyVO companyVO, Long organizationId) {

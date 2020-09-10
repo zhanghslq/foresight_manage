@@ -65,4 +65,14 @@ public class ResumeTest {
         ResponseEntity<String> responseEntity = restTemplate.postForEntity("http://test.cvhr.cn/cvparse_base64_v20200601", requestEntity, String.class);
         System.out.println(responseEntity.getBody());
     }
+
+    @Test
+    public void testSplit(){
+        String s = "1,2";
+        String[] split = s.split(",");
+        System.out.println(split.length);
+        for (String s1 : split) {
+            System.out.println(s1);
+        }
+    }
 }

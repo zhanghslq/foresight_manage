@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zhs.backmanageb.mapper.OrganizationTypeMapper">
-    <resultMap id="myTreeMap" type="com.zhs.backmanageb.model.bo.OrganizationTypeBO">
+<mapper namespace="com.zhs.mapper.OrganizationTypeMapper">
+    <resultMap id="myTreeMap" type="com.zhs.model.bo.OrganizationTypeBO">
         <id property="id" jdbcType="BIGINT" column="id" javaType="long" />
         <result property="name" javaType="java.lang.String" column="name"/>
         <result property="type" javaType="integer" column="type"/>
         <result property="hasLocation" column="has_location"/>
         <result property="detail" javaType="java.lang.String" column="detail"/>
-        <collection property="children" javaType="list"  ofType="com.zhs.backmanageb.model.bo.OrganizationTypeBO" column="id" select="selectAllTreeByParentId" />
+        <collection property="children" javaType="list" ofType="com.zhs.model.bo.OrganizationTypeBO" column="id" select="selectAllTreeByParentId" />
     </resultMap>
-    <resultMap id="myFirstTreeMap" type="com.zhs.backmanageb.model.bo.OrganizationTypeBO">
+    <resultMap id="myFirstTreeMap" type="com.zhs.model.bo.OrganizationTypeBO">
         <id property="id" jdbcType="BIGINT" column="id" javaType="long" />
         <result property="name" javaType="java.lang.String" column="name"/>
         <result property="type" javaType="integer" column="type"/>
@@ -17,7 +17,7 @@
         <result property="detail" javaType="java.lang.String" column="detail"/>
         <result property="parentId" javaType="long" column="parent_id"/>
         <result property="seq" javaType="integer" column="seq"/>
-        <collection property="children" javaType="list"  ofType="com.zhs.backmanageb.model.bo.OrganizationTypeBO" column="id" select="selectFirstTreeByParentId" />
+        <collection property="children" javaType="list" ofType="com.zhs.model.bo.OrganizationTypeBO" column="id" select="selectFirstTreeByParentId" />
     </resultMap>
     <sql id="baseSQl">
             id,name,type,detail,has_location,parent_id,seq
@@ -30,7 +30,7 @@
         </if>
         order by seq
     </select>
-    <select id="selectFirstTreeByParentId" resultType="com.zhs.backmanageb.model.bo.OrganizationTypeBO" >
+    <select id="selectFirstTreeByParentId" resultType="com.zhs.model.bo.OrganizationTypeBO" >
         select id,name,type,detail,has_location,parent_id,seq from organization_type
         where parent_id=#{parentId,jdbcType=BIGINT} and deleted=0 order by seq
     </select>
@@ -50,7 +50,7 @@
         </foreach>
         order by seq
     </select>
-    <select id="listByParentIdZero" resultType="com.zhs.backmanageb.model.bo.OrganizationTypeBO">
+    <select id="listByParentIdZero" resultType="com.zhs.model.bo.OrganizationTypeBO">
         select id,name,type,detail,has_location,parent_id,seq from organization_type
         where deleted=0 and parent_id=0 order by seq
     </select>

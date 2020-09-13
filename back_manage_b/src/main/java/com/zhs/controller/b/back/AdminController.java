@@ -93,6 +93,18 @@ public class AdminController {
         return Result.success(true);
     }
 
+    @PostMapping("unfreezeUser")
+    @ApiOperation(value = "冻结用户",tags = "修改")
+    public Result<Boolean> unfreezeUser(@RequestParam Long adminId){
+        Admin byId = adminService.getById(adminId);
+        if(Objects.isNull(byId)){
+            throw new MyException("用户不存在");
+        }
+        byId.setStatus(0);
+        adminService.updateById(byId);
+        return Result.success(true);
+    }
+
     @ApiOperation(value = "根据管理员id查询拥有角色",tags = "查询")
     @PostMapping("list_role/by_admin_id")
     public Result<List<Role>> listRoleByAdminId(@RequestParam Long adminId){

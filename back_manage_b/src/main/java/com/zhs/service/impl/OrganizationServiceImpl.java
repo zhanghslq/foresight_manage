@@ -200,6 +200,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             organization.setSeq(readBook.getSeq());
             organization.setName(readBook.getName());
             organization.setType(type);
+            organization.setWebsite(readBook.getWebsite());
             String commonType = readBook.getCommonType();
             // 这个类型到库里查
             QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();

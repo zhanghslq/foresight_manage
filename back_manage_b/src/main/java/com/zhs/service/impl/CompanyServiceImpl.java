@@ -203,6 +203,7 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
             company.setCompanyLevelName(readBook.getLevelName());
             company.setIsMarket(readBook.getIsMarket());
             company.setMarkedCode(readBook.getMarkedCode());
+            company.setWebsite(readBook.getWebsite());
             QueryWrapper<CommonData> commonDataQueryWrapperLevel = new QueryWrapper<>();
             QueryWrapper<CommonData> commonDataQueryWrapperType = new QueryWrapper<>();
             QueryWrapper<CommonData> commonDataQueryWrapperRelationType = new QueryWrapper<>();

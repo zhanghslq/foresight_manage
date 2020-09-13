@@ -41,4 +41,7 @@ public class CompanyImportConvertDTO {
     private String addressDetail;
     @ExcelProperty(value = "排序",index = 10)
     private Integer seq;
+
+    @ExcelProperty(value = "网址",index = 11)
+    private String website;
 }

@@ -115,7 +115,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     public Admin login(String username, String password, Integer type) {
         Admin admin = queryByUserName(username);
         Assert.notNull(type,"用户非法");
-        if(Objects.isNull(admin)||type.equals(admin.getType())){
+        if(Objects.isNull(admin)||!type.equals(admin.getType())){
             throw new  MyException("用户不存在");
         }
         if(Objects.equals(admin.getStatus(), 1)){

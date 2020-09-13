@@ -33,7 +33,7 @@ import java.util.Objects;
 @RequestMapping("/admin_front")
 @RestController
 @Api(tags = "管理员管理")
-public class AdminController {
+public class AdminFrontController {
 
     @Resource
     private AdminService adminService;

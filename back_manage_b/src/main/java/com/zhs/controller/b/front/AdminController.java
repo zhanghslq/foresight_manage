@@ -1,4 +1,4 @@
-package com.zhs.controller.b.back;
+package com.zhs.controller.b.front;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.zhs.common.Result;
@@ -30,7 +30,7 @@ import java.util.Objects;
  * @author: zhs
  * @date: 2020/6/9 18:57
  */
-@RequestMapping("/admin")
+@RequestMapping("/admin_front")
 @RestController
 @Api(tags = "管理员管理")
 public class AdminController {
@@ -41,7 +41,7 @@ public class AdminController {
     @PostMapping("/login")
     @ApiOperation(value = "登陆",tags = "登陆")
     public Result<AdminLoginReturnDTO> login(HttpServletRequest request, String username, String password){
-        Admin admin = adminService.login(username,password, AdminTypeEnum.B_BACK.getType());
+        Admin admin = adminService.login(username,password, AdminTypeEnum.B_FRONT.getType());
         String sessionId = request.getSession().getId();
         AdminLoginReturnDTO adminLoginReturnDTO = new AdminLoginReturnDTO();
         BeanUtil.copyProperties(admin,adminLoginReturnDTO);
@@ -57,7 +57,7 @@ public class AdminController {
     @PostMapping("add")
     @ApiOperation(value = "添加用户",tags = "新增")
     public Result<Boolean> add(@RequestParam String username,@RequestParam String password,String realName,String mobile,Long roleId){
-        adminService.register(username,password,realName,mobile,roleId, AdminTypeEnum.B_BACK.getType());
+        adminService.register(username,password,realName,mobile,roleId,AdminTypeEnum.B_FRONT.getType());
         return Result.success(true);
     }
 
@@ -81,23 +81,7 @@ public class AdminController {
         adminService.updatePassword(adminId,password);
         return Result.success(true);
     }
-    @PostMapping("freezeUser")
-    @ApiOperation(value = "冻结用户",tags = "修改")
-    public Result<Boolean> freezeUser(@RequestParam Long adminId){
-        Admin byId = adminService.getById(adminId);
-        if(Objects.isNull(byId)){
-            throw new MyException("用户不存在");
-        }
-        byId.setStatus(1);
-        adminService.updateById(byId);
-        return Result.success(true);
-    }
 
-    @ApiOperation(value = "根据管理员id查询拥有角色",tags = "查询")
-    @PostMapping("list_role/by_admin_id")
-    public Result<List<Role>> listRoleByAdminId(@RequestParam Long adminId){
-        return Result.success(adminService.listRoleByAdminId(adminId));
-    }
 
     @PostMapping("list_page/by_admin_id")
     @ApiOperation(value = "根据管理员id查询拥有页面权限",tags = "查询")
@@ -105,51 +89,6 @@ public class AdminController {
         return Result.success(adminService.listPageByAdminId(adminId));
     }
 
-    @PostMapping("list_page/by_role_id")
-    @ApiOperation(value = "根据角色id查询页面权限",tags = "查询")
-    public Result<List<Page>> listPageByRoleId(@RequestParam Long roleId){
-        return Result.success(adminService.listPageByRoleId(roleId));
-    }
 
-    @PostMapping("list")
-    @ApiOperation(value = "查询所有用户",tags = "查询")
-    public Result<List<AdminVO>> list(){
-        List<Admin> list = adminService.list();
-        List<AdminVO> result = new ArrayList<>();
-        for (Admin admin : list) {
-            AdminVO adminVO = new AdminVO();
-            BeanUtil.copyProperties(admin,adminVO);
-            adminVO.setRoleList(adminService.listRoleByAdminId(admin.getId()));
-            result.add(adminVO);
-        }
-        return Result.success(result);
-    }
-
-    @PostMapping("list/by_page")
-    @ApiOperation(value = "分页查询所有用户",tags = "查询")
-    public Result<com.baomidou.mybatisplus.extension.plugins.pagination.Page<AdminVO>> listByPage(@RequestParam Integer current, @RequestParam Integer size){
-        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Admin> adminPage = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(current, size);
-        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Admin> page = adminService.page(adminPage);
-        List<Admin> records = page.getRecords();
-        List<AdminVO> result = new ArrayList<>();
-        for (Admin admin : records) {
-            AdminVO adminVO = new AdminVO();
-            BeanUtil.copyProperties(admin,adminVO);
-            result.add(adminVO);
-        }
-        com.baomidou.mybatisplus.extension.plugins.pagination.Page<AdminVO> adminVOPage = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>();
-        BeanUtil.copyProperties(page,adminVOPage);
-        adminVOPage.setRecords(result);
-        return Result.success(adminVOPage);
-    }
-
-
-    // 查询用户的录入数据
-    @PostMapping("query/add_data")
-    @ApiOperation(value = "查用户添加的数据",tags = "查询")
-    public Result<AdminAddDataVO> queryAddData(@RequestParam Long adminId){
-        AdminAddDataVO adminAddDataVO = adminService.queryAddData(adminId);
-        return Result.success(adminAddDataVO);
-    }
 
 }

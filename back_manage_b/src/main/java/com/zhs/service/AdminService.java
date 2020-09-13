@@ -19,13 +19,13 @@ public interface AdminService extends IService<Admin> {
 
     List<Page> listPageByRoleId(Long roleId);
 
-    Admin login(String username, String password);
+    Admin login(String username, String password, Integer type);
 
     Admin queryByUserName(String username);
 
     Admin queryByMobile(String mobile);
 
-    void register(String username, String password, String realName, String mobile, Long roleId);
+    void register(String username, String password, String realName, String mobile, Long roleId, Integer type);
 
     void updateUserAndRole(Long adminId, String username, String realName, String mobile, Long roleId);
 

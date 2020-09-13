@@ -14,6 +14,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,10 +112,10 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     }
 
     @Override
-    public Admin login(String username, String password) {
+    public Admin login(String username, String password, Integer type) {
         Admin admin = queryByUserName(username);
-
-        if(Objects.isNull(admin)){
+        Assert.notNull(type,"用户非法");
+        if(Objects.isNull(admin)||type.equals(admin.getType())){
             throw new  MyException("用户不存在");
         }
         if(Objects.equals(admin.getStatus(), 1)){
@@ -147,7 +148,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     }
 
     @Override
-    public void register(String username, String password, String realName, String mobile, Long roleId) {
+    public void register(String username, String password, String realName, String mobile, Long roleId, Integer type) {
         Admin admin = queryByUserName(username);
         if(!Objects.isNull(admin)){
             throw new MyException("用户名已存在");
@@ -165,6 +166,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         admin.setRealName(realName);
         String newPassword = SecureUtil.md5(password + salt);
         admin.setPassword(newPassword);
+        admin.setType(type);
         save(admin);
         // 注册完，添加用户角色
         if(!Objects.isNull(roleId)){

@@ -32,6 +32,9 @@ public class Admin extends BaseEntity{
     private String realName;
     @ApiModelProperty("手机号")
     private String mobile;
+
+    @ApiModelProperty("管理员类型")
+    private Integer type;
     @ApiModelProperty("用户状态，0正常，1冻结")
     private Integer status;
 

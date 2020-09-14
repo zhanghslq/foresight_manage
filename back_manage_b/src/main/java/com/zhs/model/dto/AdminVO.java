@@ -16,6 +16,7 @@ public class AdminVO {
     private String username;
     private String realName;
     private String mobile;
+    private Integer status;
     private Date createTime;
     private List<Role> roleList;
 }

@@ -37,7 +37,7 @@ public class ReqLogAspect {
     private AdminService adminService;
     
 
-    @Pointcut("execution(public * com.zhs.backmanageb.controller..*.*(..))")
+    @Pointcut("execution(public * com.zhs.controller..*.*(..))")
     public void webLog() {
     }
 

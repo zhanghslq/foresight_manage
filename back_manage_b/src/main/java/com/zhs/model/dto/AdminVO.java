@@ -19,4 +19,5 @@ public class AdminVO {
     private Integer status;
     private Date createTime;
     private List<Role> roleList;
+    private Integer loginCount;
 }

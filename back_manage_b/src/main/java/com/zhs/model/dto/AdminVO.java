@@ -20,4 +20,5 @@ public class AdminVO {
     private Date createTime;
     private List<Role> roleList;
     private Integer loginCount;
+    private Long onlineTime;
 }

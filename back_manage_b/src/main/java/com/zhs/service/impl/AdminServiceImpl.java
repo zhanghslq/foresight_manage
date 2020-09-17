@@ -260,4 +260,9 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         adminAddDataVO.setImportCount(expertCount+resumeCount+contactCount);
         return adminAddDataVO;
     }
+
+    @Override
+    public void addOnLineTime(Long adminId) {
+        adminMapper.addOnlineTime(adminId);
+    }
 }

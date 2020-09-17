@@ -163,5 +163,11 @@ public class AdminController {
         AdminAddDataVO adminAddDataVO = adminService.queryAddData(adminId);
         return Result.success(adminAddDataVO);
     }
+    @PostMapping("add/online_time")
+    @ApiOperation(value = "增加在线时长",tags = "修改")
+    public Result<Boolean> addOnlineTime(@RequestParam Long adminId){
+        adminService.addOnLineTime(adminId);
+        return Result.success(true);
+    }
 
 }

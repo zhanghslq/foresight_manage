@@ -1,15 +1,18 @@
 package com.zhs.controller.b.back;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.common.Result;
 import com.zhs.common.constant.AdminTypeEnum;
 import com.zhs.entity.Admin;
+import com.zhs.entity.AdminRole;
 import com.zhs.entity.Page;
 import com.zhs.entity.Role;
 import com.zhs.exception.MyException;
 import com.zhs.model.dto.AdminLoginReturnDTO;
 import com.zhs.model.dto.AdminVO;
 import com.zhs.model.vo.AdminAddDataVO;
+import com.zhs.service.AdminRoleService;
 import com.zhs.service.AdminService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Wrapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +41,8 @@ public class AdminController {
 
     @Resource
     private AdminService adminService;
+    @Resource
+    private AdminRoleService adminRoleService;
 
     @PostMapping("/login")
     @ApiOperation(value = "登陆",tags = "登陆")
@@ -72,6 +78,9 @@ public class AdminController {
     @ApiImplicitParam(name = "adminId",value = "用户id",required = true)
     public Result<Boolean> delete(@RequestParam Long adminId){
         adminService.removeById(adminId);
+        QueryWrapper<AdminRole> adminRoleQueryWrapper = new QueryWrapper<>();
+        adminRoleQueryWrapper.eq("admin_id",adminId);
+        adminRoleService.remove(adminRoleQueryWrapper);
         return Result.success(true);
     }
 

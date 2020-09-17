@@ -76,6 +76,7 @@ public class RoleController {
                 if(!Objects.isNull(adminRoles)){
                     roleVO.setAdminCount(adminRoles.size());
                 }
+                result.add(roleVO);
             }
         }
         return Result.success(result);

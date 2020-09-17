@@ -169,5 +169,4 @@ public class AdminController {
         adminService.addOnLineTime(adminId);
         return Result.success(true);
     }
-
 }

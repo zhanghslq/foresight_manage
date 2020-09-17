@@ -34,4 +34,6 @@ public interface AdminService extends IService<Admin> {
     AdminAddDataVO queryAddData(Long adminId);
 
     void addOnLineTime(Long adminId);
+
+    void addOperatorCount(Long adminId);
 }

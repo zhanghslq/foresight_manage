@@ -265,4 +265,9 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     public void addOnLineTime(Long adminId) {
         adminMapper.addOnlineTime(adminId);
     }
+
+    @Override
+    public void addOperatorCount(Long adminId) {
+        adminMapper.addOperatorCount(adminId);
+    }
 }

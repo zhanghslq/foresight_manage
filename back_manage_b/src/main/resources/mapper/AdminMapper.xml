@@ -16,5 +16,8 @@
     <update id="addOnlineTime">
         update admin set online_time = online_time +20 where id=#{adminId,jdbcType=BIGINT}
     </update>
+    <update id="addOperatorCount">
+        update admin set operator_count = operator_count+1 where id=#{adminId,jdbcType=BIGINT}
+    </update>
 
 </mapper>

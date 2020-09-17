@@ -18,4 +18,7 @@ public interface AdminMapper extends BaseMapper<Admin> {
     void increaseLoginCount(@Param("id") Long id);
 
     void addOnlineTime(@Param("adminId") Long adminId);
+
+    void addOperatorCount(@Param("adminId") Long adminId);
+
 }

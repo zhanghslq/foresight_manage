@@ -21,4 +21,5 @@ public class AdminVO {
     private List<Role> roleList;
     private Integer loginCount;
     private Long onlineTime;
+    private Integer operatorCount;
 }

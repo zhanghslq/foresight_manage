@@ -173,7 +173,7 @@ public class AdminController {
         return Result.success(adminAddDataVO);
     }
     @PostMapping("add/online_time")
-    @ApiOperation(value = "增加在线时长",tags = "修改")
+    @ApiOperation(value = "增加在线时长",tags = "查询")
     public Result<Boolean> addOnlineTime(@RequestParam Long adminId){
         adminService.addOnLineTime(adminId);
         return Result.success(true);

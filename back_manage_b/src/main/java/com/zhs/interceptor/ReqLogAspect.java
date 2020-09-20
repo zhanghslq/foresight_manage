@@ -37,7 +37,7 @@ public class ReqLogAspect {
     private AdminService adminService;
     
 
-    @Pointcut("execution(public * com.zhs.backmanageb.controller..*.*(..))")
+    @Pointcut("execution(public * com.zhs.controller..*.*(..))")
     public void webLog() {
     }
 
@@ -111,6 +111,9 @@ public class ReqLogAspect {
         if(!"查询".equals(adminOperationLog.getOperatorType())){
             adminOperationLogService.save(adminOperationLog);
             logId.set(adminOperationLog.getId());
+        }
+        if("新增".equals(adminOperationLog.getOperatorType())||"修改".equals(adminOperationLog.getOperatorType())||"删除".equals(adminOperationLog.getOperatorType())){
+            adminService.addOperatorCount(adminOperationLog.getAdminId());
         }
         log.info(adminOperationLog.toString());
         //记录基本信息

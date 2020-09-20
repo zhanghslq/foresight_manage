@@ -32,4 +32,8 @@ public interface AdminService extends IService<Admin> {
     void updatePassword(Long adminId,  String password);
 
     AdminAddDataVO queryAddData(Long adminId);
+
+    void addOnLineTime(Long adminId);
+
+    void addOperatorCount(Long adminId);
 }

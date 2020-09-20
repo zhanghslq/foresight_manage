@@ -41,6 +41,12 @@ public class Admin extends BaseEntity{
     @ApiModelProperty("登陆次数")
     private Integer loginCount;
 
+    @ApiModelProperty("在线时长（单位 秒）")
+    private Long onlineTime;
+
+    @ApiModelProperty("操作次数（增删改）")
+    private Integer operatorCount;
+
     @JsonIgnore
     private String salt;
 

@@ -111,6 +111,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         return pageService.listByIds(pageIds);
     }
 
+    
     @Override
     public Admin login(String username, String password, Integer type) {
         Admin admin = queryByUserName(username);

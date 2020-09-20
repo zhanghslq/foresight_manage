@@ -112,7 +112,6 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     }
 
 
-
     @Override
     public Admin login(String username, String password, Integer type) {
         Admin admin = queryByUserName(username);

@@ -50,7 +50,6 @@ public class Admin extends BaseEntity{
     @JsonIgnore
     private String salt;
 
-
     @JsonIgnore
     @ApiModelProperty(value = "删除标志")
     @TableLogic

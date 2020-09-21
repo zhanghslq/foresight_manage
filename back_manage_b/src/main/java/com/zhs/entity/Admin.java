@@ -46,6 +46,7 @@ public class Admin extends BaseEntity{
 
     @ApiModelProperty("操作次数（增删改）")
     private Integer operatorCount;
+
     @JsonIgnore
     private String salt;
 

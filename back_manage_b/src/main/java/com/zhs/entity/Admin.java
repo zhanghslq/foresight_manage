@@ -44,6 +44,7 @@ public class Admin extends BaseEntity{
     @ApiModelProperty("在线时长（单位 秒）")
     private Long onlineTime;
 
+
     @ApiModelProperty("操作次数（增删改）")
     private Integer operatorCount;
 

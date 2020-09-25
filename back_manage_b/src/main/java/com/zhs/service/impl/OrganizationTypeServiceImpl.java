@@ -2,12 +2,14 @@ package com.zhs.service.impl;
 
 import com.zhs.common.constant.RootTypeEnum;
 import com.zhs.entity.OrganizationType;
+import com.zhs.entity.RootType;
 import com.zhs.exception.MyException;
 import com.zhs.mapper.OrganizationTypeMapper;
 import com.zhs.model.bo.OrganizationTypeBO;
 import com.zhs.model.vo.CommonTypeVO;
 import com.zhs.service.OrganizationTypeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zhs.service.RootTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -30,13 +32,16 @@ public class OrganizationTypeServiceImpl extends ServiceImpl<OrganizationTypeMap
     @Autowired
     private OrganizationTypeMapper organizationTypeMapper;
 
+    @Autowired
+    private RootTypeService rootTypeService;
+
     @Override
     public List<CommonTypeVO> listType() {
         List<CommonTypeVO> result = new ArrayList<>();
-        RootTypeEnum[] values = RootTypeEnum.values();
-        for (RootTypeEnum value : values) {
+        List<RootType> rootTypeList = rootTypeService.list();
+        for (RootType rootType : rootTypeList) {
             CommonTypeVO commonTypeVO = new CommonTypeVO();
-            commonTypeVO.setId(Long.valueOf(value.getId())).setName(value.getName());
+            commonTypeVO.setId(Long.valueOf(rootType.getId())).setName(rootType.getName());
             result.add(commonTypeVO);
         }
         return result;

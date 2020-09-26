@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * <p>
  * 根的类别，机构分类，和企业 前端控制器
@@ -54,6 +56,12 @@ public class RootTypeController {
         rootType.setName(name);
         rootTypeService.updateById(rootType);
         return Result.success(true);
+    }
+
+    @PostMapping("list")
+    @ApiOperation(value = "查询全部一级菜单",tags = "查询")
+    public Result<List<RootType>> list(){
+        return Result.success(rootTypeService.list());
     }
 
 

@@ -1,5 +1,6 @@
 package com.zhs.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.zhs.common.constant.RootTypeEnum;
 import com.zhs.entity.OrganizationType;
 import com.zhs.entity.RootType;
@@ -7,6 +8,7 @@ import com.zhs.exception.MyException;
 import com.zhs.mapper.OrganizationTypeMapper;
 import com.zhs.model.bo.OrganizationTypeBO;
 import com.zhs.model.vo.CommonTypeVO;
+import com.zhs.model.vo.RootTypeVO;
 import com.zhs.service.OrganizationTypeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.service.RootTypeService;
@@ -80,14 +82,20 @@ public class OrganizationTypeServiceImpl extends ServiceImpl<OrganizationTypeMap
     }
 
     @Override
-    public List<CommonTypeVO> listAllTree() {
+    public List<RootTypeVO> listAllTree() {
         List<CommonTypeVO> commonTypeVOS = listType();
+        List<RootTypeVO> result = new ArrayList<>();
+        for (CommonTypeVO commonTypeVO : commonTypeVOS) {
+            RootTypeVO rootTypeVO = new RootTypeVO();
+            BeanUtil.copyProperties(commonTypeVO,rootTypeVO);
+            result.add(rootTypeVO);
+        }
         List<OrganizationTypeBO> organizationTypeBOS = organizationTypeMapper.selectAllTree(null);
         Map<Integer, List<OrganizationTypeBO>> map = organizationTypeBOS.stream().collect(Collectors.groupingBy(OrganizationTypeBO::getType));
-        for (CommonTypeVO commonTypeVO : commonTypeVOS) {
-            commonTypeVO.setOrganizationTypeListTree(map.get(commonTypeVO.getId().intValue()));
+        for (RootTypeVO rootTypeVO : result) {
+            rootTypeVO.setChildren(map.get(rootTypeVO.getId().intValue()));
         }
-        return commonTypeVOS;
+        return result;
     }
 
     @Override

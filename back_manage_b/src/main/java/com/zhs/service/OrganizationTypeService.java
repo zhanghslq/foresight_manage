@@ -4,6 +4,7 @@ import com.zhs.entity.OrganizationType;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhs.model.bo.OrganizationTypeBO;
 import com.zhs.model.vo.CommonTypeVO;
+import com.zhs.model.vo.RootTypeVO;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public interface OrganizationTypeService extends IService<OrganizationType> {
      * 查询所有组织，树状结构
      * @return
      */
-    List<CommonTypeVO> listAllTree();
+    List<RootTypeVO> listAllTree();
 
     /**
      * 批量添加

@@ -7,6 +7,7 @@ import com.zhs.common.Result;
 import com.zhs.entity.OrganizationType;
 import com.zhs.model.bo.OrganizationTypeBO;
 import com.zhs.model.vo.CommonTypeVO;
+import com.zhs.model.vo.RootTypeVO;
 import com.zhs.service.OrganizationTypeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -122,8 +123,8 @@ public class OrganizationTypeController {
 
     @PostMapping("/list/allTree")
     @ApiOperation(value = "拿到所有数据，体系以及体系下的组织(树状结构)",tags = "查询")
-    public Result<List<CommonTypeVO>> listAllTree(){
-        List<CommonTypeVO> commonTypeVOS =organizationTypeService.listAllTree();
+    public Result<List<RootTypeVO>> listAllTree(){
+        List<RootTypeVO> commonTypeVOS =organizationTypeService.listAllTree();
         return Result.success(commonTypeVOS);
     }
     @PostMapping("list/byParentId")

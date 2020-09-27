@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -64,6 +65,12 @@ public class RootTypeController {
         return Result.success(rootTypeService.list());
     }
 
+    @PostMapping("delete")
+    @ApiOperation(value = "根据id删除",tags = "删除")
+    public Result<Boolean> delete(@RequestParam Long id){
+        Assert.isTrue(id>6,"初始化的体系不允许删除");
+        return Result.success(rootTypeService.removeById(id));
+    }
 
 }
 

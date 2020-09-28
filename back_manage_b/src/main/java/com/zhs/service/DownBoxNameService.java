@@ -2,6 +2,9 @@ package com.zhs.service;
 
 import com.zhs.entity.DownBoxName;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zhs.model.vo.DownBoxNameVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +15,15 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-09-28
  */
 public interface DownBoxNameService extends IService<DownBoxName> {
+
+    void add(String name, Integer parentId, Integer typeId, List<Integer> scopeIdList);
+
+
+    void updateSelf(Integer id, String name, Integer parentId, Integer typeId, List<Integer> scopeIdList);
+
+    void removeBySelf(Integer id);
+
+    List<DownBoxNameVO> listAndData();
+
 
 }

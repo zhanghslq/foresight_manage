@@ -32,10 +32,13 @@ public class DownBoxData implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+    @ApiModelProperty(value = "类型,即创建的下拉框的id")
     private Integer type;
 
+    @ApiModelProperty("名称")
     private String name;
 
+    @ApiModelProperty("排序")
     private Integer seq;
 
     @JsonIgnore

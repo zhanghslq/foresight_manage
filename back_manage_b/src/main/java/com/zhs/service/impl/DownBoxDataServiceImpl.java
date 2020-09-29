@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.service.DownBoxNameService;
 import com.zhs.service.DownBoxScopeRealService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,13 +29,13 @@ import java.util.stream.Collectors;
 public class DownBoxDataServiceImpl extends ServiceImpl<DownBoxDataMapper, DownBoxData> implements DownBoxDataService {
 
     @Autowired
+    @Lazy
     private DownBoxNameService downBoxNameService;
 
     @Autowired
+    @Lazy
     private DownBoxScopeRealService downBoxScopeRealService;
 
-    @Autowired
-    private DownBoxDataService downBoxDataService;
 
 
     @Override
@@ -59,7 +60,7 @@ public class DownBoxDataServiceImpl extends ServiceImpl<DownBoxDataMapper, DownB
         }
         // 双重查询的结果
         List<Integer> downNameIdList = downBoxScopeRealList.stream().map(DownBoxScopeReal::getDownBoxNameId).collect(Collectors.toList());
-        List<DownBoxData> downBoxDataList = downBoxDataService.listByIds(downNameIdList);
+        List<DownBoxData> downBoxDataList = listByIds(downNameIdList);
         result.addAll(downBoxDataList);
         return result;
     }

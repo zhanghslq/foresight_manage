@@ -30,7 +30,7 @@ import java.util.List;
  */
 @Api(tags = "下拉框作用范围选择")
 @RestController
-@RequestMapping("/downBoxScope")
+@RequestMapping("/down_box_scope")
 public class DownBoxScopeController {
     @Resource
     private DownBoxScopeService downBoxScopeService;

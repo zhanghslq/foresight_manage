@@ -26,7 +26,7 @@ import java.util.List;
  */
 @Api(tags = "下拉框实际数据")
 @RestController
-@RequestMapping("/downBoxData")
+@RequestMapping("/down_box_data")
 public class DownBoxDataController {
 
     @Resource

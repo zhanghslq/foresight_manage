@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Api(tags = "自定义系统配置数据")
 @RestController
-@RequestMapping("/downBoxName")
+@RequestMapping("/down_box_name")
 public class DownBoxNameController {
 
     @Resource

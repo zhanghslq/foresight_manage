@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Api(tags = "用户实际选择的作用范围")
 @RestController
-@RequestMapping("/downBoxScopeReal")
+@RequestMapping("/down_box_scope_real")
 public class DownBoxScopeRealController {
 
 }

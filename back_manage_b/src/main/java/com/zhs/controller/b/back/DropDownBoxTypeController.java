@@ -32,7 +32,7 @@ import java.util.Objects;
  * @since 2020-09-07
  */
 @RestController
-@RequestMapping("/dropDownBoxType")
+@RequestMapping("/drop_down_box_type")
 @Api(tags = "下拉框")
 public class DropDownBoxTypeController {
     @Resource

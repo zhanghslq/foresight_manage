@@ -24,7 +24,7 @@ import java.util.List;
  */
 @Api(tags = "下拉框的类型")
 @RestController
-@RequestMapping("/downBoxType")
+@RequestMapping("/down_box_type")
 public class DownBoxTypeController {
     @Resource
     private DownBoxTypeService downBoxTypeService;

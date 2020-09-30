@@ -41,7 +41,7 @@ public class DownBoxNameController {
         downBoxNameService.add(name,typeId,scopeIdList);
         return Result.success(true);
     }
-    @ApiOperation(value = "",tags = "")
+    @ApiOperation(value = "查询下拉框详情",tags = "查询")
     @PostMapping("query/by_id")
     public Result<DownBoxNameDetailVO> queryById(@RequestParam Integer id){
         DownBoxNameDetailVO downBoxNameDetailVO = downBoxNameService.queryById(id);

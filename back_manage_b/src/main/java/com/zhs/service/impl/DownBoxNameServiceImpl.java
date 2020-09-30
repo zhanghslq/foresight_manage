@@ -97,6 +97,7 @@ public class DownBoxNameServiceImpl extends ServiceImpl<DownBoxNameMapper, DownB
             DownBoxNameVO downBoxNameVO = new DownBoxNameVO();
             BeanUtil.copyProperties(downBoxName,downBoxNameVO);
             List<DownBoxData> list = map.get(downBoxName.getId());
+            downBoxNameVOList.add(downBoxNameVO);
             if(!Objects.isNull(list)){
                 List<DownBoxDataBO> result = new ArrayList<>();
                 List<DownBoxData> sortedResult = list.stream().sorted(Comparator.comparingInt(DownBoxData::getSeq)).collect(Collectors.toList());
@@ -115,8 +116,6 @@ public class DownBoxNameServiceImpl extends ServiceImpl<DownBoxNameMapper, DownB
                 dealDownBoxDataTree(downBoxDatamap,result);
                 downBoxNameVO.setDownBoxDataList(result);
             }
-            downBoxNameVOList.add(downBoxNameVO);
-
         }
         return downBoxNameVOList;
     }

@@ -223,17 +223,17 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             }*/else {
                 throw new MyException("不属于所属类型");
             }
-            QueryWrapper<CommonData> commonDataQueryWrapperSystem = new QueryWrapper<>();
-            QueryWrapper<CommonData> commonDataQueryWrapperHierarchy = new QueryWrapper<>();
-            QueryWrapper<CommonData> commonDataQueryWrapperLevel = new QueryWrapper<>();
-            QueryWrapper<CommonData> systemWrapper = commonDataQueryWrapperSystem.eq("name", readBook.getSystem());
-            QueryWrapper<CommonData> hierarchyWrapper = commonDataQueryWrapperHierarchy.eq("name", readBook.getHierarchy());
-            QueryWrapper<CommonData> levelWrapper = commonDataQueryWrapperLevel.eq("name", readBook.getLevelName());
+            QueryWrapper<DownBoxData> commonDataQueryWrapperSystem = new QueryWrapper<>();
+            QueryWrapper<DownBoxData> commonDataQueryWrapperHierarchy = new QueryWrapper<>();
+            QueryWrapper<DownBoxData> commonDataQueryWrapperLevel = new QueryWrapper<>();
+            QueryWrapper<DownBoxData> systemWrapper = commonDataQueryWrapperSystem.eq("name", readBook.getSystem());
+            QueryWrapper<DownBoxData> hierarchyWrapper = commonDataQueryWrapperHierarchy.eq("name", readBook.getHierarchy());
+            QueryWrapper<DownBoxData> levelWrapper = commonDataQueryWrapperLevel.eq("name", readBook.getLevelName());
 
 
-            List<CommonData> systemList = commonDataService.list(systemWrapper);
-            List<CommonData> hierarchyList = commonDataService.list(hierarchyWrapper);
-            List<CommonData> levelList = commonDataService.list(levelWrapper);
+            List<DownBoxData> systemList = downBoxDataService.list(systemWrapper);
+            List<DownBoxData> hierarchyList = downBoxDataService.list(hierarchyWrapper);
+            List<DownBoxData> levelList = downBoxDataService.list(levelWrapper);
             commonDataQueryWrapper.eq("name",commonType);
             List<CommonData> commonDataList = commonDataService.list(commonDataQueryWrapper);
             if(commonDataList.size()>0){
@@ -241,13 +241,13 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             }
             //
             if(systemList.size()>0){
-                organization.setSystemId(systemList.get(0).getId());
+                organization.setSystemId(systemList.get(0).getId().longValue());
             }
             if(hierarchyList.size()>0){
-                organization.setHierarchyId(hierarchyList.get(0).getId());
+                organization.setHierarchyId(hierarchyList.get(0).getId().longValue());
             }
             if(levelList.size()>0){
-                organization.setLevelId(levelList.get(0).getId());
+                organization.setLevelId(levelList.get(0).getId().longValue());
             }
             String areaName = readBook.getAreaName();
             QueryWrapper<Area> areaQueryWrapper = new QueryWrapper<>();

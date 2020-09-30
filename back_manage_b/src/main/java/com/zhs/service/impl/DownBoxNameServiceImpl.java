@@ -7,6 +7,8 @@ import com.zhs.entity.DownBoxData;
 import com.zhs.entity.DownBoxName;
 import com.zhs.entity.DownBoxScopeReal;
 import com.zhs.mapper.DownBoxNameMapper;
+import com.zhs.model.bo.DownBoxDataBO;
+import com.zhs.model.vo.DownBoxNameDetailVO;
 import com.zhs.model.vo.DownBoxNameVO;
 import com.zhs.service.DownBoxDataService;
 import com.zhs.service.DownBoxNameService;
@@ -96,12 +98,57 @@ public class DownBoxNameServiceImpl extends ServiceImpl<DownBoxNameMapper, DownB
             BeanUtil.copyProperties(downBoxName,downBoxNameVO);
             List<DownBoxData> list = map.get(downBoxName.getId());
             if(!Objects.isNull(list)){
+                List<DownBoxDataBO> result = new ArrayList<>();
                 List<DownBoxData> sortedResult = list.stream().sorted(Comparator.comparingInt(DownBoxData::getSeq)).collect(Collectors.toList());
-                downBoxNameVO.setDownBoxDataList(sortedResult);
+                // 需要对数据处理，做成树状结构的,递归处理
+                Map<Integer, List<DownBoxData>> downBoxDatamap  = sortedResult.stream().collect(Collectors.groupingBy(DownBoxData::getParentId));
+                // 初始的下拉框数据
+                List<DownBoxData> downBoxDataParent = map.get(0);
+                if(Objects.isNull(downBoxDataParent)||downBoxDataParent.size()==0){
+                    continue;
+                }
+                for (DownBoxData downBoxData : downBoxDataParent) {
+                    DownBoxDataBO downBoxDataBO = new DownBoxDataBO();
+                    BeanUtil.copyProperties(downBoxData,downBoxDataBO);
+                    result.add(downBoxDataBO);
+                }
+                dealDownBoxDataTree(downBoxDatamap,result);
+                downBoxNameVO.setDownBoxDataList(result);
             }
             downBoxNameVOList.add(downBoxNameVO);
 
         }
         return downBoxNameVOList;
+    }
+
+    @Override
+    public DownBoxNameDetailVO queryById(Integer id) {
+        DownBoxNameDetailVO downBoxNameDetailVO = new DownBoxNameDetailVO();
+        DownBoxName downBoxName = getById(id);
+        BeanUtil.copyProperties(downBoxName,downBoxNameDetailVO);
+        QueryWrapper<DownBoxScopeReal> downBoxScopeRealQueryWrapper = new QueryWrapper<>();
+        downBoxScopeRealQueryWrapper.eq("down_box_name_id",id);
+        List<DownBoxScopeReal> list = downBoxScopeRealService.list(downBoxScopeRealQueryWrapper);
+        List<Integer> scopeIdList = list.stream().map(DownBoxScopeReal::getScopeId).collect(Collectors.toList());
+        downBoxNameDetailVO.setScopeIdList(scopeIdList);
+        return downBoxNameDetailVO;
+    }
+
+    private void dealDownBoxDataTree(Map<Integer, List<DownBoxData>> map, List<DownBoxDataBO> result) {
+        for (DownBoxDataBO downBoxDataBO : result) {
+            List<DownBoxData> downBoxDataList = map.get(downBoxDataBO.getId());
+            if(Objects.isNull(downBoxDataList)||downBoxDataList.size()==0){
+                // 无子类，直接过到下一个
+                continue;
+            }
+            List<DownBoxDataBO> subList = new ArrayList<>();
+            for (DownBoxData downBoxData : downBoxDataList) {
+                DownBoxDataBO downBoxBO = new DownBoxDataBO();
+                BeanUtil.copyProperties(downBoxData,downBoxBO);
+                subList.add(downBoxBO);
+            }
+            dealDownBoxDataTree(map,subList);
+            downBoxDataBO.setChildren(subList);
+        }
     }
 }

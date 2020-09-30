@@ -1,8 +1,10 @@
 package com.zhs.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zhs.common.constant.DownBoxTypeEnum;
 import com.zhs.common.constant.DropDownBoxTypeEnum;
 import com.zhs.common.constant.RootTypeEnum;
+import com.zhs.common.constant.ScopeEnum;
 import com.zhs.exception.MyException;
 import com.zhs.mapper.LeaderMapper;
 import com.zhs.model.dto.LeaderImportConvertDTO;
@@ -35,8 +37,7 @@ import java.util.Objects;
 @Service
 public class LeaderServiceImpl extends ServiceImpl<LeaderMapper, Leader> implements LeaderService {
 
-    @Autowired
-    private CommonDataService commonDataService;
+
     @Autowired
     private OrganizationModuleService organizationModuleService;
     @Autowired
@@ -45,6 +46,9 @@ public class LeaderServiceImpl extends ServiceImpl<LeaderMapper, Leader> impleme
     private OrganizationService organizationService;
     @Autowired
     private CompanyService companyService;
+
+    @Autowired
+    private DownBoxDataService downBoxDataService;
 
     @Override
     public void listUpload(Long moduleId, MultipartFile file) {
@@ -103,24 +107,24 @@ public class LeaderServiceImpl extends ServiceImpl<LeaderMapper, Leader> impleme
             QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
             commonDataQueryWrapper.eq("name",levelName);
             // 需要区分几种类型，来用不同的type查
+            List<DownBoxData> list;
             if(RootTypeEnum.PARTY.getId().equals(type)){
-                commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.PARTY_LEADER_LEVEL.getId());
+                list= downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.LEADER_LEVEL.getId(), ScopeEnum.PARTY.getId());
             }else if(RootTypeEnum.GOVERNMENT.getId().equals(type)){
-                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.GOVERNMENT_LEADER_LEVEL.getId());
+                list= downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.LEADER_LEVEL.getId(), ScopeEnum.GOVERNMENT.getId());
             }else if(RootTypeEnum.LEGAL.getId().equals(type)){
-                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.LEGAL_LEADER_LEVEL.getId());
+                list= downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.LEADER_LEVEL.getId(), ScopeEnum.LEGAL.getId());
             }else if(RootTypeEnum.POLITICAL_PARTICIPATION.getId().equals(type)){
-                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.POLITICAL_LEADER_LEVEL.getId());
+                list= downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.LEADER_LEVEL.getId(), ScopeEnum.POLITICAL_PARTICIPATION.getId());
             }else if(RootTypeEnum.MILITARY.getId().equals(type)){
-                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.ARMY_LEADER_LEVEL.getId());
+                list= downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.LEADER_LEVEL.getId(), ScopeEnum.ARMY.getId());
             }else if(RootTypeEnum.COMPANY.getId().equals(type)){
-                commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.COMPANY_LEADER_LEVEL.getId());
+                list= downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.LEADER_LEVEL.getId(), ScopeEnum.COMPANY.getId());
             } else  {
                 throw new MyException("不属于所属类型");
             }
-            List<CommonData> list = commonDataService.list(commonDataQueryWrapper);
             if(list.size()>0){
-                leader.setLevelId(list.get(0).getId());
+                leader.setLevelId(list.get(0).getId().longValue());
             }
             // 拿名字去简历里面查一下
             QueryWrapper<Resume> resumeQueryWrapper = new QueryWrapper<>();

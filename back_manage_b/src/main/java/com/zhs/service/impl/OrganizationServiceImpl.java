@@ -70,6 +70,9 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
     private CommonDataService commonDataService;
 
     @Autowired
+    private DownBoxDataService downBoxDataService;
+
+    @Autowired
     private AreaService areaService;
 
     @Override
@@ -226,6 +229,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             QueryWrapper<CommonData> systemWrapper = commonDataQueryWrapperSystem.eq("name", readBook.getSystem());
             QueryWrapper<CommonData> hierarchyWrapper = commonDataQueryWrapperHierarchy.eq("name", readBook.getHierarchy());
             QueryWrapper<CommonData> levelWrapper = commonDataQueryWrapperLevel.eq("name", readBook.getLevelName());
+
 
             List<CommonData> systemList = commonDataService.list(systemWrapper);
             List<CommonData> hierarchyList = commonDataService.list(hierarchyWrapper);

@@ -3,6 +3,7 @@ package com.zhs.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zhs.common.constant.DownBoxTypeEnum;
 import com.zhs.common.constant.DropDownBoxTypeEnum;
 import com.zhs.common.constant.ModuleTypeEnum;
 import com.zhs.common.constant.RootTypeEnum;
@@ -67,8 +68,10 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
     @Autowired
     private AreaService areaService;
 
+
+
     @Autowired
-    private CommonDataService commonDataService;
+    private DownBoxDataService downBoxDataService;
 
     @Override
     public CompanyVO queryByOrganizationType(Long organizationTypeId, Long areaId) {
@@ -204,40 +207,40 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
             company.setIsMarket(readBook.getIsMarket());
             company.setMarkedCode(readBook.getMarkedCode());
             company.setWebsite(readBook.getWebsite());
-            QueryWrapper<CommonData> commonDataQueryWrapperLevel = new QueryWrapper<>();
-            QueryWrapper<CommonData> commonDataQueryWrapperType = new QueryWrapper<>();
-            QueryWrapper<CommonData> commonDataQueryWrapperRelationType = new QueryWrapper<>();
-            QueryWrapper<CommonData> commonDataQueryWrapperMarket = new QueryWrapper<>();
+            QueryWrapper<DownBoxData> commonDataQueryWrapperLevel = new QueryWrapper<>();
+            QueryWrapper<DownBoxData> commonDataQueryWrapperType = new QueryWrapper<>();
+            QueryWrapper<DownBoxData> commonDataQueryWrapperRelationType = new QueryWrapper<>();
+            QueryWrapper<DownBoxData> commonDataQueryWrapperMarket = new QueryWrapper<>();
 
             commonDataQueryWrapperLevel.eq("name", readBook.getLevelName());
-            commonDataQueryWrapperLevel.eq("type", DropDownBoxTypeEnum.COMPANY_LEVEL.getId());
+            commonDataQueryWrapperLevel.eq("type", DownBoxTypeEnum.ORGANIZATION_LEVEL.getId());
 
             commonDataQueryWrapperType.eq("type",DropDownBoxTypeEnum.COMPANY_TYPE.getId());
             commonDataQueryWrapperType.eq("name", readBook.getCompanyTypeName());
 
-            commonDataQueryWrapperRelationType.eq("type",DropDownBoxTypeEnum.COMPANY_RELATIONSHIP_TYPE.getId());
+            commonDataQueryWrapperRelationType.eq("type",DownBoxTypeEnum.COMPANY_RELATIONSHIP_TYPE.getId());
             commonDataQueryWrapperRelationType.eq("name",readBook.getRelationshipType());
 
-            commonDataQueryWrapperMarket.eq("type",DropDownBoxTypeEnum.COMPANY_MARKET_SITUATION.getId());
+            commonDataQueryWrapperMarket.eq("type",DownBoxTypeEnum.COMPANY_MARKET_SITUATION.getId());
             commonDataQueryWrapperMarket.eq("name",readBook.getMarketTypeName());
 
 
-            List<CommonData> levelList = commonDataService.list(commonDataQueryWrapperLevel);
-            List<CommonData> typeList = commonDataService.list(commonDataQueryWrapperType);
-            List<CommonData> relationTypeList = commonDataService.list(commonDataQueryWrapperRelationType);
-            List<CommonData> marketTypeList = commonDataService.list(commonDataQueryWrapperMarket);
+            List<DownBoxData> levelList = downBoxDataService.list(commonDataQueryWrapperLevel);
+            List<DownBoxData> typeList = downBoxDataService.list(commonDataQueryWrapperType);
+            List<DownBoxData> relationTypeList = downBoxDataService.list(commonDataQueryWrapperRelationType);
+            List<DownBoxData> marketTypeList = downBoxDataService.list(commonDataQueryWrapperMarket);
 
             if(levelList.size()>0){
-                company.setCompanyLevelId(levelList.get(0).getId());
+                company.setCompanyLevelId(levelList.get(0).getId().longValue());
             }
             if(typeList.size()>0){
-                company.setCompanyTypeId(typeList.get(0).getId());
+                company.setCompanyTypeId(typeList.get(0).getId().longValue());
             }
             if(relationTypeList.size()>0){
-                company.setRelationshipTypeId(relationTypeList.get(0).getId());
+                company.setRelationshipTypeId(relationTypeList.get(0).getId().longValue());
             }
             if(marketTypeList.size()>0){
-                company.setMarketTypeId(marketTypeList.get(0).getId());
+                company.setMarketTypeId(marketTypeList.get(0).getId().longValue());
             }
 
             String areaName = readBook.getAreaName();

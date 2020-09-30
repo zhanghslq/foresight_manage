@@ -6,12 +6,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.common.Result;
+import com.zhs.common.constant.DownBoxTypeEnum;
 import com.zhs.common.constant.DropDownBoxTypeEnum;
 import com.zhs.entity.CommonData;
+import com.zhs.entity.DownBoxData;
 import com.zhs.entity.Expert;
 import com.zhs.model.vo.InputStatisticsVO;
 import com.zhs.model.vo.ExpertVO;
 import com.zhs.service.CommonDataService;
+import com.zhs.service.DownBoxDataService;
 import com.zhs.service.ExpertService;
 import com.zhs.util.EasyExcelUtil;
 import io.swagger.annotations.Api;
@@ -45,8 +48,10 @@ import java.util.stream.Collectors;
 public class ExpertController {
     @Resource
     private ExpertService expertService;
+
+
     @Resource
-    private CommonDataService commonDataService;
+    private DownBoxDataService downBoxDataService;
 
     @ApiOperation(value = "获取专家列表",tags = "查询")
     @ApiImplicitParams({
@@ -57,11 +62,8 @@ public class ExpertController {
     public Result<Page<ExpertVO>> list(@RequestParam Integer current, @RequestParam Integer size){
         Page<Expert> expertPage = new Page<>(current, size);
         Page<Expert> page = expertService.page(expertPage);
-        // 领导人行政级别
-        QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
-        commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.EXPERT_LEVEL.getId());
-        List<CommonData> commonDataList = commonDataService.list(commonDataQueryWrapper);
-        Map<Long, String> map = commonDataList.stream().collect(Collectors.toMap(CommonData::getId, CommonData::getName));
+        List<DownBoxData> downBoxDataList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.EXPERT_LEVEL.getId(), null);
+        Map<Integer, String> map = downBoxDataList.stream().collect(Collectors.toMap(DownBoxData::getId, DownBoxData::getName));
         Page<ExpertVO> expertVOPage = new Page<>();
         BeanUtil.copyProperties(page,expertVOPage);
         List<Expert> records = page.getRecords();
@@ -69,7 +71,7 @@ public class ExpertController {
         for (Expert record : records) {
             ExpertVO expertVO = new ExpertVO();
             BeanUtil.copyProperties(record,expertVO);
-            expertVO.setLevelName(map.get(record.getLevelId()));
+            expertVO.setLevelName(map.get(record.getLevelId().intValue()));
             expertVOS.add(expertVO);
         }
         expertVOPage.setRecords(expertVOS);
@@ -89,10 +91,8 @@ public class ExpertController {
         expertQueryWrapper.eq("classification_id",classificationId);
         Page<Expert> page = expertService.page(expertPage,expertQueryWrapper);
         // 领导人行政级别
-        QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
-        commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.EXPERT_LEVEL.getId());
-        List<CommonData> commonDataList = commonDataService.list(commonDataQueryWrapper);
-        Map<Long, String> map = commonDataList.stream().collect(Collectors.toMap(CommonData::getId, CommonData::getName));
+        List<DownBoxData> downBoxDataList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.EXPERT_LEVEL.getId(), null);
+        Map<Integer, String> map = downBoxDataList.stream().collect(Collectors.toMap(DownBoxData::getId, DownBoxData::getName));
         Page<ExpertVO> expertVOPage = new Page<>();
         BeanUtil.copyProperties(page,expertVOPage);
         List<Expert> records = page.getRecords();
@@ -100,7 +100,7 @@ public class ExpertController {
         for (Expert record : records) {
             ExpertVO expertVO = new ExpertVO();
             BeanUtil.copyProperties(record,expertVO);
-            expertVO.setLevelName(map.get(record.getLevelId()));
+            expertVO.setLevelName(map.get(record.getLevelId().intValue()));
             expertVOS.add(expertVO);
         }
         expertVOPage.setRecords(expertVOS);
@@ -146,10 +146,8 @@ public class ExpertController {
         Page<Expert> page = expertService.page(expertPage,expertQueryWrapper);
         // 领导人行政级别
 
-        QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
-        commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.EXPERT_LEVEL.getId());
-        List<CommonData> commonDataList = commonDataService.list(commonDataQueryWrapper);
-        Map<Long, String> map = commonDataList.stream().collect(Collectors.toMap(CommonData::getId, CommonData::getName));
+        List<DownBoxData> downBoxDataList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.EXPERT_LEVEL.getId(), null);
+        Map<Integer, String> map = downBoxDataList.stream().collect(Collectors.toMap(DownBoxData::getId, DownBoxData::getName));
         Page<ExpertVO> expertVOPage = new Page<>();
         BeanUtil.copyProperties(page,expertVOPage);
         List<Expert> records = page.getRecords();
@@ -157,7 +155,7 @@ public class ExpertController {
         for (Expert record : records) {
             ExpertVO expertVO = new ExpertVO();
             BeanUtil.copyProperties(record,expertVO);
-            expertVO.setLevelName(map.get(record.getLevelId()));
+            expertVO.setLevelName(map.get(record.getLevelId().intValue()));
             expertVOS.add(expertVO);
         }
         expertVOPage.setRecords(expertVOS);

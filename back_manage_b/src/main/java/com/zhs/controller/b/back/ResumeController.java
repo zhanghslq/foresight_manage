@@ -8,18 +8,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.common.Result;
-import com.zhs.entity.CommonData;
-import com.zhs.entity.ExperienceRecord;
-import com.zhs.entity.Resume;
-import com.zhs.entity.ResumeCompany;
+import com.zhs.entity.*;
 import com.zhs.model.dto.ResumeDTO;
 import com.zhs.model.dto.ResumeDetailDTO;
 import com.zhs.model.vo.InputStatisticsVO;
 import com.zhs.model.vo.ResumeVO;
-import com.zhs.service.CommonDataService;
-import com.zhs.service.ExperienceRecordService;
-import com.zhs.service.ResumeCompanyService;
-import com.zhs.service.ResumeService;
+import com.zhs.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -49,11 +43,12 @@ public class ResumeController {
     private ResumeService resumeService;
     @Resource
     private ExperienceRecordService experienceRecordService;
-    @Autowired
-    private CommonDataService commonDataService;
+
     @Autowired
     private ResumeCompanyService resumeCompanyService;
 
+    @Autowired
+    private DownBoxDataService downBoxDataService;
 
     @ApiOperation(value = "按照条件查询简历列表",tags = "查询")
     @PostMapping("search/list")
@@ -189,7 +184,7 @@ public class ResumeController {
         // 然后把字段值填上
         // 行政级别
         if(!Objects.isNull(resumeVO.getLevelId())){
-            CommonData byId = commonDataService.getById(resume.getLevelId());
+            DownBoxData byId = downBoxDataService.getById(resume.getLevelId());
             if(!Objects.isNull(byId)){
                 resumeVO.setLevelName(byId.getName());
             }
@@ -207,7 +202,7 @@ public class ResumeController {
             resumeVO.setBeginWorkingTime(date);
         }
         if(Objects.isNull(resume.getCurrentStatus())&&!Objects.isNull(resume.getCurrentStatusId())){
-            CommonData byId = commonDataService.getById(resume.getCurrentStatusId());
+            DownBoxData byId = downBoxDataService.getById(resume.getCurrentStatusId());
             if(!Objects.isNull(byId)){
                 resumeVO.setCurrentStatus(byId.getName());
             }
@@ -219,12 +214,12 @@ public class ResumeController {
         resumeVO.setResumeCompanyList(resumeCompanyList);
 
         if(!Objects.isNull(resumeVO.getParties())){
-            CommonData commonData = commonDataService.getById(resumeVO.getParties());
+            DownBoxData commonData = downBoxDataService.getById(resumeVO.getParties());
             String name = commonData.getName();
             resumeVO.setPartiesName(name);
         }
         if(!Objects.isNull(resumeVO.getNation())){
-            CommonData commonData = commonDataService.getById(resumeVO.getNation());
+            DownBoxData commonData = downBoxDataService.getById(resumeVO.getNation());
             String name = commonData.getName();
             resumeVO.setNationName(name);
         }

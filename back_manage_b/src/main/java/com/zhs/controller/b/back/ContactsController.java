@@ -6,12 +6,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.common.Result;
+import com.zhs.common.constant.DownBoxTypeEnum;
 import com.zhs.common.constant.DropDownBoxTypeEnum;
+import com.zhs.common.constant.ScopeEnum;
 import com.zhs.entity.CommonData;
 import com.zhs.entity.Contacts;
+import com.zhs.entity.DownBoxData;
 import com.zhs.model.vo.ContactsVO;
 import com.zhs.service.CommonDataService;
 import com.zhs.service.ContactsService;
+import com.zhs.service.DownBoxDataService;
 import com.zhs.util.EasyExcelUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -45,8 +49,9 @@ import java.util.stream.Collectors;
 public class ContactsController {
     @Resource
     private ContactsService contactsService;
+
     @Resource
-    private CommonDataService commonDataService;
+    private DownBoxDataService downBoxDataService;
 
 
     @PostMapping("list")
@@ -59,12 +64,12 @@ public class ContactsController {
         Page<Contacts> contactsPage = new Page<>(current, size);
         Page<Contacts> page = contactsService.page(contactsPage);
         // 领导人行政级别
-        QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
-        commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.CONCAT_LEVEL.getId());
-        List<CommonData> commonDataList = commonDataService.list(commonDataQueryWrapper);
 
 
-        Map<Long, String> map = commonDataList.stream().collect(Collectors.toMap(CommonData::getId, CommonData::getName));
+        List<DownBoxData> downBoxDataList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.LEADER_LEVEL.getId(), null);
+
+
+        Map<Integer, String> map = downBoxDataList.stream().collect(Collectors.toMap(DownBoxData::getId, DownBoxData::getName));
         Page<ContactsVO> contactsVOPage = new Page<>();
         BeanUtil.copyProperties(page,contactsVOPage);
         List<Contacts> records = page.getRecords();
@@ -72,7 +77,7 @@ public class ContactsController {
         for (Contacts record : records) {
             ContactsVO contactsVO = new ContactsVO();
             BeanUtil.copyProperties(record,contactsVO);
-            contactsVO.setLevelName(map.get(record.getLevelId()));
+            contactsVO.setLevelName(map.get(record.getLevelId().intValue()));
             contactsVOS.add(contactsVO);
         }
         contactsVOPage.setRecords(contactsVOS);
@@ -119,10 +124,8 @@ public class ContactsController {
         Page<Contacts> page = contactsService.page(contactsPage,contactsQueryWrapper);
 
         // 领导人行政级别
-        QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
-        commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.CONCAT_LEVEL.getId());
-        List<CommonData> commonDataList = commonDataService.list(commonDataQueryWrapper);
-        Map<Long, String> map = commonDataList.stream().collect(Collectors.toMap(CommonData::getId, CommonData::getName));
+        List<DownBoxData> downBoxDataList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.LEADER_LEVEL.getId(), null);
+        Map<Integer, String> map = downBoxDataList.stream().collect(Collectors.toMap(DownBoxData::getId, DownBoxData::getName));
         Page<ContactsVO> contactsVOPage = new Page<>();
         BeanUtil.copyProperties(page,contactsVOPage);
         List<Contacts> records = page.getRecords();
@@ -130,7 +133,7 @@ public class ContactsController {
         for (Contacts record : records) {
             ContactsVO contactsVO = new ContactsVO();
             BeanUtil.copyProperties(record,contactsVO);
-            contactsVO.setLevelName(map.get(record.getLevelId()));
+            contactsVO.setLevelName(map.get(record.getLevelId().intValue()));
             contactsVOS.add(contactsVO);
         }
         contactsVOPage.setRecords(contactsVOS);

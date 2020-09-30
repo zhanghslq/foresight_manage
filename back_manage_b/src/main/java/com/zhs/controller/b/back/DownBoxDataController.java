@@ -58,9 +58,16 @@ public class DownBoxDataController {
 
 
     @PostMapping("list/tree/by_type_and_scope")
-    @ApiOperation(value = "根据类型和作用域获取下拉框数据",tags = "查询")
-    public Result<List<DownBoxDataBO>> listByDownBoxTypeAndScope(@RequestParam Integer downBoxTypeId, @RequestParam Integer scopeId){
+    @ApiOperation(value = "根据类型和作用域获取下拉框数据（树状结构）",tags = "查询")
+    public Result<List<DownBoxDataBO>> listTreeByDownBoxTypeAndScope(@RequestParam Integer downBoxTypeId, @RequestParam Integer scopeId){
         List<DownBoxDataBO> list = downBoxDataService.listByDownBoxTypeAndScope(downBoxTypeId,scopeId);
+        return Result.success(list);
+    }
+
+    @ApiOperation(value = "平铺的下拉框数据",tags = "查询")
+    @PostMapping("list/no_tree/by_type_andScope")
+    public Result<List<DownBoxData>> listNoTreeByDownBoxTypeAndScope(@RequestParam Integer downBoxTypeId, @RequestParam Integer scopeId){
+        List<DownBoxData> list = downBoxDataService.listNoTreeByDownBoxTypeAndScope(downBoxTypeId,scopeId);
         return Result.success(list);
     }
 }

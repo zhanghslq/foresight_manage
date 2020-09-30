@@ -1,14 +1,17 @@
 package com.zhs.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zhs.common.constant.DownBoxTypeEnum;
 import com.zhs.common.constant.DropDownBoxTypeEnum;
 import com.zhs.entity.CommonData;
+import com.zhs.entity.DownBoxData;
 import com.zhs.entity.Expert;
 import com.zhs.exception.MyException;
 import com.zhs.mapper.ExpertMapper;
 import com.zhs.model.bo.CommonCountBO;
 import com.zhs.model.vo.InputStatisticsVO;
 import com.zhs.service.CommonDataService;
+import com.zhs.service.DownBoxDataService;
 import com.zhs.service.ExpertService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
@@ -33,20 +36,20 @@ import java.util.stream.Collectors;
 @Service
 public class ExpertServiceImpl extends ServiceImpl<ExpertMapper, Expert> implements ExpertService {
 
-    @Autowired
-    private CommonDataService commonDataService;
 
+    @Autowired
+    private DownBoxDataService downBoxDataService;
     @Autowired
     private ExpertMapper expertMapper;
     @Override
     public void saveBatchSelf(Long classificationId, List<Expert> readBooks) {
-        CommonData byId = commonDataService.getById(classificationId);
+        DownBoxData byId = downBoxDataService.getById(classificationId);
         if(Objects.isNull(byId)){
             throw new MyException("专家类别不存在");
         }
         // 需要对字段进行处理，id，name等的
-        QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
-        commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.EXPERT_LEVEL.getId());
+        QueryWrapper<DownBoxData> commonDataQueryWrapper = new QueryWrapper<>();
+        commonDataQueryWrapper.eq("type", DownBoxTypeEnum.EXPERT_LEVEL.getId());
 
         Subject subject = SecurityUtils.getSubject();
         Object principal = subject.getPrincipal();
@@ -56,14 +59,14 @@ public class ExpertServiceImpl extends ServiceImpl<ExpertMapper, Expert> impleme
         } catch (NumberFormatException e) {
             log.error("未获取到认证信息");
         }
-        List<CommonData> list = commonDataService.list(commonDataQueryWrapper);
-        Map<String, Long> map = list.stream().collect(Collectors.toMap(CommonData::getName, CommonData::getId, (k1, k2) -> k2));
+        List<DownBoxData> list = downBoxDataService.list(commonDataQueryWrapper);
+        Map<String, Integer> map = list.stream().collect(Collectors.toMap(DownBoxData::getName, DownBoxData::getId, (k1, k2) -> k2));
 
 
         QueryWrapper<CommonData> commonDataFieldQueryWrapper = new QueryWrapper<>();
         commonDataFieldQueryWrapper.eq("type", DropDownBoxTypeEnum.EXPERT_LEVEL.getId());
-        List<CommonData> listField = commonDataService.list(commonDataQueryWrapper);
-        Map<String, Long> mapField = listField.stream().collect(Collectors.toMap(CommonData::getName, CommonData::getId, (k1, k2) -> k2));
+        List<DownBoxData> listField = downBoxDataService.list(commonDataQueryWrapper);
+        Map<String, Integer> mapField = listField.stream().collect(Collectors.toMap(DownBoxData::getName, DownBoxData::getId, (k1, k2) -> k2));
 
         for (Expert readBook : readBooks) {
             readBook.setClassificationId(classificationId);
@@ -79,11 +82,17 @@ public class ExpertServiceImpl extends ServiceImpl<ExpertMapper, Expert> impleme
             }
             String levelName = readBook.getLevelName();
             if(!Objects.isNull(levelName)){
-                readBook.setLevelId(map.get(levelName));
+                Integer integer = map.get(levelName);
+                if(!Objects.isNull(integer)){
+                    readBook.setLevelId(integer.longValue());
+                }
             }
             String workArea = readBook.getWorkArea();
             if(!Objects.isNull(workArea)){
-                readBook.setWorkAreaId(mapField.get(workArea));
+                Integer integer = mapField.get(workArea);
+                if(!Objects.isNull(integer)){
+                    readBook.setWorkAreaId(integer.longValue());
+                }
             }
             readBook.setId(null);
         }
@@ -92,17 +101,17 @@ public class ExpertServiceImpl extends ServiceImpl<ExpertMapper, Expert> impleme
 
     @Override
     public List<InputStatisticsVO> expertInputStatistics() {
-        QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
-        commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.EXPERT_CLASSIFICATION.getId());
-        List<CommonData> list = commonDataService.list(commonDataQueryWrapper);
+        QueryWrapper<DownBoxData> commonDataQueryWrapper = new QueryWrapper<>();
+        commonDataQueryWrapper.eq("type",DownBoxTypeEnum.EXPERT_CLASSIFICATION.getId());
+        List<DownBoxData> list = downBoxDataService.list(commonDataQueryWrapper);
         List<CommonCountBO> commonCountBOS = expertMapper.countByClassificationId();
         Map<Long, Integer> map = commonCountBOS.stream().collect(Collectors.toMap(CommonCountBO::getId, CommonCountBO::getCount, (k1, k2) -> k2));
         ArrayList<InputStatisticsVO> result = new ArrayList<>();
-        for (CommonData commonData : list) {
+        for (DownBoxData commonData : list) {
             InputStatisticsVO inputStatisticsVO = new InputStatisticsVO();
-            inputStatisticsVO.setId(commonData.getId());
+            inputStatisticsVO.setId(commonData.getId().longValue());
             inputStatisticsVO.setName(commonData.getName());
-            inputStatisticsVO.setCount(map.get(commonData.getId()));
+            inputStatisticsVO.setCount(map.get(commonData.getId().longValue()));
             result.add(inputStatisticsVO);
         }
         return result;

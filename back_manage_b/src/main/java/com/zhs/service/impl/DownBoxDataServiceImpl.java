@@ -84,6 +84,34 @@ public class DownBoxDataServiceImpl extends ServiceImpl<DownBoxDataMapper, DownB
         return result;
     }
 
+    @Override
+    public List<DownBoxData> listNoTreeByDownBoxTypeAndScope(Integer downBoxTypeId, Integer scopeId) {
+        List<DownBoxData> result = new ArrayList<>();
+        // 查
+        QueryWrapper<DownBoxName> downBoxNameQueryWrapper = new QueryWrapper<>();
+        downBoxNameQueryWrapper.eq("down_box_type_id",downBoxTypeId);
+        // 这个类型下下拉框名称
+        List<DownBoxName> downBoxNameList = downBoxNameService.list(downBoxNameQueryWrapper);
+        if(downBoxNameList.size()==0){
+            return result;
+        }
+        List<Integer> downBoxNameIdList = downBoxNameList.stream().map(DownBoxName::getId).collect(Collectors.toList());
+        // 根据作用域查
+        QueryWrapper<DownBoxScopeReal> downBoxScopeRealQueryWrapper = new QueryWrapper<>();
+        downBoxScopeRealQueryWrapper.eq("scope_id",scopeId);
+        downBoxScopeRealQueryWrapper.in("down_box_name_id",downBoxNameIdList);
+        List<DownBoxScopeReal> downBoxScopeRealList = downBoxScopeRealService.list(downBoxScopeRealQueryWrapper);
+        if(downBoxScopeRealList.size()==0){
+            return result;
+        }
+        // 双重查询的结果
+        List<Integer> downNameIdList = downBoxScopeRealList.stream().map(DownBoxScopeReal::getDownBoxNameId).collect(Collectors.toList());
+        QueryWrapper<DownBoxData> downBoxDataQueryWrapper = new QueryWrapper<>();
+        downBoxDataQueryWrapper.in("type",downNameIdList);
+        List<DownBoxData> downBoxDataList = list(downBoxDataQueryWrapper);
+        return downBoxDataList;
+    }
+
     private void dealDownBoxDataTree(Map<Integer, List<DownBoxData>> map, List<DownBoxDataBO> result) {
         for (DownBoxDataBO downBoxDataBO : result) {
             List<DownBoxData> downBoxDataList = map.get(downBoxDataBO.getId());

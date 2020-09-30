@@ -4,10 +4,12 @@ package com.zhs.controller.b.back;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.common.Result;
 import com.zhs.entity.DownBoxName;
+import com.zhs.model.vo.DownBoxNameDetailVO;
 import com.zhs.model.vo.DownBoxNameVO;
 import com.zhs.service.DownBoxNameService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import javafx.geometry.Pos;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -38,6 +40,12 @@ public class DownBoxNameController {
     public Result<Boolean> add(@RequestParam String name,  @RequestParam Integer typeId,@RequestParam List<Integer> scopeIdList) {
         downBoxNameService.add(name,typeId,scopeIdList);
         return Result.success(true);
+    }
+    @ApiOperation(value = "",tags = "")
+    @PostMapping("query/by_id")
+    public Result<DownBoxNameDetailVO> queryById(@RequestParam Integer id){
+        DownBoxNameDetailVO downBoxNameDetailVO = downBoxNameService.queryById(id);
+        return Result.success(downBoxNameDetailVO);
     }
 
     @ApiOperation(value = "修改自定义下拉框",tags = "修改")

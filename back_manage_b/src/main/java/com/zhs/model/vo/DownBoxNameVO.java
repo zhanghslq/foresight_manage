@@ -3,6 +3,7 @@ package com.zhs.model.vo;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.zhs.entity.DownBoxData;
+import com.zhs.model.bo.DownBoxDataBO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,5 +28,5 @@ public class DownBoxNameVO {
     @ApiModelProperty(value = "下拉框类型的id")
     private Integer downBoxTypeId;
 
-    private List<DownBoxData> downBoxDataList;
+    private List<DownBoxDataBO> downBoxDataList;
 }

@@ -100,11 +100,13 @@ public class DownBoxNameServiceImpl extends ServiceImpl<DownBoxNameMapper, DownB
             downBoxNameVOList.add(downBoxNameVO);
             if(!Objects.isNull(list)){
                 List<DownBoxDataBO> result = new ArrayList<>();
+                downBoxNameVO.setDownBoxDataList(result);
                 List<DownBoxData> sortedResult = list.stream().sorted(Comparator.comparingInt(DownBoxData::getSeq)).collect(Collectors.toList());
                 // 需要对数据处理，做成树状结构的,递归处理
                 Map<Integer, List<DownBoxData>> downBoxDatamap  = sortedResult.stream().collect(Collectors.groupingBy(DownBoxData::getParentId));
                 // 初始的下拉框数据
-                List<DownBoxData> downBoxDataParent = map.get(0);
+                List<DownBoxData> downBoxDataParent = downBoxDatamap.get(0);
+
                 if(Objects.isNull(downBoxDataParent)||downBoxDataParent.size()==0){
                     continue;
                 }
@@ -114,7 +116,6 @@ public class DownBoxNameServiceImpl extends ServiceImpl<DownBoxNameMapper, DownB
                     result.add(downBoxDataBO);
                 }
                 dealDownBoxDataTree(downBoxDatamap,result);
-                downBoxNameVO.setDownBoxDataList(result);
             }
         }
         return downBoxNameVOList;

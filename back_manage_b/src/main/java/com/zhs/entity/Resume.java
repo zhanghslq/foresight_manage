@@ -37,6 +37,9 @@ public class Resume implements Serializable {
     @ApiModelProperty(value = "姓名")
     private String realName;
 
+    @ApiModelProperty("行政级别id数组")
+    private String levelIdArray;
+
     @ApiModelProperty(value = "行政级别id")
     private Long levelId;
 
@@ -63,11 +66,17 @@ public class Resume implements Serializable {
     @ApiModelProperty(value = "当前单位")
     private String company;
 
+    @ApiModelProperty("民族id数组")
+    private String nationIdArray;
+
     @ApiModelProperty(value = "民族")
     private Long nation;
 
     @ApiModelProperty("民族字符串")
     private String nationName;
+
+    @ApiModelProperty("党派id数组")
+    private String partiesArray;
 
     @ApiModelProperty(value = "党派")
     private Long parties;

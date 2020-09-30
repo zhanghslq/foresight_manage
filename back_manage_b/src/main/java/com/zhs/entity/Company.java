@@ -41,11 +41,17 @@ public class Company implements Serializable {
     @ApiModelProperty(value = "完善度")
     private Integer perfectValue;
 
+    @ApiModelProperty(value = "企业行政级别数组")
+    private String companyLevelIdArray;
+
     @ApiModelProperty(value = "企业行政级别")
     private Long companyLevelId;
 
     @ApiModelProperty(value = "企业行政级别名称")
     private String companyLevelName;
+
+    @ApiModelProperty("企业类别id数组")
+    private String companyTypeIdArray;
 
     @ApiModelProperty("企业类别id")
     private Long companyTypeId;
@@ -53,11 +59,17 @@ public class Company implements Serializable {
     @ApiModelProperty("企业类别名称")
     private String companyTypeName;
 
+    @ApiModelProperty("上级关系类型数组")
+    private String relationshipTypeIdArray;
+
     @ApiModelProperty(value = "上级关系类型")
     private Long relationshipTypeId;
 
     @ApiModelProperty(value = "是否上市")
     private Integer isMarket;
+
+    @ApiModelProperty("上市类型id数组")
+    private String marketTypeIdArray;
 
     @ApiModelProperty("上市类型id")
     private Long marketTypeId;
@@ -83,8 +95,6 @@ public class Company implements Serializable {
 
     @ApiModelProperty("地区id，集合，json形式")
     private String areaIdArray;
-
-
 
     @ApiModelProperty("企业logo")
     private String logoUrl;

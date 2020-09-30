@@ -45,6 +45,9 @@ public class Organization implements Serializable {
     @ApiModelProperty(value = "完善度")
     private Integer perfectValue;
 
+    @ApiModelProperty(value = "行政级别id数组")
+    private String levelIdArray;
+
     @ApiModelProperty(value = "行政级别")
     private Long levelId;
 
@@ -60,14 +63,23 @@ public class Organization implements Serializable {
     @ApiModelProperty(value = "是否是事业单位0否，1是")
     private Integer isGovernment;
 
+    @ApiModelProperty(value = "体系id数组")
+    private String hierarchyIdArray;
+
     @ApiModelProperty(value = "体系id，系统配置进行维护")
     private Long hierarchyId;
+
+    @ApiModelProperty(value = "系统id数组")
+    private Long systemIdArray;
 
     @ApiModelProperty(value = "系统id，系统配置进行维护")
     private Long systemId;
 
     @ApiModelProperty(value = "冗余给二级联动用，可以用来存系统的上级id，根据这个来判断取哪个下拉框的值")
     private String systemTypeIdString;
+
+    @ApiModelProperty(value = "所属类型数组")
+    private Long commonTypeIdArray;
 
     @ApiModelProperty(value = "所属类型(系统配置维护)")
     private Long commonTypeId;

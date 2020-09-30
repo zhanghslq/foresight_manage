@@ -38,6 +38,9 @@ public class Leader implements Serializable {
     @ApiModelProperty(value = "职位")
     private String position;
 
+    @ApiModelProperty(value = "级别id数组")
+    private String levelIdArray;
+
     @ApiModelProperty(value = "级别")
     private Long levelId;
 

@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -58,6 +59,9 @@ public class Contacts implements Serializable {
 
     @ApiModelProperty(value = "默认电话")
     private String defaultPhone;
+
+    @ApiModelProperty(value = "级别id数组")
+    private String levelIdArray;
 
     @ApiModelProperty(value = "级别id")
     private Long levelId;

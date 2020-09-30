@@ -41,6 +41,9 @@ public class DownBoxData implements Serializable {
     @ApiModelProperty("排序")
     private Integer seq;
 
+    @ApiModelProperty("父级id")
+    private Integer parentId;
+
     @JsonIgnore
     @TableLogic
     private Integer deleted;

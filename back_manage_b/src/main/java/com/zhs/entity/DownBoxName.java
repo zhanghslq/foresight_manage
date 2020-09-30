@@ -39,8 +39,8 @@ public class DownBoxName implements Serializable {
     @ApiModelProperty(value = "下拉框类型的id")
     private Integer downBoxTypeId;
 
-    @ApiModelProperty(value = "上级id")
-    private Integer parentId;
+    //@ApiModelProperty(value = "上级id")
+    //private Integer parentId;
 
     @JsonIgnore
     @TableLogic

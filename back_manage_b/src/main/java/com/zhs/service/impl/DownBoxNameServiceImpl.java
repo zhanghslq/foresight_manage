@@ -36,12 +36,12 @@ public class DownBoxNameServiceImpl extends ServiceImpl<DownBoxNameMapper, DownB
     private DownBoxDataService downBoxDataService;
 
     @Override
-    public void add(String name, Integer parentId, Integer typeId, List<Integer> scopeIdList) {
+    public void add(String name, Integer typeId, List<Integer> scopeIdList) {
         Assert.notEmpty(scopeIdList,"作用范围不能为空");
 
         //插入自定义数据
         DownBoxName downBoxName = new DownBoxName();
-        downBoxName.setName(name).setParentId(parentId).setDownBoxTypeId(typeId);
+        downBoxName.setName(name).setDownBoxTypeId(typeId);
         save(downBoxName);
         Integer downBoxNameId = downBoxName.getId();
         //插入对应的作用范围
@@ -56,9 +56,9 @@ public class DownBoxNameServiceImpl extends ServiceImpl<DownBoxNameMapper, DownB
     }
 
     @Override
-    public void updateSelf(Integer id, String name, Integer parentId, Integer typeId, List<Integer> scopeIdList) {
+    public void updateSelf(Integer id, String name, Integer typeId, List<Integer> scopeIdList) {
         DownBoxName downBoxName = new DownBoxName();
-        downBoxName.setName(name).setParentId(parentId).setDownBoxTypeId(typeId).setId(id);
+        downBoxName.setName(name).setDownBoxTypeId(typeId).setId(id);
         updateById(downBoxName);
         QueryWrapper<DownBoxScopeReal> downBoxScopeRealQueryWrapper = new QueryWrapper<>();
         downBoxScopeRealQueryWrapper.eq("down_box_name_id",id);

@@ -2,6 +2,7 @@ package com.zhs.service;
 
 import com.zhs.entity.DownBoxData;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zhs.model.bo.DownBoxDataBO;
 
 import java.util.List;
 
@@ -15,5 +16,5 @@ import java.util.List;
  */
 public interface DownBoxDataService extends IService<DownBoxData> {
 
-    List<DownBoxData> listByDownBoxTypeAndScope(Integer downBoxTypeId, Integer scopeId);
+    List<DownBoxDataBO> listByDownBoxTypeAndScope(Integer downBoxTypeId, Integer scopeId);
 }

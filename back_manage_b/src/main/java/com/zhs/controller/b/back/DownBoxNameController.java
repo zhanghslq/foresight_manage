@@ -35,15 +35,15 @@ public class DownBoxNameController {
 
     @ApiOperation(value = "添加自定义菜单",tags = "新增")
     @PostMapping("add")
-    public Result<Boolean> add(@RequestParam String name, Integer parentId, @RequestParam Integer typeId,@RequestParam List<Integer> scopeIdList) {
-        downBoxNameService.add(name,parentId,typeId,scopeIdList);
+    public Result<Boolean> add(@RequestParam String name,  @RequestParam Integer typeId,@RequestParam List<Integer> scopeIdList) {
+        downBoxNameService.add(name,typeId,scopeIdList);
         return Result.success(true);
     }
 
     @ApiOperation(value = "修改自定义下拉框",tags = "修改")
     @PostMapping("update")
-    public Result<Boolean> update(@RequestParam Integer id,@RequestParam String name, Integer parentId, @RequestParam Integer typeId,@RequestParam List<Integer> scopeIdList){
-        downBoxNameService.updateSelf(id,name,parentId,typeId,scopeIdList);
+    public Result<Boolean> update(@RequestParam Integer id,@RequestParam String name, @RequestParam Integer typeId,@RequestParam List<Integer> scopeIdList){
+        downBoxNameService.updateSelf(id,name,typeId,scopeIdList);
         return Result.success(true);
     }
 

@@ -3,6 +3,7 @@ package com.zhs.controller.b.back;
 
 import com.zhs.common.Result;
 import com.zhs.entity.DownBoxData;
+import com.zhs.model.bo.DownBoxDataBO;
 import com.zhs.service.DownBoxDataService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -58,8 +59,8 @@ public class DownBoxDataController {
 
     @PostMapping("list/by_type_and_scope")
     @ApiOperation(value = "根据类型和作用域获取下拉框数据",tags = "查询")
-    public Result<List<DownBoxData>> listByDownBoxTypeAndScope(@RequestParam Integer downBoxTypeId, @RequestParam Integer scopeId){
-        List<DownBoxData> list = downBoxDataService.listByDownBoxTypeAndScope(downBoxTypeId,scopeId);
+    public Result<List<DownBoxDataBO>> listByDownBoxTypeAndScope(@RequestParam Integer downBoxTypeId, @RequestParam Integer scopeId){
+        List<DownBoxDataBO> list = downBoxDataService.listByDownBoxTypeAndScope(downBoxTypeId,scopeId);
         return Result.success(list);
     }
 }

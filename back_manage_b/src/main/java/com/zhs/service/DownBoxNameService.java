@@ -16,10 +16,10 @@ import java.util.List;
  */
 public interface DownBoxNameService extends IService<DownBoxName> {
 
-    void add(String name, Integer parentId, Integer typeId, List<Integer> scopeIdList);
+    void add(String name, Integer typeId, List<Integer> scopeIdList);
 
 
-    void updateSelf(Integer id, String name, Integer parentId, Integer typeId, List<Integer> scopeIdList);
+    void updateSelf(Integer id, String name, Integer typeId, List<Integer> scopeIdList);
 
     void removeBySelf(Integer id);
 

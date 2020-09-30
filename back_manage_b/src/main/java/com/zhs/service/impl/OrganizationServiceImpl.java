@@ -3,10 +3,7 @@ package com.zhs.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zhs.common.constant.DropDownBoxTypeEnum;
-import com.zhs.common.constant.ImportanceTypeEnum;
-import com.zhs.common.constant.ModuleTypeEnum;
-import com.zhs.common.constant.RootTypeEnum;
+import com.zhs.common.constant.*;
 import com.zhs.exception.MyException;
 import com.zhs.mapper.OrganizationMapper;
 import com.zhs.model.bo.ContactsBO;
@@ -65,9 +62,6 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
     @Autowired
     private OrganizationMapper organizationMapper;
-
-    @Autowired
-    private CommonDataService commonDataService;
 
     @Autowired
     private DownBoxDataService downBoxDataService;
@@ -234,10 +228,14 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             List<DownBoxData> systemList = downBoxDataService.list(systemWrapper);
             List<DownBoxData> hierarchyList = downBoxDataService.list(hierarchyWrapper);
             List<DownBoxData> levelList = downBoxDataService.list(levelWrapper);
-            commonDataQueryWrapper.eq("name",commonType);
-            List<CommonData> commonDataList = commonDataService.list(commonDataQueryWrapper);
+
+
+            List<DownBoxData> downBoxDataList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.ORGANIZATION_TYPE.getId(), null);
+            List<DownBoxData> commonDataList = downBoxDataList.stream().filter(downBoxData -> !Objects.isNull(downBoxData.getName()) && downBoxData.getName().equals(commonType)).collect(Collectors.toList());
+
+
             if(commonDataList.size()>0){
-                organization.setCommonTypeId(commonDataList.get(0).getId());
+                organization.setCommonTypeId(commonDataList.get(0).getId().longValue());
             }
             //
             if(systemList.size()>0){

@@ -9,11 +9,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zhs.common.constant.DownBoxTypeEnum;
 import com.zhs.common.constant.DropDownBoxTypeEnum;
-import com.zhs.entity.CommonData;
-import com.zhs.entity.ExperienceRecord;
-import com.zhs.entity.Resume;
-import com.zhs.entity.ResumeCompany;
+import com.zhs.common.constant.ScopeEnum;
+import com.zhs.entity.*;
 import com.zhs.mapper.ResumeMapper;
 import com.zhs.model.bo.CommonCountBO;
 import com.zhs.model.bo.OrganizationConvertBO;
@@ -22,12 +21,10 @@ import com.zhs.model.dto.ResumeConvertDTO;
 import com.zhs.model.dto.ResumeDTO;
 import com.zhs.model.vo.InputStatisticsVO;
 import com.zhs.model.vo.ResumeVO;
-import com.zhs.service.CommonDataService;
-import com.zhs.service.ExperienceRecordService;
-import com.zhs.service.ResumeCompanyService;
-import com.zhs.service.ResumeService;
+import com.zhs.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.util.AsposeWordUtil;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -54,8 +51,7 @@ import java.util.stream.Collectors;
 @Service
 public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> implements ResumeService {
 
-    @Autowired
-    private CommonDataService commonDataService;
+
     @Autowired
     private ExperienceRecordService experienceRecordService;
     @Autowired
@@ -67,17 +63,21 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
     @Autowired
     private ResumeCompanyService resumeCompanyService;
 
+    @Autowired
+    private DownBoxDataService downBoxDataService;
+
     @Override
     public Page<ResumeVO> pageSelf(Resume resume, Page<Resume> resumePage) {
-        QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
-        commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.RESUME_LEVEL.getId());
-        List<CommonData> list = commonDataService.list(commonDataQueryWrapper);
-        Map<Long, String> map = list.stream().collect(Collectors.toMap(CommonData::getId, CommonData::getName));
 
-        QueryWrapper<CommonData> commonDataStatusQueryWrapper = new QueryWrapper<>();
-        commonDataStatusQueryWrapper.eq("type", DropDownBoxTypeEnum.RESUME_STATUS.getId());
-        List<CommonData> statusList = commonDataService.list(commonDataStatusQueryWrapper);
-        Map<Long, String> statusMap = statusList.stream().collect(Collectors.toMap(CommonData::getId, CommonData::getName));
+        List<DownBoxData> list = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.ORGANIZATION_LEVEL.getId(), ScopeEnum.RESUME.getId());
+
+
+        Map<Integer, String> map = list.stream().collect(Collectors.toMap(DownBoxData::getId, DownBoxData::getName));
+
+
+        List<DownBoxData> statusList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.RESUME_STATUS.getId(), ScopeEnum.RESUME.getId());
+
+        Map<Integer, String> statusMap = statusList.stream().collect(Collectors.toMap(DownBoxData::getId, DownBoxData::getName));
 
         List<ResumeVO> resumeVOS = new ArrayList<>();
         Page<ResumeVO> resumeVOPage = new Page<>();
@@ -145,7 +145,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             resumeVO.setResumeCompanyList(resumeCompanyMap.get(record.getId()));
             resumeVO.setPoliticsResumeCompanyList(politicsResumeCompanyMap.get(record.getId()));
             // 行政级别
-            resumeVO.setLevelName(map.get(resumeVO.getLevelId()));
+            resumeVO.setLevelName(map.get(resumeVO.getLevelId().intValue()));
             Date birthday = record.getBirthday();
             if(!Objects.isNull(birthday)){
                 int age =DateUtil.ageOfNow(birthday);
@@ -159,7 +159,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                 resumeVO.setBeginWorkingTime(date);
             }
             if(Objects.isNull(record.getCurrentStatus())&&!Objects.isNull(record.getCurrentStatusId())){
-                resumeVO.setCurrentStatus(statusMap.get(record.getCurrentStatusId()));
+                resumeVO.setCurrentStatus(statusMap.get(record.getCurrentStatusId().intValue()));
             }
             resumeVOS.add(resumeVO);
         }
@@ -176,7 +176,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             prefix = "/data/file/";
         }
         Resume resume = new Resume();
-        CommonData byId = commonDataService.getById(currentStatusId);
+        DownBoxData byId = downBoxDataService.getById(currentStatusId);
         Assert.notNull(byId,"状态不存在");
         ResumeDTO resumeDTO = new ResumeDTO();
 
@@ -276,22 +276,18 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
 
             resume.setNationName(resumeConvertDTO.getNation());
 
-            QueryWrapper<CommonData> nationWrapper = new QueryWrapper<>();
-            nationWrapper.eq("type",DropDownBoxTypeEnum.NATION.getId());
-            nationWrapper.eq("name",resumeConvertDTO.getNation());
-            List<CommonData> nationList = commonDataService.list(nationWrapper);
+            List<DownBoxData> nationList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.NATION.getId(), ScopeEnum.RESUME.getId());
             if(nationList.size()>0){
-                Long nationId = nationList.get(0).getId();
-                resume.setNation(nationId);
+                Integer nationId = nationList.get(0).getId();
+                resume.setNation(nationId.longValue());
             }
             resume.setPartiesName(resumeConvertDTO.getParties());
-            QueryWrapper<CommonData> partiesWrapper = new QueryWrapper<>();
-            partiesWrapper.eq("type",DropDownBoxTypeEnum.PARTIES.getId());
-            partiesWrapper.eq("name",resumeConvertDTO.getParties());
-            List<CommonData> partiesList = commonDataService.list(partiesWrapper);
+
+            List<DownBoxData> partiesList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.PARTIES.getId(), ScopeEnum.RESUME.getId());
+
             if(partiesList.size()>0){
-                Long partiesId = partiesList.get(0).getId();
-                resume.setParties(partiesId);
+                Integer partiesId = partiesList.get(0).getId();
+                resume.setParties(partiesId.longValue());
             }
             resume.setWordUrl(filename);
             resume.setCurrentStatusId(currentStatusId);
@@ -395,17 +391,15 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
 
     @Override
     public List<InputStatisticsVO> expertInputStatistics() {
-        QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
-        commonDataQueryWrapper.eq("type",DropDownBoxTypeEnum.RESUME_STATUS.getId());
-        List<CommonData> list = commonDataService.list(commonDataQueryWrapper);
+        List<DownBoxData> list = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.RESUME_STATUS.getId(), ScopeEnum.RESUME.getId());
         List<CommonCountBO> commonCountBOS = resumeMapper.countByCurrentStatusId();
         Map<Long, Integer> map = commonCountBOS.stream().collect(Collectors.toMap(CommonCountBO::getId, CommonCountBO::getCount, (k1, k2) -> k2));
         ArrayList<InputStatisticsVO> result = new ArrayList<>();
-        for (CommonData commonData : list) {
+        for (DownBoxData commonData : list) {
             InputStatisticsVO inputStatisticsVO = new InputStatisticsVO();
-            inputStatisticsVO.setId(commonData.getId());
+            inputStatisticsVO.setId(commonData.getId().longValue());
             inputStatisticsVO.setName(commonData.getName());
-            inputStatisticsVO.setCount(map.get(commonData.getId()));
+            inputStatisticsVO.setCount(map.get(commonData.getId().longValue()));
             result.add(inputStatisticsVO);
         }
         return result;

@@ -62,7 +62,7 @@ public class DownBoxNameController {
     }
 
     @ApiOperation(value = "根据类型查询所有下拉框名字(可用于上级选择)",tags = "查询")
-    @PostMapping("list")
+    @PostMapping("list/by_type_id")
     public Result<List<DownBoxName>> listByDownBoxType(@RequestParam Integer downBoxTypeId){
         QueryWrapper<DownBoxName> downBoxNameQueryWrapper = new QueryWrapper<>();
         downBoxNameQueryWrapper.eq("down_box_type_id",downBoxTypeId);

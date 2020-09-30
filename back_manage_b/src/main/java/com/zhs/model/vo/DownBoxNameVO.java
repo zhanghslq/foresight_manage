@@ -28,5 +28,5 @@ public class DownBoxNameVO {
     @ApiModelProperty(value = "下拉框类型的id")
     private Integer downBoxTypeId;
 
-    private List<DownBoxDataBO> downBoxDataList;
+    private List<DownBoxDataBO> children;
 }

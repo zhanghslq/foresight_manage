@@ -58,7 +58,7 @@ public class DownBoxDataController {
 
     @PostMapping("list/by_type_and_scope")
     @ApiOperation(value = "根据类型和作用域获取下拉框数据",tags = "查询")
-    public Result<List<DownBoxData>> listByDownBoxTypeAndScope(@RequestParam Integer downBoxTypeId, Integer scopeId){
+    public Result<List<DownBoxData>> listByDownBoxTypeAndScope(@RequestParam Integer downBoxTypeId, @RequestParam Integer scopeId){
         List<DownBoxData> list = downBoxDataService.listByDownBoxTypeAndScope(downBoxTypeId,scopeId);
         return Result.success(list);
     }

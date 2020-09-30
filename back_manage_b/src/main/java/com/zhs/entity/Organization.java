@@ -79,7 +79,7 @@ public class Organization implements Serializable {
     private String systemTypeIdString;
 
     @ApiModelProperty(value = "所属类型数组")
-    private Long commonTypeIdArray;
+    private String commonTypeIdArray;
 
     @ApiModelProperty(value = "所属类型(系统配置维护)")
     private Long commonTypeId;

@@ -88,7 +88,8 @@ public class DownBoxDataServiceImpl extends ServiceImpl<DownBoxDataMapper, DownB
         for (DownBoxDataBO downBoxDataBO : result) {
             List<DownBoxData> downBoxDataList = map.get(downBoxDataBO.getId());
             if(Objects.isNull(downBoxDataList)||downBoxDataList.size()==0){
-                return ;
+                // 无子类，直接过到下一个
+                continue;
             }
             List<DownBoxDataBO> subList = new ArrayList<>();
             for (DownBoxData downBoxData : downBoxDataList) {

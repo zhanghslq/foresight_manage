@@ -48,6 +48,7 @@ public class ContactsController {
     @Resource
     private CommonDataService commonDataService;
 
+
     @PostMapping("list")
     @ApiOperation(value = "联系人列表",tags = "查询")
     @ApiImplicitParams({
@@ -61,6 +62,8 @@ public class ContactsController {
         QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
         commonDataQueryWrapper.eq("type", DropDownBoxTypeEnum.CONCAT_LEVEL.getId());
         List<CommonData> commonDataList = commonDataService.list(commonDataQueryWrapper);
+
+
         Map<Long, String> map = commonDataList.stream().collect(Collectors.toMap(CommonData::getId, CommonData::getName));
         Page<ContactsVO> contactsVOPage = new Page<>();
         BeanUtil.copyProperties(page,contactsVOPage);

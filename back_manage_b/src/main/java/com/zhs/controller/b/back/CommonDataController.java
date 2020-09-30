@@ -85,7 +85,7 @@ public class CommonDataController {
         return Result.success(commonDataService.save(commonData));
     }
     @PostMapping("insertBatch")
-    @ApiOperation(value = "批量添加公共數據",tags = "新增")
+    @ApiOperation(value = "批量添加公共数据",tags = "新增")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "content",value = "文本域内容",required = true),
             @ApiImplicitParam(name = "type",value = "类型",required = true),

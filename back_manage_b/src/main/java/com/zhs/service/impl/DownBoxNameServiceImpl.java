@@ -100,7 +100,7 @@ public class DownBoxNameServiceImpl extends ServiceImpl<DownBoxNameMapper, DownB
             downBoxNameVOList.add(downBoxNameVO);
             if(!Objects.isNull(list)){
                 List<DownBoxDataBO> result = new ArrayList<>();
-                downBoxNameVO.setDownBoxDataList(result);
+                downBoxNameVO.setChildren(result);
                 List<DownBoxData> sortedResult = list.stream().sorted(Comparator.comparingInt(DownBoxData::getSeq)).collect(Collectors.toList());
                 // 需要对数据处理，做成树状结构的,递归处理
                 Map<Integer, List<DownBoxData>> downBoxDatamap  = sortedResult.stream().collect(Collectors.groupingBy(DownBoxData::getParentId));

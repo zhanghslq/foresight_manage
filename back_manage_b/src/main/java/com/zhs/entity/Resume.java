@@ -102,6 +102,9 @@ public class Resume implements Serializable {
     @ApiModelProperty(value = "照片")
     private String photoUrl;
 
+    @ApiModelProperty("状态id数组")
+    private String currentStatusIdArray;
+
     @ApiModelProperty(value = "现在状态的id")
     private Long currentStatusId;
 

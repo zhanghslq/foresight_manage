@@ -81,6 +81,9 @@ public class Expert implements Serializable {
     @ApiModelProperty(value = "级别名称")
     private String levelName;
 
+    @ApiModelProperty("从事领域数组")
+    private String workAreaIdArray;
+
     @ApiModelProperty(value = "从事领域id")
     private Long workAreaId;
 

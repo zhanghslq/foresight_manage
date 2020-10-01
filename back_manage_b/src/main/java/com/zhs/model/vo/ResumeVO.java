@@ -23,6 +23,9 @@ public class ResumeVO {
     @ApiModelProperty(value = "姓名")
     private String realName;
 
+    @ApiModelProperty("行政级别id数组")
+    private String levelIdArray;
+
     @ApiModelProperty("行政级别id")
     private Long levelId;
 

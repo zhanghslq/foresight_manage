@@ -85,6 +85,10 @@ public class DownBoxNameServiceImpl extends ServiceImpl<DownBoxNameMapper, DownB
         QueryWrapper<DownBoxScopeReal> downBoxScopeRealQueryWrapper = new QueryWrapper<>();
         downBoxScopeRealQueryWrapper.eq("down_box_name_id",id);
         downBoxScopeRealService.remove(downBoxScopeRealQueryWrapper);
+
+        QueryWrapper<DownBoxData> downBoxDataQueryWrapper = new QueryWrapper<>();
+        downBoxDataQueryWrapper.eq("type",id);
+        downBoxDataService.remove(downBoxDataQueryWrapper);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.zhs.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.common.constant.DownBoxTypeEnum;
 import com.zhs.common.constant.DropDownBoxTypeEnum;
+import com.zhs.common.constant.ScopeEnum;
 import com.zhs.entity.CommonData;
 import com.zhs.entity.DownBoxData;
 import com.zhs.entity.Expert;
@@ -101,9 +102,7 @@ public class ExpertServiceImpl extends ServiceImpl<ExpertMapper, Expert> impleme
 
     @Override
     public List<InputStatisticsVO> expertInputStatistics() {
-        QueryWrapper<DownBoxData> commonDataQueryWrapper = new QueryWrapper<>();
-        commonDataQueryWrapper.eq("type",DownBoxTypeEnum.EXPERT_CLASSIFICATION.getId());
-        List<DownBoxData> list = downBoxDataService.list(commonDataQueryWrapper);
+        List<DownBoxData> list = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.EXPERT_CLASSIFICATION.getId(), ScopeEnum.EXPERT.getId());
         List<CommonCountBO> commonCountBOS = expertMapper.countByClassificationId();
         Map<Long, Integer> map = commonCountBOS.stream().collect(Collectors.toMap(CommonCountBO::getId, CommonCountBO::getCount, (k1, k2) -> k2));
         ArrayList<InputStatisticsVO> result = new ArrayList<>();

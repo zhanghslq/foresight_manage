@@ -77,7 +77,9 @@ public class ContactsController {
         for (Contacts record : records) {
             ContactsVO contactsVO = new ContactsVO();
             BeanUtil.copyProperties(record,contactsVO);
-            contactsVO.setLevelName(map.get(record.getLevelId().intValue()));
+            if(!Objects.isNull(record.getLevelId())){
+                contactsVO.setLevelName(map.get(record.getLevelId().intValue()));
+            }
             contactsVOS.add(contactsVO);
         }
         contactsVOPage.setRecords(contactsVOS);

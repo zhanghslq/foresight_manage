@@ -55,7 +55,10 @@ public class ContactsServiceImpl extends ServiceImpl<ContactsMapper, Contacts> i
             }
             String levelName = readBook.getLevelName();
             if(!Objects.isNull(levelName)){
-                readBook.setLevelId(map.get(levelName).longValue());
+                Integer levelId = map.get(levelName);
+                if(!Objects.isNull(levelId)){
+                    readBook.setLevelId(levelId.longValue());
+                }
             }
             readBook.setId(null);
         }

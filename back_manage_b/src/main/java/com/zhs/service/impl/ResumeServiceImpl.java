@@ -276,22 +276,56 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
 
             resume.setNationName(resumeConvertDTO.getNation());
 
+
             List<DownBoxData> nationList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.NATION.getId(), ScopeEnum.RESUME.getId());
             if(nationList.size()>0){
-                Integer nationId = nationList.get(0).getId();
-                resume.setNation(nationId.longValue());
+                Optional<DownBoxData> first = nationList.stream().filter(downBoxData -> downBoxData.getName().equals(resumeConvertDTO.getNation())).findFirst();
+                first.ifPresent(downBoxData ->{
+                    Integer nationId = downBoxData.getId();
+                    resume.setNation(nationId.longValue());
+                    List<Integer> nationIds = new ArrayList<>();
+                    nationIds.add(nationId);
+                    Map<Integer, DownBoxData> collect = nationList.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData1 -> downBoxData1, (k1, k2) -> k1));
+                    dealArray(nationIds,collect);
+                    Collections.reverse(nationIds);
+                    resume.setNationIdArray(JSONArray.toJSONString(nationIds));
+                });
+
             }
             resume.setPartiesName(resumeConvertDTO.getParties());
 
             List<DownBoxData> partiesList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.PARTIES.getId(), ScopeEnum.RESUME.getId());
 
             if(partiesList.size()>0){
-                Integer partiesId = partiesList.get(0).getId();
-                resume.setParties(partiesId.longValue());
+                Optional<DownBoxData> first = partiesList.stream().filter(downBoxData -> downBoxData.getName().equals(resumeConvertDTO.getNation())).findFirst();
+                first.ifPresent(downBoxData ->{
+                    Integer partiesId = downBoxData.getId();
+                    resume.setParties(partiesId.longValue());
+                    List<Integer> partiesIds = new ArrayList<>();
+                    partiesIds.add(partiesId);
+                    Map<Integer, DownBoxData> collect = partiesList.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData1 -> downBoxData1, (k1, k2) -> k1));
+                    dealArray(partiesIds,collect);
+                    Collections.reverse(partiesIds);
+                    resume.setPartiesArray(JSONArray.toJSONString(partiesIds));
+                });
+
             }
             resume.setWordUrl(filename);
             resume.setCurrentStatusId(currentStatusId);
             resume.setCurrentStatus(byId.getName());
+
+            List<DownBoxData> statusList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.RESUME_STATUS.getId(), ScopeEnum.RESUME.getId());
+            Optional<DownBoxData> first = statusList.stream().filter(downBoxData -> downBoxData.getName().equals(resumeConvertDTO.getNation())).findFirst();
+            first.ifPresent(downBoxData ->{
+                Integer statusId = downBoxData.getId();
+                List<Integer> statusIds = new ArrayList<>();
+                statusIds.add(statusId);
+                Map<Integer, DownBoxData> collect = statusList.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData1 -> downBoxData1, (k1, k2) -> k1));
+                dealArray(statusIds,collect);
+                Collections.reverse(statusIds);
+                resume.setCurrentStatusIdArray(JSONArray.toJSONString(statusIds));
+            });
+
             resume.setWordContent(jsonArray.get(2).toString());
             //save(resume);
 
@@ -387,6 +421,25 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
 
         }
         return resumeDTO;
+    }
+
+    /**
+     * 处理下拉框的父类问题，解决数组
+     * @param downBoxDataIds  下拉框的数据和父类
+     * @param map 下拉框整体数据
+     */
+    void dealArray(List<Integer> downBoxDataIds,Map<Integer,DownBoxData> map){
+        if(downBoxDataIds.size()==0){
+            return;
+        }
+        Integer id = downBoxDataIds.get(0);
+        DownBoxData downBoxData = map.get(id);
+        if(downBoxData==null){
+            return;
+        }
+        Integer parentId = downBoxData.getParentId();
+        downBoxDataIds.add(parentId);
+        dealArray(downBoxDataIds,map);
     }
 
     @Override

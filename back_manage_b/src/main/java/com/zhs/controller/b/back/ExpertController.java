@@ -71,7 +71,9 @@ public class ExpertController {
         for (Expert record : records) {
             ExpertVO expertVO = new ExpertVO();
             BeanUtil.copyProperties(record,expertVO);
-            expertVO.setLevelName(map.get(record.getLevelId().intValue()));
+            if(!Objects.isNull(record.getLevelId())){
+                expertVO.setLevelName(map.get(record.getLevelId().intValue()));
+            }
             expertVOS.add(expertVO);
         }
         expertVOPage.setRecords(expertVOS);

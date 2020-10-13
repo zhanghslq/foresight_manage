@@ -98,7 +98,7 @@ public class DownBoxDataServiceImpl extends ServiceImpl<DownBoxDataMapper, DownB
         List<Integer> downBoxNameIdList = downBoxNameList.stream().map(DownBoxName::getId).collect(Collectors.toList());
         // 根据作用域查
         QueryWrapper<DownBoxScopeReal> downBoxScopeRealQueryWrapper = new QueryWrapper<>();
-        downBoxScopeRealQueryWrapper.eq("scope_id",scopeId);
+        downBoxScopeRealQueryWrapper.eq(!Objects.isNull(scopeId),"scope_id",scopeId);
         downBoxScopeRealQueryWrapper.in("down_box_name_id",downBoxNameIdList);
         List<DownBoxScopeReal> downBoxScopeRealList = downBoxScopeRealService.list(downBoxScopeRealQueryWrapper);
         if(downBoxScopeRealList.size()==0){

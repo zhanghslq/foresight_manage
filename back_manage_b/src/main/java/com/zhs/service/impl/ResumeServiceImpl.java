@@ -297,7 +297,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             List<DownBoxData> partiesList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.PARTIES.getId(), ScopeEnum.RESUME.getId());
 
             if(partiesList.size()>0){
-                Optional<DownBoxData> first = partiesList.stream().filter(downBoxData -> downBoxData.getName().equals(resumeConvertDTO.getNation())).findFirst();
+                Optional<DownBoxData> first = partiesList.stream().filter(downBoxData -> downBoxData.getName().equals(resumeConvertDTO.getParties())).findFirst();
                 first.ifPresent(downBoxData ->{
                     Integer partiesId = downBoxData.getId();
                     resume.setParties(partiesId.longValue());
@@ -315,7 +315,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             resume.setCurrentStatus(byId.getName());
 
             List<DownBoxData> statusList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.RESUME_STATUS.getId(), ScopeEnum.RESUME.getId());
-            Optional<DownBoxData> first = statusList.stream().filter(downBoxData -> downBoxData.getName().equals(resumeConvertDTO.getNation())).findFirst();
+            Optional<DownBoxData> first = statusList.stream().filter(downBoxData -> downBoxData.getName().equals(resume.getCurrentStatus())).findFirst();
             first.ifPresent(downBoxData ->{
                 Integer statusId = downBoxData.getId();
                 List<Integer> statusIds = new ArrayList<>();
@@ -438,6 +438,9 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             return;
         }
         Integer parentId = downBoxData.getParentId();
+        if(parentId==0){
+            return;
+        }
         downBoxDataIds.add(parentId);
         dealArray(downBoxDataIds,map);
     }

@@ -407,7 +407,8 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                     }
                     experienceRecord.setEndDate(endDate);
                     experienceRecord.setBeginDateString(expierenceRecordConvertDTO.getEndDate());
-                    experienceRecord.setCompanyName(expierenceRecordConvertDTO.getPosition());
+                    experienceRecord.setCompanyName(expierenceRecordConvertDTO.getOrganization());
+                    experienceRecord.setJob(expierenceRecordConvertDTO.getPosition());
                     experienceRecords.add(experienceRecord);
                 }
                 /*if(experienceRecords.size()>0){

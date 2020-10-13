@@ -62,8 +62,9 @@ public class AdminController {
     }
     @PostMapping("add")
     @ApiOperation(value = "添加用户",tags = "新增")
-    public Result<Boolean> add(@RequestParam String username,@RequestParam String password,String realName,String mobile,Long roleId){
-        adminService.register(username,password,realName,mobile,roleId, AdminTypeEnum.B_BACK.getType());
+    public Result<Boolean> add(@RequestParam String username,@RequestParam String password,String realName,String mobile,Long roleId,@RequestParam(defaultValue = "0") Integer type){
+
+        adminService.register(username,password,realName,mobile,roleId, type);
         return Result.success(true);
     }
 

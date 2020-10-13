@@ -432,7 +432,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         if(downBoxDataIds.size()==0){
             return;
         }
-        Integer id = downBoxDataIds.get(0);
+        Integer id = downBoxDataIds.get(downBoxDataIds.size()-1);
         DownBoxData downBoxData = map.get(id);
         if(downBoxData==null){
             return;

@@ -7,6 +7,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.common.Result;
 import com.zhs.entity.Organization;
 import com.zhs.entity.OrganizationTag;
+import com.zhs.exception.MyException;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.dto.OrganizationDTO;
 import com.zhs.model.vo.OrganizationVO;
@@ -70,6 +71,16 @@ public class OrganizationController {
             organization.setAdminId(adminId);
         } catch (NumberFormatException e) {
             organization.setAdminId(0L);
+        }
+        String name = organization.getName();
+        Long areaId = organization.getAreaId();
+        QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
+        organizationQueryWrapper.eq("name",name);
+        organizationQueryWrapper.eq("area_id",areaId);
+
+        List<Organization> list = organizationService.list(organizationQueryWrapper);
+        if(list.size()>0){
+            throw new MyException("存在同名，请检查重试");
         }
         organizationService.save(organization);
         if(!Objects.isNull(tags)&&tags.size()>0){

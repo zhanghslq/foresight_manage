@@ -70,7 +70,7 @@ public class Organization implements Serializable {
     private Long hierarchyId;
 
     @ApiModelProperty(value = "系统id数组")
-    private Long systemIdArray;
+    private String systemIdArray;
 
     @ApiModelProperty(value = "系统id，系统配置进行维护")
     private Long systemId;

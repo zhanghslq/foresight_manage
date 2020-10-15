@@ -2,6 +2,7 @@ package com.zhs.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.common.constant.*;
 import com.zhs.exception.MyException;
@@ -218,17 +219,15 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             }*/else {
                 throw new MyException("不属于所属类型");
             }
-            QueryWrapper<DownBoxData> commonDataQueryWrapperSystem = new QueryWrapper<>();
-            QueryWrapper<DownBoxData> commonDataQueryWrapperHierarchy = new QueryWrapper<>();
-            QueryWrapper<DownBoxData> commonDataQueryWrapperLevel = new QueryWrapper<>();
-            QueryWrapper<DownBoxData> systemWrapper = commonDataQueryWrapperSystem.eq("name", readBook.getSystem());
-            QueryWrapper<DownBoxData> hierarchyWrapper = commonDataQueryWrapperHierarchy.eq("name", readBook.getHierarchy());
-            QueryWrapper<DownBoxData> levelWrapper = commonDataQueryWrapperLevel.eq("name", readBook.getLevelName());
+            List<DownBoxData> systemDownBoxDataList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.ADMINISTRATION_SYSTEM.getId(), null);
+            List<DownBoxData> systemList = systemDownBoxDataList.stream().filter(downBoxData -> !Objects.isNull(downBoxData.getName()) && downBoxData.getName().equals(readBook.getSystem())).collect(Collectors.toList());
 
+            List<DownBoxData> hierarchyDownBoxDataList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.SYSTEM_SERIES.getId(), null);
 
-            List<DownBoxData> systemList = downBoxDataService.list(systemWrapper);
-            List<DownBoxData> hierarchyList = downBoxDataService.list(hierarchyWrapper);
-            List<DownBoxData> levelList = downBoxDataService.list(levelWrapper);
+            List<DownBoxData> hierarchyList = hierarchyDownBoxDataList.stream().filter(downBoxData -> !Objects.isNull(downBoxData.getName()) && downBoxData.getName().equals(readBook.getHierarchy())).collect(Collectors.toList());
+
+            List<DownBoxData> levelDownBoxDataList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.ORGANIZATION_LEVEL.getId(), null);
+            List<DownBoxData> levelList = levelDownBoxDataList.stream().filter(downBoxData -> !Objects.isNull(downBoxData.getName()) && downBoxData.getName().equals(readBook.getLevelName())).collect(Collectors.toList());
 
 
             List<DownBoxData> downBoxDataList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.ORGANIZATION_TYPE.getId(), null);
@@ -237,16 +236,44 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
             if(commonDataList.size()>0){
                 organization.setCommonTypeId(commonDataList.get(0).getId().longValue());
+
+                List<Integer> commonTypeIds = new ArrayList<>();
+                commonTypeIds.add(commonDataList.get(0).getId());
+                Map<Integer, DownBoxData> collect = downBoxDataList.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData1 -> downBoxData1, (k1, k2) -> k1));
+                ResumeServiceImpl.dealArray(commonTypeIds,collect);
+                Collections.reverse(commonTypeIds);
+                organization.setCommonTypeIdArray(JSONArray.toJSONString(commonTypeIds));
             }
             //
             if(systemList.size()>0){
                 organization.setSystemId(systemList.get(0).getId().longValue());
+
+                List<Integer> systemIds = new ArrayList<>();
+                systemIds.add(commonDataList.get(0).getId());
+                Map<Integer, DownBoxData> collect = systemDownBoxDataList.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData1 -> downBoxData1, (k1, k2) -> k1));
+                ResumeServiceImpl.dealArray(systemIds,collect);
+                Collections.reverse(systemIds);
+                organization.setSystemIdArray(JSONArray.toJSONString(systemIds));
             }
             if(hierarchyList.size()>0){
                 organization.setHierarchyId(hierarchyList.get(0).getId().longValue());
+
+                List<Integer> hierarchyIds = new ArrayList<>();
+                hierarchyIds.add(commonDataList.get(0).getId());
+                Map<Integer, DownBoxData> collect = hierarchyDownBoxDataList.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData1 -> downBoxData1, (k1, k2) -> k1));
+                ResumeServiceImpl.dealArray(hierarchyIds,collect);
+                Collections.reverse(hierarchyIds);
+                organization.setHierarchyIdArray(JSONArray.toJSONString(hierarchyIds));
             }
             if(levelList.size()>0){
                 organization.setLevelId(levelList.get(0).getId().longValue());
+
+                List<Integer> levelIds = new ArrayList<>();
+                levelIds.add(commonDataList.get(0).getId());
+                Map<Integer, DownBoxData> collect = levelDownBoxDataList.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData1 -> downBoxData1, (k1, k2) -> k1));
+                ResumeServiceImpl.dealArray(levelIds,collect);
+                Collections.reverse(levelIds);
+                organization.setLevelIdArray(JSONArray.toJSONString(levelIds));
             }
             String areaName = readBook.getAreaName();
             QueryWrapper<Area> areaQueryWrapper = new QueryWrapper<>();

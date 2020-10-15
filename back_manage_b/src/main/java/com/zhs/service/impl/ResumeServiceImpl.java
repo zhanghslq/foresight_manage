@@ -429,7 +429,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
      * @param downBoxDataIds  下拉框的数据和父类
      * @param map 下拉框整体数据
      */
-    void dealArray(List<Integer> downBoxDataIds,Map<Integer,DownBoxData> map){
+    public static void dealArray(List<Integer> downBoxDataIds,Map<Integer,DownBoxData> map){
         if(downBoxDataIds.size()==0){
             return;
         }

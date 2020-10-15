@@ -249,7 +249,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
                 organization.setSystemId(systemList.get(0).getId().longValue());
 
                 List<Integer> systemIds = new ArrayList<>();
-                systemIds.add(commonDataList.get(0).getId());
+                systemIds.add(systemList.get(0).getId());
                 Map<Integer, DownBoxData> collect = systemDownBoxDataList.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData1 -> downBoxData1, (k1, k2) -> k1));
                 ResumeServiceImpl.dealArray(systemIds,collect);
                 Collections.reverse(systemIds);
@@ -259,7 +259,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
                 organization.setHierarchyId(hierarchyList.get(0).getId().longValue());
 
                 List<Integer> hierarchyIds = new ArrayList<>();
-                hierarchyIds.add(commonDataList.get(0).getId());
+                hierarchyIds.add(hierarchyList.get(0).getId());
                 Map<Integer, DownBoxData> collect = hierarchyDownBoxDataList.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData1 -> downBoxData1, (k1, k2) -> k1));
                 ResumeServiceImpl.dealArray(hierarchyIds,collect);
                 Collections.reverse(hierarchyIds);
@@ -269,7 +269,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
                 organization.setLevelId(levelList.get(0).getId().longValue());
 
                 List<Integer> levelIds = new ArrayList<>();
-                levelIds.add(commonDataList.get(0).getId());
+                levelIds.add(levelList.get(0).getId());
                 Map<Integer, DownBoxData> collect = levelDownBoxDataList.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData1 -> downBoxData1, (k1, k2) -> k1));
                 ResumeServiceImpl.dealArray(levelIds,collect);
                 Collections.reverse(levelIds);

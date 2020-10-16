@@ -3,6 +3,8 @@ package com.zhs.entity;
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.IdType;
+
+import java.time.LocalDate;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.FieldFill;
@@ -76,7 +78,7 @@ public class ConcatRecord implements Serializable {
 
     @ApiModelProperty(value = "联系日期")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date contactDate;
+    private LocalDate contactDate;
 
     @ApiModelProperty(value = "沟通简报")
     private String briefing;

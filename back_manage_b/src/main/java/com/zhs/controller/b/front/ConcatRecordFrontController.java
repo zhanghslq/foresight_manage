@@ -111,9 +111,13 @@ public class ConcatRecordFrontController {
             QueryWrapper<Admin> adminQueryWrapper = new QueryWrapper<>();
             adminQueryWrapper.in("id",operatorIdList);
             List<Admin> adminList = adminService.list(adminQueryWrapper);
-            Map<Long, String> adminMap = adminList.stream().collect(Collectors.toMap(Admin::getId, Admin::getRealName));
+            Map<Long, Admin> adminMap = adminList.stream().collect(Collectors.toMap(Admin::getId, admin -> admin));
+
             for (ConcatRecord record : records) {
-                record.setOperatorName(adminMap.get(record.getOperatorId()));
+                Admin admin = adminMap.get(record.getOperatorId());
+                if(Objects.nonNull(admin)){
+                    record.setOperatorName(admin.getRealName());
+                }
             }
         }
         return Result.success(page1);

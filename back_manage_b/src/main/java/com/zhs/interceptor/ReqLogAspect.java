@@ -161,6 +161,7 @@ public class ReqLogAspect {
         Long adminOperatorId = logId.get();
         long useTime = System.currentTimeMillis() - startTime.get();
         AdminOperationLog byId = adminOperationLogService.getById(adminOperatorId);
+        log.error("报错",e);
         byId.setReturnString(e.getMessage());
         byId.setUseTime(useTime);
         adminOperationLogService.updateById(byId);

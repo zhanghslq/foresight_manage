@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.common.Result;
+import com.zhs.entity.Admin;
 import com.zhs.entity.ConcatRecord;
 import com.zhs.exception.MyException;
 import com.zhs.model.vo.ConcatRecordVO;
+import com.zhs.service.AdminService;
 import com.zhs.service.ConcatRecordService;
 import com.zhs.util.EasyExcelUtil;
 import io.swagger.annotations.Api;
@@ -29,7 +31,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -45,6 +49,8 @@ import java.util.Objects;
 public class ConcatRecordFrontController {
     @Resource
     private ConcatRecordService concatRecordService;
+    @Resource
+    private AdminService adminService;
 
     @PostMapping("list")
     @ApiOperation(value = "联系记录列表",tags = "查询")
@@ -99,6 +105,17 @@ public class ConcatRecordFrontController {
         }
         Page<ConcatRecord> contactsPage = new Page<>(current, size);
         Page<ConcatRecord> page1 = concatRecordService.page(contactsPage,concatRecordQueryWrapper);
+        List<ConcatRecord> records = page1.getRecords();
+        if(records.size()>0){
+            List<Long> operatorIdList = records.stream().map(ConcatRecord::getOperatorId).collect(Collectors.toList());
+            QueryWrapper<Admin> adminQueryWrapper = new QueryWrapper<>();
+            adminQueryWrapper.in("id",operatorIdList);
+            List<Admin> adminList = adminService.list(adminQueryWrapper);
+            Map<Long, String> adminMap = adminList.stream().collect(Collectors.toMap(Admin::getId, Admin::getRealName));
+            for (ConcatRecord record : records) {
+                record.setOperatorName(adminMap.get(record.getOperatorId()));
+            }
+        }
         return Result.success(page1);
     }
     @PostMapping("delete")

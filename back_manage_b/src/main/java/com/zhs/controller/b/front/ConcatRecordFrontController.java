@@ -86,6 +86,8 @@ public class ConcatRecordFrontController {
         concatRecordQueryWrapper.eq(!Objects.isNull(concatRecord.getConcatType()),"concat_type",concatRecord.getConcatType());
         //沟通频率
         concatRecordQueryWrapper.eq(!Objects.isNull(concatRecord.getConcatCount()),"concat_count",concatRecord.getConcatCount());
+
+        concatRecordQueryWrapper.eq(!Objects.isNull(concatRecord.getConcatPersonId()),"concat_person_id",concatRecord.getConcatPersonId());
         // 是否是今天
         if(isToday==0){
             // 查历史的
@@ -160,6 +162,8 @@ public class ConcatRecordFrontController {
             //沟通类型
             concatRecordQueryWrapper.eq(!Objects.isNull(concatRecord.getConcatType()),"concat_type",concatRecord.getConcatType());
             //沟通频率
+            concatRecordQueryWrapper.eq(!Objects.isNull(concatRecord.getConcatCount()),"concat_count",concatRecord.getConcatCount());
+
             concatRecordQueryWrapper.eq(!Objects.isNull(concatRecord.getConcatCount()),"concat_count",concatRecord.getConcatCount());
             // 是否是今天
             if(isToday==0){

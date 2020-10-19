@@ -154,7 +154,10 @@ public class ExpertFrontController {
         for (Expert record : records) {
             ExpertVO expertVO = new ExpertVO();
             BeanUtil.copyProperties(record,expertVO);
-            expertVO.setLevelName(map.get(record.getLevelId().intValue()));
+            Long levelId = record.getLevelId();
+            if(Objects.nonNull(levelId)){
+                expertVO.setLevelName(map.get(levelId.intValue()));
+            }
             expertVOS.add(expertVO);
         }
         expertVOPage.setRecords(expertVOS);

@@ -20,6 +20,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -57,7 +58,7 @@ public class ResumeController {
             @ApiImplicitParam(name = "size",value = "每页多少条",required = true),
     })
     @ApiOperationSupport(ignoreParameters = {"deleted"})
-    public Result<Page<ResumeVO>> searchList(Resume resume, @RequestParam Integer current, @RequestParam Integer size,Date createTimeBegin,Date createTimeEnd){
+    public Result<Page<ResumeVO>> searchList(Resume resume, @RequestParam Integer current, @RequestParam Integer size, @DateTimeFormat(pattern = "yyyy-MM-dd")Date createTimeBegin,@DateTimeFormat(pattern = "yyyy-MM-dd") Date createTimeEnd){
         Page<Resume> resumePage = new Page<>(current, size);
 
         Page<ResumeVO> pageSelf =resumeService.pageSelf(resume,resumePage,createTimeBegin,createTimeEnd);

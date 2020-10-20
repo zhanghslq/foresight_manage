@@ -57,10 +57,10 @@ public class ResumeController {
             @ApiImplicitParam(name = "size",value = "每页多少条",required = true),
     })
     @ApiOperationSupport(ignoreParameters = {"deleted"})
-    public Result<Page<ResumeVO>> searchList(Resume resume, @RequestParam Integer current, @RequestParam Integer size){
+    public Result<Page<ResumeVO>> searchList(Resume resume, @RequestParam Integer current, @RequestParam Integer size,Date createTimeBegin,Date createTimeEnd){
         Page<Resume> resumePage = new Page<>(current, size);
 
-        Page<ResumeVO> pageSelf =resumeService.pageSelf(resume,resumePage);
+        Page<ResumeVO> pageSelf =resumeService.pageSelf(resume,resumePage,createTimeBegin,createTimeEnd);
 
         return Result.success(pageSelf);
     }

@@ -7,6 +7,7 @@ import com.zhs.model.dto.ResumeDTO;
 import com.zhs.model.vo.InputStatisticsVO;
 import com.zhs.model.vo.ResumeVO;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ import java.util.List;
  */
 public interface ResumeService extends IService<Resume> {
 
-    Page<ResumeVO> pageSelf(Resume resume, Page<Resume> resumePage);
+    Page<ResumeVO> pageSelf(Resume resume, Page<Resume> resumePage, Date createTimeBegin, Date createTimeEnd);
 
     ResumeDTO dealWord(String filename, Long currentStatusId);
 

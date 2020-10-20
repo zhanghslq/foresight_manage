@@ -10,7 +10,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zhs.common.constant.DownBoxTypeEnum;
-import com.zhs.common.constant.DropDownBoxTypeEnum;
 import com.zhs.common.constant.ScopeEnum;
 import com.zhs.entity.*;
 import com.zhs.mapper.ResumeMapper;
@@ -24,7 +23,6 @@ import com.zhs.model.vo.ResumeVO;
 import com.zhs.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.util.AsposeWordUtil;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -65,9 +63,11 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
 
     @Autowired
     private DownBoxDataService downBoxDataService;
+    @Autowired
+    private AdminService adminService;
 
     @Override
-    public Page<ResumeVO> pageSelf(Resume resume, Page<Resume> resumePage) {
+    public Page<ResumeVO> pageSelf(Resume resume, Page<Resume> resumePage, Date createTimeBegin, Date createTimeEnd) {
 
         List<DownBoxData> list = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.ORGANIZATION_LEVEL.getId(), ScopeEnum.RESUME.getId());
 
@@ -90,15 +90,21 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             if(!Objects.isNull(resume.getId())){
                 resumeQueryWrapper.eq("id",resume.getId());
             }
+            if(Objects.nonNull(createTimeBegin)&&Objects.nonNull(createTimeEnd)){
+                resumeQueryWrapper.ge("create_time",createTimeBegin);
+                resumeQueryWrapper.le("create_time",createTimeEnd);
+            }
             //姓名
             resumeQueryWrapper.like(!StringUtils.isEmpty(resume.getRealName()),"real_name",resume.getRealName());
+            //创建人
+            resumeQueryWrapper.eq(!StringUtils.isEmpty(resume.getAdminId()),"admin_id",resume.getAdminId());
             // 行政级别
-            resumeQueryWrapper.like(!StringUtils.isEmpty(resume.getLevelId()),"level_id",resume.getLevelId());
-            resumeQueryWrapper.like(!StringUtils.isEmpty(resume.getLevelName()),"level_name",resume.getLevelName());
+            resumeQueryWrapper.eq(!StringUtils.isEmpty(resume.getLevelId()),"level_id",resume.getLevelId());
+            resumeQueryWrapper.eq(!StringUtils.isEmpty(resume.getLevelName()),"level_name",resume.getLevelName());
             //现任单位
-            resumeQueryWrapper.like(!StringUtils.isEmpty(resume.getCompany()),"company",resume.getCompany());
+            resumeQueryWrapper.eq(!StringUtils.isEmpty(resume.getCompany()),"company",resume.getCompany());
             //现任职位
-            resumeQueryWrapper.like(!StringUtils.isEmpty(resume.getJob()),"job",resume.getJob());
+            resumeQueryWrapper.eq(!StringUtils.isEmpty(resume.getJob()),"job",resume.getJob());
             //现任职时间
 
             // 这俩跟别的不算同一个维度的，
@@ -118,6 +124,9 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             return resumeVOPage;
         }
         List<Long> resumeIds = records.stream().map(Resume::getId).collect(Collectors.toList());
+        List<Long> adminIds = records.stream().map(Resume::getAdminId).collect(Collectors.toList());
+        List<Admin> adminList = adminService.listByIds(adminIds);
+        Map<Long, Admin> adminMap = adminList.stream().collect(Collectors.toMap(Admin::getId, admin -> admin));
         List<ExperienceRecord>  lastExperienceList = experienceRecordService.queryLastExperience(resumeIds);
         // 工作时间
         Map<Long, Date> workMap = lastExperienceList.stream().collect(Collectors.toMap(ExperienceRecord::getResumeId, ExperienceRecord::getBeginDate));
@@ -160,6 +169,10 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             }
             if(Objects.isNull(record.getCurrentStatus())&&!Objects.isNull(record.getCurrentStatusId())){
                 resumeVO.setCurrentStatus(statusMap.get(record.getCurrentStatusId().intValue()));
+            }
+            Admin admin = adminMap.get(record.getAdminId());
+            if(Objects.nonNull(admin)){
+                resumeVO.setAdminName(admin.getRealName());
             }
             resumeVOS.add(resumeVO);
         }

@@ -82,6 +82,9 @@ public class ResumeVO {
     @ApiModelProperty(value = "管理员id")
     private Long adminId;
 
+    @ApiModelProperty(value = "管理员名字")
+    private String adminName;
+
     /**
      * 现任职时间
      */

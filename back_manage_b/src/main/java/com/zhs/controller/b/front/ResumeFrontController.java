@@ -24,7 +24,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,7 +65,7 @@ public class ResumeFrontController {
     public Result<Page<ResumeVO>> searchList(Resume resume, @RequestParam Integer current, @RequestParam Integer size){
         Page<Resume> resumePage = new Page<>(current, size);
 
-        Page<ResumeVO> pageSelf =resumeService.pageSelf(resume,resumePage);
+        Page<ResumeVO> pageSelf =resumeService.pageSelf(resume,resumePage, createTimeBegin, createTimeEnd);
 
         return Result.success(pageSelf);
     }
@@ -169,6 +168,19 @@ public class ResumeFrontController {
     public Result<List<InputStatisticsVO>> expertInputStatistics(){
         List<InputStatisticsVO> inputStatisticsVO = resumeService.expertInputStatistics();
         return Result.success(inputStatisticsVO);
+    }
+    @PostMapping("list/gender_and_level")
+    @ApiOperation(value = "人事级别性别对比")
+    public Result<Object> genderRate(){
+
+        return Result.success("");
+    }
+    @PostMapping("list/personnel_changes")
+    @ApiOperation(value = "人事变化",tags = "查询")
+    public Result<Object> listPersonalChange(@RequestParam Date startDate){
+        // 最近多久的数据
+
+        return Result.success("");
     }
 }
 

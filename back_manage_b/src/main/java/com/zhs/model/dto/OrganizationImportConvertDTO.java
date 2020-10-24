@@ -19,13 +19,15 @@ public class OrganizationImportConvertDTO {
     @ExcelProperty(value = "完善度",index = 3)
     private Integer perfectValue;
     @ExcelProperty(value = "级别",index = 4)
-    private Integer isGovernment;
+    private String levelName;
     @ExcelProperty(value = "体系",index = 5)
     private String hierarchy;
+
     @ExcelProperty(value = "系统",index = 6)
-    private String levelName;
-    @ExcelProperty(value = "下属单位,1是，0否",index = 7)
     private String system;
+    @ExcelProperty(value = "下属单位,1是，0否",index = 7)
+    private Integer isGovernment;
+
     @ExcelProperty(value = "机构类型",index = 8)
     private String commonType;
     /**
@@ -33,7 +35,7 @@ public class OrganizationImportConvertDTO {
      */
     @ExcelProperty(value = "协会学会",index = 9)
     private Integer isAssociation;
-    @ExcelProperty(value = "是否脱钩",index = 10)
+    @ExcelProperty(value = "是否脱钩",index = 11)
     private String isDecoupling;
     @ExcelProperty(value = "地区名称",index = 11)
     private String areaName;

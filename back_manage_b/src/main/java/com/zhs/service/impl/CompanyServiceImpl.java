@@ -2,6 +2,7 @@ package com.zhs.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.ASMSerializerFactory;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.common.constant.DownBoxTypeEnum;
 import com.zhs.common.constant.DropDownBoxTypeEnum;
@@ -268,6 +269,15 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
         if(result.size()>0){
             saveBatch(result);
         }
+    }
+
+    @Override
+    public List<Company> listByOrganizationType(Long organizationTypeId, Long areaId) {
+        Assert.notNull(organizationTypeId,"类别不允许为空");
+        QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();
+        companyQueryWrapper.eq(Objects.nonNull(areaId),"area_id",areaId);
+        companyQueryWrapper.eq("organization_type_id",organizationTypeId);
+        return list(companyQueryWrapper);
     }
 
     private void getContactAndLeader(CompanyVO companyVO, Long organizationId) {

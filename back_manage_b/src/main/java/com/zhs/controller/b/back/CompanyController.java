@@ -95,6 +95,18 @@ public class CompanyController {
         return Result.success(companyVO);
     }
 
+    @PostMapping("list_company/by_organization_type")
+    @ApiOperation(value = "根据组织类别,地区（可选）查询组织列表",tags = "查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "organizationTypeId",value = "组织类型id",required = true),
+            @ApiImplicitParam(name = "areaId",value = "地区id"),
+    })
+    public Result<List<Company>> listByOrganizationType(@RequestParam Long organizationTypeId, Long areaId){
+        List<Company> list = companyService.listByOrganizationType(organizationTypeId,areaId);
+        return Result.success(list);
+    }
+
+
     @ApiOperation(value = "根据企业Id查询下属企业,领导人，联系人",tags = "查询")
     @PostMapping("query/by_id")
     @ApiImplicitParam(name = "id",value = "企业id",required = true)

@@ -35,14 +35,14 @@ public class OrganizationImportConvertDTO {
     private Integer isAssociation;
     @ExcelProperty(value = "是否脱钩",index = 11)
     private String isDecoupling;
-    @ExcelProperty(value = "地区名称",index = 11)
+    @ExcelProperty(value = "地区名称",index = 12)
     private String areaName;
-    @ExcelProperty(value = "详细地址",index = 12)
+    @ExcelProperty(value = "详细地址",index = 13)
     private String addressDetail;
-    @ExcelProperty(value = "排序",index = 13)
+    @ExcelProperty(value = "排序",index = 14)
     private Integer seq;
 
-    @ExcelProperty(value = "网址",index = 14)
+    @ExcelProperty(value = "网址",index = 15)
     private String website;
 
 

@@ -35,7 +35,7 @@ public class OrganizationImportConvertDTO {
      */
     @ExcelProperty(value = "协会学会",index = 9)
     private Integer isAssociation;
-    @ExcelProperty(value = "是否脱钩",index = 11)
+    @ExcelProperty(value = "是否脱钩",index = 10)
     private String isDecoupling;
     @ExcelProperty(value = "地区名称",index = 11)
     private String areaName;

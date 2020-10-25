@@ -200,6 +200,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             organization.setName(readBook.getName());
             organization.setType(type);
             organization.setWebsite(readBook.getWebsite());
+            organization.setIsGovernment(readBook.getIsGovernment());
             organization.setIsAssociation(readBook.getIsAssociation());
             String isDecoupling = readBook.getIsDecoupling();
             if("已脱钩".equals(isDecoupling)){

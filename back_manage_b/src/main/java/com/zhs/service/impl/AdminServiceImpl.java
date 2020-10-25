@@ -312,9 +312,9 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
             for (AdminVO adminVO : result) {
                 Long id = adminVO.getId();
                 adminVO.setOrganizationTodayCount(Objects.nonNull(adminOrganizationTodayMap.get(id))?adminOrganizationTodayMap.get(id).size():0);
-                adminVO.setOrganizationTotalCount(Objects.nonNull(adminOrganizationMap.get(id))?adminOrganizationTodayMap.get(id).size():0);
-                adminVO.setResumeTodayCount(Objects.nonNull(adminResumeTodayMap.get(id))?adminOrganizationTodayMap.get(id).size():0);
-                adminVO.setResumetTotalCount(Objects.nonNull(adminResumeMap.get(id))?adminOrganizationTodayMap.get(id).size():0);
+                adminVO.setOrganizationTotalCount(Objects.nonNull(adminOrganizationMap.get(id))?adminOrganizationMap.get(id).size():0);
+                adminVO.setResumeTodayCount(Objects.nonNull(adminResumeTodayMap.get(id))?adminResumeTodayMap.get(id).size():0);
+                adminVO.setResumetTotalCount(Objects.nonNull(adminResumeMap.get(id))?adminResumeMap.get(id).size():0);
             }
 
 

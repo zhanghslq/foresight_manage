@@ -317,7 +317,6 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
                 adminVO.setResumetTotalCount(Objects.nonNull(adminResumeMap.get(id))?adminResumeMap.get(id).size():0);
             }
 
-
         }
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<AdminVO> adminVOPage = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>();
         BeanUtil.copyProperties(page,adminVOPage);

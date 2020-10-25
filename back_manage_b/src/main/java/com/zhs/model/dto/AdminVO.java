@@ -22,4 +22,9 @@ public class AdminVO {
     private Integer loginCount;
     private Long onlineTime;
     private Integer operatorCount;
+    private Integer resumeTodayCount;
+    private Integer resumetTotalCount;
+    private Integer organizationTodayCount;
+    private Integer organizationTotalCount;
+
 }

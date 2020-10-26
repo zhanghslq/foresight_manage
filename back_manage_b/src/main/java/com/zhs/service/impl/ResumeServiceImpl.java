@@ -213,7 +213,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("resumeText", text);
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(map, headers);
-        ResponseEntity<String> entity = restTemplate.postForEntity("http://resume.carltrip.com/api/resume/index", request, String.class);
+        ResponseEntity<String> entity = restTemplate.postForEntity("http://data.yuanjiandata.com/resume/index/index/", request, String.class);
         //获取3方接口返回的数据通过entity.getBody();它返回的是一个字符串；
         String body = entity.getBody();
         //  简历对应的单位和职务改为多个

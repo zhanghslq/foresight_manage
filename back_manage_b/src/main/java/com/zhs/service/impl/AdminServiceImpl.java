@@ -1,5 +1,8 @@
 package com.zhs.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -7,6 +10,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.entity.*;
 import com.zhs.exception.MyException;
 import com.zhs.mapper.AdminMapper;
+import com.zhs.model.dto.AdminVO;
 import com.zhs.model.vo.AdminAddDataVO;
 import com.zhs.service.*;
 import org.apache.shiro.SecurityUtils;
@@ -16,9 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -270,5 +272,55 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     @Override
     public void addOperatorCount(Long adminId) {
         adminMapper.addOperatorCount(adminId);
+    }
+
+    @Override
+    public com.baomidou.mybatisplus.extension.plugins.pagination.Page<AdminVO> pageSelf(Integer current, Integer size) {
+
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Admin> adminPage = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(current, size);
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Admin> page = page(adminPage);
+        List<Admin> records = page.getRecords();
+        List<AdminVO> result = new ArrayList<>();
+        for (Admin admin : records) {
+            AdminVO adminVO = new AdminVO();
+            BeanUtil.copyProperties(admin,adminVO);
+            adminVO.setRoleList(listRoleByAdminId(admin.getId()));
+            result.add(adminVO);
+        }
+        // 添加的简历，机构等统计数据
+        if(result.size()>0){
+            DateTime beginOfToday = DateUtil.beginOfDay(new Date());
+            List<Long> adminIdList = result.stream().map(AdminVO::getId).collect(Collectors.toList());
+            QueryWrapper<Resume> resumeQueryWrapper = new QueryWrapper<>();
+            resumeQueryWrapper.in("admin_id",adminIdList);
+            List<Resume> resumeList = resumeService.list(resumeQueryWrapper);
+            Map<Long, List<Resume>> adminResumeTodayMap = resumeList.stream().filter(resume -> Objects.nonNull(resume.getAdminId()) && Objects.nonNull(resume.getCreateTime()) && resume.getCreateTime().after(beginOfToday))
+                    .collect(Collectors.groupingBy(Resume::getAdminId));
+
+            Map<Long, List<Resume>> adminResumeMap = resumeList.stream().filter(resume -> Objects.nonNull(resume.getAdminId()))
+                    .collect(Collectors.groupingBy(Resume::getAdminId));
+
+            QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
+            organizationQueryWrapper.in("admin_id",adminIdList);
+            List<Organization> organizationList = organizationService.list(organizationQueryWrapper);
+            Map<Long, List<Organization>> adminOrganizationTodayMap = organizationList.stream().filter(resume -> Objects.nonNull(resume.getAdminId()) && Objects.nonNull(resume.getCreateTime()) && resume.getCreateTime().after(beginOfToday))
+                    .collect(Collectors.groupingBy(Organization::getAdminId));
+
+            Map<Long, List<Organization>> adminOrganizationMap = organizationList.stream().filter(resume -> Objects.nonNull(resume.getAdminId()))
+                    .collect(Collectors.groupingBy(Organization::getAdminId));
+
+            for (AdminVO adminVO : result) {
+                Long id = adminVO.getId();
+                adminVO.setOrganizationTodayCount(Objects.nonNull(adminOrganizationTodayMap.get(id))?adminOrganizationTodayMap.get(id).size():0);
+                adminVO.setOrganizationTotalCount(Objects.nonNull(adminOrganizationMap.get(id))?adminOrganizationMap.get(id).size():0);
+                adminVO.setResumeTodayCount(Objects.nonNull(adminResumeTodayMap.get(id))?adminResumeTodayMap.get(id).size():0);
+                adminVO.setResumetTotalCount(Objects.nonNull(adminResumeMap.get(id))?adminResumeMap.get(id).size():0);
+            }
+
+        }
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<AdminVO> adminVOPage = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>();
+        BeanUtil.copyProperties(page,adminVOPage);
+        adminVOPage.setRecords(result);
+        return adminVOPage;
     }
 }

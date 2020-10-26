@@ -12,31 +12,39 @@ import lombok.Data;
 public class OrganizationImportConvertDTO {
     @ExcelProperty(value = "名字",index = 0)
     private String name;
-    @ExcelProperty(value = "重要性",index = 1)
+    @ExcelProperty(value = "其他名字",index = 1)
+    private String otherName;
+    @ExcelProperty(value = "重要性",index = 2)
     private String importance;
-    @ExcelProperty(value = "完善度",index = 2)
+    @ExcelProperty(value = "完善度",index = 3)
     private Integer perfectValue;
-    @ExcelProperty(value = "级别",index = 3)
+    @ExcelProperty(value = "级别",index = 4)
     private String levelName;
-    @ExcelProperty(value = "是否是政府机关,1是，0否",index = 4)
-    private Integer isGovernment;
     @ExcelProperty(value = "体系",index = 5)
     private String hierarchy;
+
     @ExcelProperty(value = "系统",index = 6)
     private String system;
-    @ExcelProperty(value = "机构类型",index = 7)
+    @ExcelProperty(value = "下属单位,1是，0否",index = 7)
+    private Integer isGovernment;
+
+    @ExcelProperty(value = "机构类型",index = 8)
     private String commonType;
     /**
      * 这里需要维护id，和id数组？
      */
-    @ExcelProperty(value = "地区名称",index = 8)
+    @ExcelProperty(value = "协会学会",index = 9)
+    private Integer isAssociation;
+    @ExcelProperty(value = "是否脱钩",index = 10)
+    private String isDecoupling;
+    @ExcelProperty(value = "地区名称",index = 11)
     private String areaName;
-    @ExcelProperty(value = "详细地址",index = 9)
+    @ExcelProperty(value = "详细地址",index = 12)
     private String addressDetail;
-    @ExcelProperty(value = "排序",index = 10)
+    @ExcelProperty(value = "排序",index = 13)
     private Integer seq;
 
-    @ExcelProperty(value = "网址",index = 11)
+    @ExcelProperty(value = "网址",index = 14)
     private String website;
 
 

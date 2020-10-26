@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhs.entity.Admin;
 import com.zhs.entity.Page;
 import com.zhs.entity.Role;
+import com.zhs.model.dto.AdminVO;
 import com.zhs.model.vo.AdminAddDataVO;
 
 import java.util.List;
@@ -36,4 +37,6 @@ public interface AdminService extends IService<Admin> {
     void addOnLineTime(Long adminId);
 
     void addOperatorCount(Long adminId);
+
+    com.baomidou.mybatisplus.extension.plugins.pagination.Page<AdminVO> pageSelf(Integer current, Integer size);
 }

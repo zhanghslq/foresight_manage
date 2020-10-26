@@ -29,4 +29,6 @@ public interface CompanyService extends IService<Company> {
 
 
     void listUpload(Long moduleId, MultipartFile file);
+
+    List<Company> listByOrganizationType(Long organizationTypeId, Long areaId);
 }

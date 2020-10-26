@@ -200,6 +200,15 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             organization.setName(readBook.getName());
             organization.setType(type);
             organization.setWebsite(readBook.getWebsite());
+            organization.setIsGovernment(readBook.getIsGovernment());
+            organization.setIsAssociation(readBook.getIsAssociation());
+            String isDecoupling = readBook.getIsDecoupling();
+            if("已脱钩".equals(isDecoupling)){
+                organization.setIsDecoupling(1);
+            }else if("未脱钩".equals(isDecoupling)){
+                organization.setIsDecoupling(0);
+            }
+            organization.setOtherName(readBook.getOtherName());
             String commonType = readBook.getCommonType();
             // 这个类型到库里查
             QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();

@@ -150,19 +150,8 @@ public class AdminController {
     @PostMapping("list/by_page")
     @ApiOperation(value = "分页查询所有用户",tags = "查询")
     public Result<com.baomidou.mybatisplus.extension.plugins.pagination.Page<AdminVO>> listByPage(@RequestParam Integer current, @RequestParam Integer size){
-        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Admin> adminPage = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(current, size);
-        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Admin> page = adminService.page(adminPage);
-        List<Admin> records = page.getRecords();
-        List<AdminVO> result = new ArrayList<>();
-        for (Admin admin : records) {
-            AdminVO adminVO = new AdminVO();
-            BeanUtil.copyProperties(admin,adminVO);
-            result.add(adminVO);
-        }
-        com.baomidou.mybatisplus.extension.plugins.pagination.Page<AdminVO> adminVOPage = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>();
-        BeanUtil.copyProperties(page,adminVOPage);
-        adminVOPage.setRecords(result);
-        return Result.success(adminVOPage);
+
+        return Result.success(adminService.pageSelf(current,size));
     }
 
 

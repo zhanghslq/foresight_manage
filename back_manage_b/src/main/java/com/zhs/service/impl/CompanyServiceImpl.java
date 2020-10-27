@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.spring.web.json.Json;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -213,17 +214,17 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
             QueryWrapper<DownBoxData> commonDataQueryWrapperRelationType = new QueryWrapper<>();
             QueryWrapper<DownBoxData> commonDataQueryWrapperMarket = new QueryWrapper<>();
 
-            commonDataQueryWrapperLevel.eq("name", readBook.getLevelName());
+//            commonDataQueryWrapperLevel.eq("name", readBook.getLevelName());
             commonDataQueryWrapperLevel.eq("type", DownBoxTypeEnum.ORGANIZATION_LEVEL.getId());
 
             commonDataQueryWrapperType.eq("type",DropDownBoxTypeEnum.COMPANY_TYPE.getId());
-            commonDataQueryWrapperType.eq("name", readBook.getCompanyTypeName());
+            //commonDataQueryWrapperType.eq("name", readBook.getCompanyTypeName());
 
             commonDataQueryWrapperRelationType.eq("type",DownBoxTypeEnum.COMPANY_RELATIONSHIP_TYPE.getId());
-            commonDataQueryWrapperRelationType.eq("name",readBook.getRelationshipType());
+            //commonDataQueryWrapperRelationType.eq("name",readBook.getRelationshipType());
 
             commonDataQueryWrapperMarket.eq("type",DownBoxTypeEnum.COMPANY_MARKET_SITUATION.getId());
-            commonDataQueryWrapperMarket.eq("name",readBook.getMarketTypeName());
+            //commonDataQueryWrapperMarket.eq("name",readBook.getMarketTypeName());
 
 
             List<DownBoxData> levelList = downBoxDataService.list(commonDataQueryWrapperLevel);
@@ -231,17 +232,54 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
             List<DownBoxData> relationTypeList = downBoxDataService.list(commonDataQueryWrapperRelationType);
             List<DownBoxData> marketTypeList = downBoxDataService.list(commonDataQueryWrapperMarket);
 
-            if(levelList.size()>0){
-                company.setCompanyLevelId(levelList.get(0).getId().longValue());
+            List<DownBoxData> levelNameList = levelList.stream().filter(downBoxData -> Objects.nonNull(downBoxData.getName()) &&
+                    downBoxData.getName().equals(readBook.getLevelName())).collect(Collectors.toList());
+
+            if(levelNameList.size()>0){
+                company.setCompanyLevelId(levelNameList.get(0).getId().longValue());
+
+                List<Integer> integers = new ArrayList<>();
+                integers.add(levelNameList.get(0).getId());
+                Map<Integer, DownBoxData> map = levelList.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData1 -> downBoxData1, (k1, k2) -> k1));
+                ResumeServiceImpl.dealArray(integers,map);
+
+                company.setCompanyLevelIdArray(JSON.toJSONString(integers));
             }
-            if(typeList.size()>0){
-                company.setCompanyTypeId(typeList.get(0).getId().longValue());
+            List<DownBoxData> typeNameList = typeList.stream().filter(downBoxData -> Objects.nonNull(downBoxData.getName()) &&
+                    downBoxData.getName().equals(readBook.getCompanyTypeName())).collect(Collectors.toList());
+            if(typeNameList.size()>0){
+                company.setCompanyTypeId(typeNameList.get(0).getId().longValue());
+
+                List<Integer> integers = new ArrayList<>();
+                integers.add(typeNameList.get(0).getId());
+                Map<Integer, DownBoxData> map = typeList.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData1 -> downBoxData1, (k1, k2) -> k1));
+                ResumeServiceImpl.dealArray(integers,map);
+
+                company.setCompanyTypeIdArray(JSON.toJSONString(integers));
             }
-            if(relationTypeList.size()>0){
-                company.setRelationshipTypeId(relationTypeList.get(0).getId().longValue());
+            List<DownBoxData> relationTypeNameList = relationTypeList.stream().filter(downBoxData -> Objects.nonNull(downBoxData.getName()) &&
+                    downBoxData.getName().equals(readBook.getCompanyTypeName())).collect(Collectors.toList());
+            if(relationTypeNameList.size()>0){
+                Integer id = relationTypeNameList.get(0).getId();
+                company.setRelationshipTypeId(id.longValue());
+                List<Integer> integers = new ArrayList<>();
+                integers.add(id);
+                Map<Integer, DownBoxData> map = relationTypeList.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData1 -> downBoxData1, (k1, k2) -> k1));
+                ResumeServiceImpl.dealArray(integers,map);
+
+                company.setRelationshipTypeIdArray(JSON.toJSONString(integers));
             }
-            if(marketTypeList.size()>0){
-                company.setMarketTypeId(marketTypeList.get(0).getId().longValue());
+            List<DownBoxData> marketTypeNameList = marketTypeList.stream().filter(downBoxData -> Objects.nonNull(downBoxData.getName()) &&
+                    downBoxData.getName().equals(readBook.getCompanyTypeName())).collect(Collectors.toList());
+            if(marketTypeNameList.size()>0){
+                company.setMarketTypeId(marketTypeNameList.get(0).getId().longValue());
+
+                List<Integer> integers = new ArrayList<>();
+                integers.add(marketTypeNameList.get(0).getId());
+                Map<Integer, DownBoxData> map = marketTypeList.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData1 -> downBoxData1, (k1, k2) -> k1));
+                ResumeServiceImpl.dealArray(integers,map);
+
+                company.setMarketTypeIdArray(JSON.toJSONString(integers));
             }
 
             String areaName = readBook.getAreaName();

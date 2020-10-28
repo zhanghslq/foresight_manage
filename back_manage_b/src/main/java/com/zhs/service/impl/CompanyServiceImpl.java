@@ -209,28 +209,11 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
             company.setIsMarket(readBook.getIsMarket());
             company.setMarkedCode(readBook.getMarkedCode());
             company.setWebsite(readBook.getWebsite());
-            QueryWrapper<DownBoxData> commonDataQueryWrapperLevel = new QueryWrapper<>();
-            QueryWrapper<DownBoxData> commonDataQueryWrapperType = new QueryWrapper<>();
-            QueryWrapper<DownBoxData> commonDataQueryWrapperRelationType = new QueryWrapper<>();
-            QueryWrapper<DownBoxData> commonDataQueryWrapperMarket = new QueryWrapper<>();
 
-//            commonDataQueryWrapperLevel.eq("name", readBook.getLevelName());
-            commonDataQueryWrapperLevel.eq("type", DownBoxTypeEnum.ORGANIZATION_LEVEL.getId());
-
-            commonDataQueryWrapperType.eq("type",DownBoxTypeEnum.COMPANY_TYPE.getId());
-            //commonDataQueryWrapperType.eq("name", readBook.getCompanyTypeName());
-
-            commonDataQueryWrapperRelationType.eq("type",DownBoxTypeEnum.COMPANY_RELATIONSHIP_TYPE.getId());
-            //commonDataQueryWrapperRelationType.eq("name",readBook.getRelationshipType());
-
-            commonDataQueryWrapperMarket.eq("type",DownBoxTypeEnum.COMPANY_MARKET_SITUATION.getId());
-            //commonDataQueryWrapperMarket.eq("name",readBook.getMarketTypeName());
-
-
-            List<DownBoxData> levelList = downBoxDataService.list(commonDataQueryWrapperLevel);
-            List<DownBoxData> typeList = downBoxDataService.list(commonDataQueryWrapperType);
-            List<DownBoxData> relationTypeList = downBoxDataService.list(commonDataQueryWrapperRelationType);
-            List<DownBoxData> marketTypeList = downBoxDataService.list(commonDataQueryWrapperMarket);
+            List<DownBoxData> levelList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.ORGANIZATION_LEVEL.getId(),null);
+            List<DownBoxData> typeList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.COMPANY_TYPE.getId(),null);
+            List<DownBoxData> relationTypeList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.COMPANY_RELATIONSHIP_TYPE.getId(),null);
+            List<DownBoxData> marketTypeList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.COMPANY_MARKET_SITUATION.getId(),null);
 
             List<DownBoxData> levelNameList = levelList.stream().filter(downBoxData -> Objects.nonNull(downBoxData.getName()) &&
                     downBoxData.getName().equals(readBook.getLevelName())).collect(Collectors.toList());

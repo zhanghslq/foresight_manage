@@ -1,5 +1,6 @@
 package com.zhs.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.common.constant.DownBoxTypeEnum;
 import com.zhs.common.constant.DropDownBoxTypeEnum;
@@ -24,7 +25,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -104,8 +107,6 @@ public class LeaderServiceImpl extends ServiceImpl<LeaderMapper, Leader> impleme
             leader.setPosition(readBook.getPosition());
             leader.setType(type);
             String levelName = readBook.getLevelName();
-            QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();
-            commonDataQueryWrapper.eq("name",levelName);
             // 需要区分几种类型，来用不同的type查
             List<DownBoxData> list;
             if(RootTypeEnum.PARTY.getId().equals(type)){
@@ -124,7 +125,17 @@ public class LeaderServiceImpl extends ServiceImpl<LeaderMapper, Leader> impleme
                 throw new MyException("不属于所属类型");
             }
             if(list.size()>0){
-                leader.setLevelId(list.get(0).getId().longValue());
+                List<DownBoxData> thisNameList = list.stream().filter(downBoxData -> Objects.nonNull(downBoxData.getName()) && downBoxData.getName().equals(levelName)).collect(Collectors.toList());
+                if(thisNameList.size()>0){
+                    leader.setLevelId(thisNameList.get(0).getId().longValue());
+                    // idArray
+                    List<Integer> ids = new ArrayList<>();
+                    ids.add(thisNameList.get(0).getId());
+                    Map<Integer, DownBoxData> map = list.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData -> downBoxData));
+                    ResumeServiceImpl.dealArray(ids,map);
+                    leader.setLevelIdArray(JSONArray.toJSONString(ids));
+                }
+
             }
             // 拿名字去简历里面查一下
             QueryWrapper<Resume> resumeQueryWrapper = new QueryWrapper<>();

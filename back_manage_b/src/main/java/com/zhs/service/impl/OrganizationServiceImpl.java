@@ -208,7 +208,13 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             }else if("未脱钩".equals(isDecoupling)){
                 organization.setIsDecoupling(0);
             }
-            organization.setOtherName(readBook.getOtherName());
+            String otherName = readBook.getOtherName();
+            if(Objects.nonNull(otherName)){
+                String s = otherName.replaceAll("，", ",");
+                String[] split = s.split(",");
+                List<String> strings = Arrays.asList(split);
+                organization.setOtherName(JSONArray.toJSONString(strings));
+            }
             String commonType = readBook.getCommonType();
             // 这个类型到库里查
             QueryWrapper<CommonData> commonDataQueryWrapper = new QueryWrapper<>();

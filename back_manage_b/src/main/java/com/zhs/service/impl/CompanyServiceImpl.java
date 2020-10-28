@@ -217,7 +217,7 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
 //            commonDataQueryWrapperLevel.eq("name", readBook.getLevelName());
             commonDataQueryWrapperLevel.eq("type", DownBoxTypeEnum.ORGANIZATION_LEVEL.getId());
 
-            commonDataQueryWrapperType.eq("type",DropDownBoxTypeEnum.COMPANY_TYPE.getId());
+            commonDataQueryWrapperType.eq("type",DownBoxTypeEnum.COMPANY_TYPE.getId());
             //commonDataQueryWrapperType.eq("name", readBook.getCompanyTypeName());
 
             commonDataQueryWrapperRelationType.eq("type",DownBoxTypeEnum.COMPANY_RELATIONSHIP_TYPE.getId());

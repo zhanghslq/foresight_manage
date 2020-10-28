@@ -49,8 +49,6 @@ public class ExpertServiceImpl extends ServiceImpl<ExpertMapper, Expert> impleme
             throw new MyException("专家类别不存在");
         }
         // 需要对字段进行处理，id，name等的
-        QueryWrapper<DownBoxData> commonDataQueryWrapper = new QueryWrapper<>();
-        commonDataQueryWrapper.eq("type", DownBoxTypeEnum.EXPERT_LEVEL.getId());
 
         Subject subject = SecurityUtils.getSubject();
         Object principal = subject.getPrincipal();
@@ -60,13 +58,10 @@ public class ExpertServiceImpl extends ServiceImpl<ExpertMapper, Expert> impleme
         } catch (NumberFormatException e) {
             log.error("未获取到认证信息");
         }
-        List<DownBoxData> list = downBoxDataService.list(commonDataQueryWrapper);
+        List<DownBoxData> list = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.EXPERT_LEVEL.getId(),null);
         Map<String, Integer> map = list.stream().collect(Collectors.toMap(DownBoxData::getName, DownBoxData::getId, (k1, k2) -> k2));
 
-
-        QueryWrapper<CommonData> commonDataFieldQueryWrapper = new QueryWrapper<>();
-        commonDataFieldQueryWrapper.eq("type", DropDownBoxTypeEnum.EXPERT_LEVEL.getId());
-        List<DownBoxData> listField = downBoxDataService.list(commonDataQueryWrapper);
+        List<DownBoxData> listField = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.EXPERT_LEVEL.getId(),null);
         Map<String, Integer> mapField = listField.stream().collect(Collectors.toMap(DownBoxData::getName, DownBoxData::getId, (k1, k2) -> k2));
 
         for (Expert readBook : readBooks) {

@@ -241,7 +241,7 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
                 company.setCompanyTypeIdArray(JSON.toJSONString(integers));
             }
             List<DownBoxData> relationTypeNameList = relationTypeList.stream().filter(downBoxData -> Objects.nonNull(downBoxData.getName()) &&
-                    downBoxData.getName().equals(readBook.getCompanyTypeName())).collect(Collectors.toList());
+                    downBoxData.getName().equals(readBook.getRelationshipType())).collect(Collectors.toList());
             if(relationTypeNameList.size()>0){
                 Integer id = relationTypeNameList.get(0).getId();
                 company.setRelationshipTypeId(id.longValue());
@@ -253,7 +253,7 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
                 company.setRelationshipTypeIdArray(JSON.toJSONString(integers));
             }
             List<DownBoxData> marketTypeNameList = marketTypeList.stream().filter(downBoxData -> Objects.nonNull(downBoxData.getName()) &&
-                    downBoxData.getName().equals(readBook.getCompanyTypeName())).collect(Collectors.toList());
+                    downBoxData.getName().equals(readBook.getMarketTypeName())).collect(Collectors.toList());
             if(marketTypeNameList.size()>0){
                 company.setMarketTypeId(marketTypeNameList.get(0).getId().longValue());
 

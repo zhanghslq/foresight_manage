@@ -209,6 +209,8 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
             company.setIsMarket(readBook.getIsMarket());
             company.setMarkedCode(readBook.getMarkedCode());
             company.setWebsite(readBook.getWebsite());
+            company.setMarketTypeName(readBook.getMarketTypeName());
+
 
             List<DownBoxData> levelList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.ORGANIZATION_LEVEL.getId(),null);
             List<DownBoxData> typeList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.COMPANY_TYPE.getId(),null);

@@ -32,11 +32,11 @@ public class AreaController {
     @Resource
     private AreaService areaService;
 
-    /*@ApiOperation("查询所有地区，树状结构")
+    @ApiOperation("查询所有地区，树状结构")
     @PostMapping("select/all_tree")
     public Result<List<AreaBO>> selectAllTree(){
         return Result.success(areaService.selectAllTree());
-    }*/
+    }
 
     @ApiOperation(value = "查询所有地区，不查数据库",tags = "查询")
     @PostMapping("select/all_tree_no_db")

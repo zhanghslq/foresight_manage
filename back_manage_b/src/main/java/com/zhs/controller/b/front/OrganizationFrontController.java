@@ -9,6 +9,8 @@ import com.zhs.entity.Organization;
 import com.zhs.entity.OrganizationTag;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.dto.OrganizationDTO;
+import com.zhs.model.vo.OrganizationFrontVO;
+import com.zhs.model.vo.OrganizationInformationVO;
 import com.zhs.model.vo.OrganizationVO;
 import com.zhs.service.OrganizationService;
 import com.zhs.service.OrganizationTagService;
@@ -68,9 +70,9 @@ public class OrganizationFrontController {
             @ApiImplicitParam(name = "organizationTypeId",value = "组织类型id",required = true),
             @ApiImplicitParam(name = "areaId",value = "地区id"),
     })
-    public Result<OrganizationVO> queryByOrganizationType(@RequestParam Long organizationTypeId, Long areaId){
+    public Result<OrganizationFrontVO> queryByOrganizationType(@RequestParam Long organizationTypeId, Long areaId){
         //
-        OrganizationVO organizationVO = organizationService.queryByOrganizationType(organizationTypeId,areaId);
+        OrganizationFrontVO organizationVO = organizationService.queryFrontByOrganizationType(organizationTypeId,areaId);
         return Result.success(organizationVO);
     }
 
@@ -87,6 +89,12 @@ public class OrganizationFrontController {
     public Result<OrganizationHasParentBO> listParentById(@RequestParam Long organizationId){
         OrganizationHasParentBO organizationHasParentBO = organizationService.listParentById(organizationId);
         return Result.success(organizationHasParentBO);
+    }
+    @ApiOperation(value = "根据机构id，获取总览信息",tags = "查询")
+    @PostMapping("query_information/by_id")
+    public Result<OrganizationInformationVO> queryInformationById(@RequestParam Long id){
+        OrganizationInformationVO organizationInformationVO = organizationService.queryInformationById(id);
+        return Result.success(organizationInformationVO);
     }
 
 }

@@ -4,14 +4,14 @@ import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import com.zhs.common.constant.*;
 import com.zhs.exception.MyException;
 import com.zhs.mapper.OrganizationMapper;
-import com.zhs.model.bo.ContactsBO;
-import com.zhs.model.bo.OrganizationHasParentBO;
-import com.zhs.model.bo.OrganizationModuleBO;
-import com.zhs.model.bo.OrganizationTagBO;
+import com.zhs.model.bo.*;
 import com.zhs.model.dto.OrganizationImportConvertDTO;
+import com.zhs.model.vo.OrganizationFrontVO;
+import com.zhs.model.vo.OrganizationInformationVO;
 import com.zhs.model.vo.OrganizationVO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.service.*;
@@ -69,6 +69,9 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
     @Autowired
     private AreaService areaService;
+
+    @Autowired
+    private ExperienceRecordService experienceRecordService;
 
     @Override
     public OrganizationVO queryByOrganizationType(Long organizationTypeId, Long areaId) {
@@ -314,6 +317,160 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         }
         if(result.size()>0){
             saveBatch(result);
+        }
+    }
+
+    @Override
+    public OrganizationInformationVO queryInformationById(Long id) {
+        Organization organization = getById(id);
+        Assert.notNull(organization,"机构不存在");
+        OrganizationInformationVO organizationInformationVO = new OrganizationInformationVO();
+        organizationInformationVO.setId(organization.getId());
+        organizationInformationVO.setName(organization.getName());
+
+        Long levelId = organization.getLevelId();
+        if(Objects.nonNull(levelId)){
+            DownBoxData boxData = downBoxDataService.getById(levelId);
+            if(Objects.nonNull(boxData)){
+                organizationInformationVO.setLevelName(boxData.getName());
+            }
+        }
+        Long systemId = organization.getSystemId();
+        if(Objects.nonNull(systemId)){
+            DownBoxData boxData = downBoxDataService.getById(systemId);
+            if(Objects.nonNull(boxData)){
+                organizationInformationVO.setSystemName(boxData.getName());
+            }
+        }
+        Long hierarchyId = organization.getHierarchyId();
+        if(Objects.nonNull(hierarchyId)){
+            DownBoxData boxData = downBoxDataService.getById(hierarchyId);
+            if(Objects.nonNull(boxData)){
+                organizationInformationVO.setHierarchyName(boxData.getName());
+            }
+        }
+        QueryWrapper<OrganizationModule> organizationModuleQueryWrapper = new QueryWrapper<>();
+        organizationModuleQueryWrapper.eq("organization_id",id);
+        List<OrganizationModule> organizationModuleList = organizationModuleService.list(organizationModuleQueryWrapper);
+
+        List<ModuleSimple> simpleArrayList = new ArrayList<>();
+        for (OrganizationModule organizationModule : organizationModuleList) {
+            ModuleSimple moduleSimple = new ModuleSimple();
+            moduleSimple.setModuleName(organizationModule.getName());
+            Integer type = organizationModule.getType();
+            Long moduleId = organizationModule.getId();
+            if(ModuleTypeEnum.LEADER.getId().equals(type)){
+                QueryWrapper<Leader> leaderQueryWrapper = new QueryWrapper<>();
+                leaderQueryWrapper.eq("module_id",moduleId);
+                int count = leaderService.count(leaderQueryWrapper);
+                moduleSimple.setCount(count);
+            }else if(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(type)){
+                QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
+                organizationQueryWrapper.eq("module_id",moduleId);
+                int count = count(organizationQueryWrapper);
+                moduleSimple.setCount(count);
+
+            }else if(ModuleTypeEnum.CONTACTS.getId().equals(type)){
+                QueryWrapper<ModuleContacts> moduleContactsQueryWrapper = new QueryWrapper<>();
+                moduleContactsQueryWrapper.eq("module_id",moduleId);
+                int count = moduleContactsService.count(moduleContactsQueryWrapper);
+                moduleSimple.setCount(count);
+            }
+            simpleArrayList.add(moduleSimple);
+        }
+        organizationInformationVO.setModuleList(simpleArrayList);
+        return organizationInformationVO;
+    }
+
+    @Override
+    public OrganizationFrontVO queryFrontByOrganizationType(Long organizationTypeId, Long areaId) {
+        OrganizationFrontVO organizationFrontVO = new OrganizationFrontVO();
+
+        OrganizationVO organizationVO = queryByOrganizationType(organizationTypeId, areaId);
+        Organization organization = organizationVO.getOrganization();
+
+        organizationFrontVO.setOrganization(organization);
+        if(Objects.isNull(organization)){
+            return organizationFrontVO;
+        }
+        Long id = organization.getId();
+        dealOrganizationFront(organizationFrontVO,organization);
+        return null;
+    }
+
+    private void dealOrganizationFront(OrganizationFrontVO organizationFrontVO, Organization organization) {
+        Long id = organization.getId();
+        QueryWrapper<OrganizationModule> organizationModuleQueryWrapper = new QueryWrapper<>();
+        organizationModuleQueryWrapper.eq("organizaiton_id",id);
+        String organizationName = organization.getName();
+        List<OrganizationModule> organizationModuleList = organizationModuleService.list(organizationModuleQueryWrapper);
+        for (OrganizationModule organizationModule : organizationModuleList) {
+            if(ModuleTypeEnum.LEADER.getId().equals(organizationModule.getType())){
+                dealLeaderList(organizationFrontVO, organizationName, organizationModule);
+            }else if(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(organization.getType())){
+                // 下属机构
+
+
+            }
+        }
+    }
+
+    private void dealLeaderList(OrganizationFrontVO organizationFrontVO, String organizationName, OrganizationModule organizationModule) {
+        // 领导人，这里区分
+        Long moduleId = organizationModule.getId();
+        QueryWrapper<Leader> leaderQueryWrapper = new QueryWrapper<>();
+        leaderQueryWrapper.eq("module_id",moduleId);
+        List<Leader> leaderList = leaderService.list(leaderQueryWrapper);
+        List<Leader> hasResumeLeaderList = leaderList.stream().filter(leader -> Objects.nonNull(leader.getResumeId())).collect(Collectors.toList());
+        List<Long> resumeIdList = hasResumeLeaderList.stream().map(leader -> leader.getResumeId()).collect(Collectors.toList());
+        Map<Long, ExperienceRecord> map = new HashMap<>();
+        if(resumeIdList.size()>0){
+            QueryWrapper<ExperienceRecord> experienceRecordQueryWrapper = new QueryWrapper<>();
+            experienceRecordQueryWrapper.in("resume_id",resumeIdList);
+            experienceRecordQueryWrapper.eq("company_name",organizationName);
+            List<ExperienceRecord> list = experienceRecordService.list(experienceRecordQueryWrapper);
+            map = list.stream().collect(Collectors.toMap(ExperienceRecord::getResumeId, experienceRecord -> experienceRecord, (k1, k2) -> k2));
+        }
+
+        for (Leader leader : leaderList) {
+            LeaderBO leaderBO = new LeaderBO();
+            leaderBO.setName(leader.getRealName());
+            Long resumeId = leader.getResumeId();
+            if(Objects.nonNull(resumeId)){
+                ExperienceRecord experienceRecord = map.get(resumeId);
+                if(Objects.nonNull(experienceRecord)){
+                    leaderBO.setStartTime(experienceRecord.getBeginDate());
+                }
+            }
+            Long levelId = leader.getLevelId();
+            if(Objects.nonNull(levelId)){
+                DownBoxData level = downBoxDataService.getById(levelId);
+                if(Objects.isNull(level)){
+                    continue;
+                }
+                if(Objects.nonNull(level.getName())&&level.getName().contains("正")){
+                    List<LeaderBO> justLeaderList = organizationFrontVO.getJustLeaderList();
+                    if(Objects.isNull(justLeaderList)){
+                        ArrayList<LeaderBO> leaderBOArrayList = new ArrayList<>();
+                        organizationFrontVO.setJustLeaderList(leaderBOArrayList);
+                    }
+                    justLeaderList.add(leaderBO);
+                }else if(Objects.nonNull(level.getName())&&level.getName().contains("副")){
+                    List<LeaderBO> viceLeaderList = organizationFrontVO.getViceLeaderList();
+                    if(Objects.isNull(viceLeaderList)){
+                        ArrayList<LeaderBO> leaderBOArrayList = new ArrayList<>();
+                        organizationFrontVO.setViceLeaderList(leaderBOArrayList);
+                    }
+                    viceLeaderList.add(leaderBO);
+                }else {
+                    List<LeaderBO> otherLeaderList = organizationFrontVO.getOtherLeaderList();
+                    if(Objects.isNull(otherLeaderList)){
+                        ArrayList<LeaderBO> leaderBOArrayList = new ArrayList<>();
+                        organizationFrontVO.setOtherLeaderList(leaderBOArrayList);
+                    }
+                    otherLeaderList.add(leaderBO);
+                }
+            }
         }
     }
 

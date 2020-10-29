@@ -409,7 +409,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         for (OrganizationModule organizationModule : organizationModuleList) {
             if(ModuleTypeEnum.LEADER.getId().equals(organizationModule.getType())){
                 dealLeaderList(organizationFrontVO, organizationName, organizationModule);
-            }else if(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(organization.getType())){
+            }else if(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(organizationModule.getType())){
                 ModuleFrontBO moduleFrontBO = new ModuleFrontBO();
                 moduleFrontBO.setModuleName(organizationModule.getName());
                 dealOrganizationModuleSon(organizationModule,moduleFrontBO);

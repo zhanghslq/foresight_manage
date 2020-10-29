@@ -16,6 +16,11 @@ public class OrganizationInformationVO {
     private Long id;
     @ApiModelProperty("机构名字")
     private String name;
+
+    @ApiModelProperty("地区")
+    private String area;
+    @ApiModelProperty("详细地址")
+    private String addressDetail;
     @ApiModelProperty("行政级别")
     private String levelName;
     @ApiModelProperty("体系")

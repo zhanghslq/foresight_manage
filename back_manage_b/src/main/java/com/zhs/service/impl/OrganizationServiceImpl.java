@@ -327,6 +327,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         OrganizationInformationVO organizationInformationVO = new OrganizationInformationVO();
         organizationInformationVO.setId(organization.getId());
         organizationInformationVO.setName(organization.getName());
+        organizationInformationVO.setAddressDetail(organization.getAddressDetail());
 
         Long levelId = organization.getLevelId();
         if(Objects.nonNull(levelId)){
@@ -347,6 +348,13 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             DownBoxData boxData = downBoxDataService.getById(hierarchyId);
             if(Objects.nonNull(boxData)){
                 organizationInformationVO.setHierarchyName(boxData.getName());
+            }
+        }
+        Long areaId = organization.getAreaId();
+        if(Objects.nonNull(areaId)){
+            DownBoxData boxData = downBoxDataService.getById(hierarchyId);
+            if(Objects.nonNull(boxData)){
+                organizationInformationVO.setArea(boxData.getName());
             }
         }
         QueryWrapper<OrganizationModule> organizationModuleQueryWrapper = new QueryWrapper<>();

@@ -393,26 +393,72 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         if(Objects.isNull(organization)){
             return organizationFrontVO;
         }
-        Long id = organization.getId();
         dealOrganizationFront(organizationFrontVO,organization);
-        return null;
+        return organizationFrontVO;
     }
 
     private void dealOrganizationFront(OrganizationFrontVO organizationFrontVO, Organization organization) {
         Long id = organization.getId();
         QueryWrapper<OrganizationModule> organizationModuleQueryWrapper = new QueryWrapper<>();
-        organizationModuleQueryWrapper.eq("organizaiton_id",id);
+        organizationModuleQueryWrapper.eq("organization_id",id);
         String organizationName = organization.getName();
         List<OrganizationModule> organizationModuleList = organizationModuleService.list(organizationModuleQueryWrapper);
+
+        ArrayList<ModuleFrontBO> moduleFrontBOS = new ArrayList<>();
+
         for (OrganizationModule organizationModule : organizationModuleList) {
             if(ModuleTypeEnum.LEADER.getId().equals(organizationModule.getType())){
                 dealLeaderList(organizationFrontVO, organizationName, organizationModule);
             }else if(ModuleTypeEnum.ORGANIZATION_CHILDREN.getId().equals(organization.getType())){
-                // 下属机构
-
-
+                ModuleFrontBO moduleFrontBO = new ModuleFrontBO();
+                moduleFrontBO.setModuleName(organizationModule.getName());
+                dealOrganizationModuleSon(organizationModule,moduleFrontBO);
+                moduleFrontBOS.add(moduleFrontBO);
             }
         }
+        organizationFrontVO.setModuleList(moduleFrontBOS);
+    }
+
+    private void dealOrganizationModuleSon(OrganizationModule organizationModule, ModuleFrontBO moduleFrontBO) {
+        // 下属机构
+        Long moduleId = organizationModule.getId();
+        QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
+        organizationQueryWrapper.eq("module_id",moduleId);
+        List<Organization> list = list(organizationQueryWrapper);
+        ArrayList<OrganizationSimple> organizationSimples = new ArrayList<>();
+        for (Organization organizationSon : list) {
+            // 各个组织的联系人,领导人数量
+            OrganizationSimple organizationSimple = new OrganizationSimple();
+            organizationSimple.setOrganizationId(organizationSon.getId());
+            organizationSimple.setName(organizationSon.getName());
+
+            QueryWrapper<OrganizationModule> organizationModuleQueryWrapperSon = new QueryWrapper<>();
+            organizationModuleQueryWrapperSon.eq("organization_id",organizationSon.getId());
+            List<OrganizationModule> organizationModuleSonList = organizationModuleService.list(organizationModuleQueryWrapperSon);
+            List<Long> contactModuleIdList = organizationModuleSonList.stream().filter(organizationModule1 -> ModuleTypeEnum.CONTACTS.getId().equals(organizationModule1.getType())).map(OrganizationModule::getId).collect(Collectors.toList());
+            if(contactModuleIdList.size()>0){
+                // 联系人数量
+                QueryWrapper<ModuleContacts> moduleContactsQueryWrapper = new QueryWrapper<>();
+                moduleContactsQueryWrapper.in("module_id",contactModuleIdList);
+                int count = moduleContactsService.count(moduleContactsQueryWrapper);
+                organizationSimple.setContactsCount(count);
+            }else {
+                organizationSimple.setContactsCount(0);
+            }
+            // 领导数量
+            List<Long> leaderModuleIdList = organizationModuleSonList.stream().filter(organizationModule1 -> ModuleTypeEnum.LEADER.getId().equals(organizationModule1.getType())).map(OrganizationModule::getId).collect(Collectors.toList());
+            if(leaderModuleIdList.size()>0){
+                QueryWrapper<Leader> leaderQueryWrapper = new QueryWrapper<>();
+                leaderQueryWrapper.in("module_id",leaderModuleIdList);
+                int count = leaderService.count(leaderQueryWrapper);
+                organizationSimple.setLeaderCount(count);
+            }else {
+                organizationSimple.setLeaderCount(0);
+            }
+
+            organizationSimples.add(organizationSimple);
+        }
+        moduleFrontBO.setOrganizationSimpleList(organizationSimples);
     }
 
     private void dealLeaderList(OrganizationFrontVO organizationFrontVO, String organizationName, OrganizationModule organizationModule) {
@@ -451,22 +497,22 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
                 if(Objects.nonNull(level.getName())&&level.getName().contains("正")){
                     List<LeaderBO> justLeaderList = organizationFrontVO.getJustLeaderList();
                     if(Objects.isNull(justLeaderList)){
-                        ArrayList<LeaderBO> leaderBOArrayList = new ArrayList<>();
-                        organizationFrontVO.setJustLeaderList(leaderBOArrayList);
+                        justLeaderList = new ArrayList<>();
+                        organizationFrontVO.setJustLeaderList(justLeaderList);
                     }
                     justLeaderList.add(leaderBO);
                 }else if(Objects.nonNull(level.getName())&&level.getName().contains("副")){
                     List<LeaderBO> viceLeaderList = organizationFrontVO.getViceLeaderList();
                     if(Objects.isNull(viceLeaderList)){
-                        ArrayList<LeaderBO> leaderBOArrayList = new ArrayList<>();
-                        organizationFrontVO.setViceLeaderList(leaderBOArrayList);
+                        viceLeaderList = new ArrayList<>();
+                        organizationFrontVO.setViceLeaderList(viceLeaderList);
                     }
                     viceLeaderList.add(leaderBO);
                 }else {
                     List<LeaderBO> otherLeaderList = organizationFrontVO.getOtherLeaderList();
                     if(Objects.isNull(otherLeaderList)){
-                        ArrayList<LeaderBO> leaderBOArrayList = new ArrayList<>();
-                        organizationFrontVO.setOtherLeaderList(leaderBOArrayList);
+                        otherLeaderList = new ArrayList<>();
+                        organizationFrontVO.setOtherLeaderList(otherLeaderList);
                     }
                     otherLeaderList.add(leaderBO);
                 }

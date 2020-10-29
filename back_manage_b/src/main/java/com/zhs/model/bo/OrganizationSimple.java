@@ -11,6 +11,8 @@ import lombok.Data;
 @Data
 public class OrganizationSimple {
 
+    @ApiModelProperty("组织id")
+    private Long organizationId;
     @ApiModelProperty("组织名称")
     private String name;
     @ApiModelProperty("领导数量")

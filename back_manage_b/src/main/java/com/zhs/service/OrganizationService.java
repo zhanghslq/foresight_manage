@@ -34,4 +34,6 @@ public interface OrganizationService extends IService<Organization> {
     OrganizationInformationVO queryInformationById(Long id);
 
     OrganizationFrontVO queryFrontByOrganizationType(Long organizationTypeId, Long areaId);
+
+    OrganizationFrontVO queryFrontByParentId(Long id);
 }

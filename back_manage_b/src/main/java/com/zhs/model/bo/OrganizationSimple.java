@@ -19,4 +19,8 @@ public class OrganizationSimple {
     private Integer leaderCount;
     @ApiModelProperty("联系人数量")
     private Integer contactsCount;
+    @ApiModelProperty("重要性")
+    private Integer importance;
+    @ApiModelProperty("大的体系分类，政务法务这种")
+    private String  typeName;
 }

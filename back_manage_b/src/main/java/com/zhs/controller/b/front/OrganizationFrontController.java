@@ -76,11 +76,11 @@ public class OrganizationFrontController {
         return Result.success(organizationVO);
     }
 
-    @ApiOperation(value = "根据组织Id查询下属组织,领导人，联系人（企业查询除外，企业是根这些分开的）",tags = "查询")
+    @ApiOperation(value = "根据组织Id查询下属模块组织信息）",tags = "查询")
     @PostMapping("query/by_id")
     @ApiImplicitParam(name = "id",value = "组织id",required = true)
-    public Result<OrganizationVO> queryById(@RequestParam Long id){
-        OrganizationVO organizationVO = organizationService.queryByParentId(id);
+    public Result<OrganizationFrontVO> queryById(@RequestParam Long id){
+        OrganizationFrontVO organizationVO = organizationService.queryFrontByParentId(id);
         return Result.success(organizationVO);
     }
 

@@ -19,4 +19,14 @@ public enum  RootTypeEnum {
     COMPANY(6,"企业");
     private final Integer id;
     private final String name;
+
+    public static String getNameById(Integer type) {
+        for (RootTypeEnum value : RootTypeEnum.values()) {
+            if(value.id.equals(type)){
+                return value.name;
+            }
+        }
+
+        return "";
+    }
 }

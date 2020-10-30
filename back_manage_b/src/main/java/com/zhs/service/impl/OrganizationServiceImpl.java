@@ -405,6 +405,15 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         return organizationFrontVO;
     }
 
+    @Override
+    public OrganizationFrontVO queryFrontByParentId(Long id) {
+        Organization organization = getById(id);
+        Assert.notNull(organization,"机构不存在");
+        OrganizationFrontVO organizationFrontVO = new OrganizationFrontVO();
+        dealOrganizationFront(organizationFrontVO,organization);
+        return organizationFrontVO;
+    }
+
     private void dealOrganizationFront(OrganizationFrontVO organizationFrontVO, Organization organization) {
         Long id = organization.getId();
         QueryWrapper<OrganizationModule> organizationModuleQueryWrapper = new QueryWrapper<>();
@@ -428,6 +437,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
     }
 
     private void dealOrganizationModuleSon(OrganizationModule organizationModule, ModuleFrontBO moduleFrontBO) {
+
         // 下属机构
         Long moduleId = organizationModule.getId();
         QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
@@ -439,7 +449,11 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             OrganizationSimple organizationSimple = new OrganizationSimple();
             organizationSimple.setOrganizationId(organizationSon.getId());
             organizationSimple.setName(organizationSon.getName());
-
+            Integer type = organizationSon.getType();
+            if(Objects.nonNull(type)){
+                organizationSimple.setTypeName(RootTypeEnum.getNameById(type));
+            }
+            organizationSimple.setImportance(organizationSon.getImportance());
             QueryWrapper<OrganizationModule> organizationModuleQueryWrapperSon = new QueryWrapper<>();
             organizationModuleQueryWrapperSon.eq("organization_id",organizationSon.getId());
             List<OrganizationModule> organizationModuleSonList = organizationModuleService.list(organizationModuleQueryWrapperSon);

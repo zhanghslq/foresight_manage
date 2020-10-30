@@ -328,7 +328,8 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         organizationInformationVO.setId(organization.getId());
         organizationInformationVO.setName(organization.getName());
         organizationInformationVO.setAddressDetail(organization.getAddressDetail());
-
+        organizationInformationVO.setWebsite(organization.getWebsite());
+        organizationInformationVO.setLogoUrl(organization.getLogoUrl());
         Long levelId = organization.getLevelId();
         if(Objects.nonNull(levelId)){
             DownBoxData boxData = downBoxDataService.getById(levelId);
@@ -352,7 +353,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         }
         Long areaId = organization.getAreaId();
         if(Objects.nonNull(areaId)){
-            DownBoxData boxData = downBoxDataService.getById(hierarchyId);
+            Area boxData = areaService.getById(areaId);
             if(Objects.nonNull(boxData)){
                 organizationInformationVO.setArea(boxData.getName());
             }

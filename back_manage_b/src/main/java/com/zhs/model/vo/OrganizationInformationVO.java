@@ -27,6 +27,11 @@ public class OrganizationInformationVO {
     private String hierarchyName;
     @ApiModelProperty("系统")
     private String systemName;
+    @ApiModelProperty("网址")
+    private String website;
+
+    @ApiModelProperty("logo地址")
+    private String logoUrl;
 
     @ApiModelProperty("模块")
     private List<ModuleSimple> moduleList;

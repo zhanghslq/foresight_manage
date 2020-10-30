@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -24,6 +25,8 @@ import com.zhs.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.util.AsposeWordUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -65,6 +68,8 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
     private DownBoxDataService downBoxDataService;
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private AdminOperationLogService adminOperationLogService;
 
     @Override
     public Page<ResumeVO> pageSelf(Resume resume, Page<Resume> resumePage, Date createTimeBegin, Date createTimeEnd) {
@@ -434,6 +439,21 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             log.info("word解析出来的内容：{}",o2.toString());
 
         }
+        AdminOperationLog adminOperationLog = new AdminOperationLog();
+        Subject subject = SecurityUtils.getSubject();
+        if(subject.isAuthenticated()){
+            try {
+                Object principal = subject.getPrincipal();
+                Long adminId = Long.valueOf(principal.toString());
+                adminOperationLog.setAdminId(adminId);
+                adminOperationLog.setOperatorType("上传");
+                adminOperationLog.setInterfaceDesc("上传简历:"+ StrUtil.blankToDefault(filename,""));
+            } catch (NumberFormatException e) {
+                adminOperationLog.setAdminId(0L);
+            }
+        }
+        adminOperationLogService.save(adminOperationLog);
+
         return resumeDTO;
     }
 

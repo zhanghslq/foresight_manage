@@ -1,16 +1,19 @@
 package com.zhs.controller.b.back;
 
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.common.Result;
+import com.zhs.entity.AdminOperationLog;
 import com.zhs.entity.Organization;
 import com.zhs.entity.OrganizationTag;
 import com.zhs.exception.MyException;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.dto.OrganizationDTO;
 import com.zhs.model.vo.OrganizationVO;
+import com.zhs.service.AdminOperationLogService;
 import com.zhs.service.OrganizationService;
 import com.zhs.service.OrganizationTagService;
 import io.swagger.annotations.Api;
@@ -18,6 +21,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,6 +49,8 @@ public class OrganizationController {
     private OrganizationService organizationService;
     @Resource
     private OrganizationTagService organizationTagService;
+    @Resource
+    private AdminOperationLogService adminOperationLogService;
 
 
     @ApiOperation(value = "根据类型获取组织列表（军，政，法等）",tags = "查询")
@@ -94,6 +102,20 @@ public class OrganizationController {
             }
             organizationTagService.saveBatch(organizationTags);
         }
+        AdminOperationLog adminOperationLog = new AdminOperationLog();
+        Subject subject = SecurityUtils.getSubject();
+        if(subject.isAuthenticated()){
+            try {
+                Object principal = subject.getPrincipal();
+                Long adminId = Long.valueOf(principal.toString());
+                adminOperationLog.setAdminId(adminId);
+                adminOperationLog.setOperatorType("新增");
+                adminOperationLog.setInterfaceDesc("插入组织:"+ StrUtil.blankToDefault(organization.getName(),""));
+            } catch (NumberFormatException e) {
+                adminOperationLog.setAdminId(0L);
+            }
+        }
+        adminOperationLogService.save(adminOperationLog);
         return Result.success(organization.getId());
     }
 
@@ -102,7 +124,26 @@ public class OrganizationController {
     @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
     public Result<Boolean> update(@RequestBody OrganizationDTO organizationDTO){
         organizationService.dealTags(organizationDTO.getOrganization().getId(),organizationDTO.getTags());
-        return Result.success(organizationService.updateById(organizationDTO.getOrganization()));
+        Organization organization = organizationDTO.getOrganization();
+        Assert.notNull(organization,"组织不存在");
+        boolean b = organizationService.updateById(organization);
+
+
+        AdminOperationLog adminOperationLog = new AdminOperationLog();
+        Subject subject = SecurityUtils.getSubject();
+        if(subject.isAuthenticated()){
+            try {
+                Object principal = subject.getPrincipal();
+                Long adminId = Long.valueOf(principal.toString());
+                adminOperationLog.setAdminId(adminId);
+                adminOperationLog.setOperatorType("修改");
+                adminOperationLog.setInterfaceDesc("修改组织:"+ StrUtil.blankToDefault(organization.getName(),""));
+            } catch (NumberFormatException e) {
+                adminOperationLog.setAdminId(0L);
+            }
+        }
+        adminOperationLogService.save(adminOperationLog);
+        return Result.success(b);
     }
 
     // 查一个组织的时候会查组织详情和领导人，以及联系人
@@ -131,7 +172,24 @@ public class OrganizationController {
     @PostMapping("delete")
     @ApiImplicitParam(name = "id",value = "组织id",required = true)
     public Result<Boolean> delete(@RequestParam Long id){
-        return Result.success(organizationService.removeById(id));
+        Organization byId = organizationService.getById(id);
+        Assert.notNull(byId,"机构不存在");
+        boolean b = organizationService.removeById(id);
+        AdminOperationLog adminOperationLog = new AdminOperationLog();
+        Subject subject = SecurityUtils.getSubject();
+        if(subject.isAuthenticated()){
+            try {
+                Object principal = subject.getPrincipal();
+                Long adminId = Long.valueOf(principal.toString());
+                adminOperationLog.setAdminId(adminId);
+                adminOperationLog.setOperatorType("删除");
+                adminOperationLog.setInterfaceDesc("删除组织:"+ StrUtil.blankToDefault(byId.getName(),""));
+            } catch (NumberFormatException e) {
+                adminOperationLog.setAdminId(0L);
+            }
+        }
+        adminOperationLogService.save(adminOperationLog);
+        return Result.success(b);
     }
 
     @ApiOperation(value = "根据组织id查所有父类",tags = "查询")

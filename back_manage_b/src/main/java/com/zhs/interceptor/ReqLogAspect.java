@@ -108,10 +108,16 @@ public class ReqLogAspect {
             }
         }
 
-        if(!"查询".equals(adminOperationLog.getOperatorType())){
+        // 组织和简历的单独记录
+        if(!"查询".equals(adminOperationLog.getOperatorType())&&
+                !"com.zhs.controller.b.back.OrganizationController".equals(adminOperationLog.getDeclaringName())
+                &&!"com.zhs.controller.b.back.OrganizationController".equals(adminOperationLog.getDeclaringName())
+                &&!"com.zhs.controller.b.back.OrganizationModuleController".equals(adminOperationLog.getDeclaringName())
+        ){
             adminOperationLogService.save(adminOperationLog);
             logId.set(adminOperationLog.getId());
         }
+
         if("新增".equals(adminOperationLog.getOperatorType())||"修改".equals(adminOperationLog.getOperatorType())||"删除".equals(adminOperationLog.getOperatorType())){
             adminService.addOperatorCount(adminOperationLog.getAdminId());
         }

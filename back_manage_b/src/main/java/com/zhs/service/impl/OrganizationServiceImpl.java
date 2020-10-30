@@ -73,6 +73,9 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
     @Autowired
     private ExperienceRecordService experienceRecordService;
 
+    @Autowired
+    private AdminOperationLogService adminOperationLogService;
+
     @Override
     public OrganizationVO queryByOrganizationType(Long organizationTypeId, Long areaId) {
         List<Long> organizationTypeIds = new ArrayList<>();
@@ -317,6 +320,19 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         }
         if(result.size()>0){
             saveBatch(result);
+            AdminOperationLog adminOperationLog = new AdminOperationLog();
+            adminOperationLog.setOperatorType("新增");
+            adminOperationLog.setAdminId(result.get(0).getAdminId());
+            StringBuilder sb = new StringBuilder();
+            for (Organization organization : result) {
+                String organizationName = organization.getName();
+                if(Objects.nonNull(organizationName)){
+                    sb.append(organizationName);
+                    sb.append(",");
+                }
+            }
+            adminOperationLog.setInterfaceDesc("新增机构:"+sb.toString());
+            adminOperationLogService.save(adminOperationLog);
         }
     }
 

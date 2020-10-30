@@ -1,7 +1,9 @@
 package com.zhs.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.common.constant.RootTypeEnum;
+import com.zhs.entity.Organization;
 import com.zhs.entity.OrganizationType;
 import com.zhs.entity.RootType;
 import com.zhs.exception.MyException;
@@ -9,6 +11,7 @@ import com.zhs.mapper.OrganizationTypeMapper;
 import com.zhs.model.bo.OrganizationTypeBO;
 import com.zhs.model.vo.CommonTypeVO;
 import com.zhs.model.vo.RootTypeVO;
+import com.zhs.service.OrganizationService;
 import com.zhs.service.OrganizationTypeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.service.RootTypeService;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,6 +40,9 @@ public class OrganizationTypeServiceImpl extends ServiceImpl<OrganizationTypeMap
 
     @Autowired
     private RootTypeService rootTypeService;
+
+    @Autowired
+    private OrganizationService organizationService;
 
     @Override
     public List<CommonTypeVO> listType() {
@@ -119,5 +126,20 @@ public class OrganizationTypeServiceImpl extends ServiceImpl<OrganizationTypeMap
     @Override
     public List<OrganizationTypeBO> listAllTreeByType(Integer type) {
         return organizationTypeMapper.selectAllTree(type);
+    }
+
+    @Override
+    public List<Organization> listSonOrganization(Long organizationTypeId) {
+        QueryWrapper<OrganizationType> organizationTypeQueryWrapper = new QueryWrapper<>();
+        organizationTypeQueryWrapper.eq("parent_id",organizationTypeId);
+        List<OrganizationType> list = list(organizationTypeQueryWrapper);
+        if(list.size()>0){
+            List<Long> organizationTypeList = list.stream().map(OrganizationType::getId).collect(Collectors.toList());
+            QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
+            organizationQueryWrapper.eq("parent_id",0);
+            organizationQueryWrapper.in("organization_type_id",organizationTypeList);
+            return organizationService.list(organizationQueryWrapper);
+        }
+        return Collections.emptyList();
     }
 }

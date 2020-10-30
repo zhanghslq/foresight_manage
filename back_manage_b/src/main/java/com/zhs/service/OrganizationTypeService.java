@@ -1,5 +1,6 @@
 package com.zhs.service;
 
+import com.zhs.entity.Organization;
 import com.zhs.entity.OrganizationType;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhs.model.bo.OrganizationTypeBO;
@@ -45,4 +46,5 @@ public interface OrganizationTypeService extends IService<OrganizationType> {
 
     List<OrganizationTypeBO> listAllTreeByType(Integer type);
 
+    List<Organization> listSonOrganization(Long organizationTypeId);
 }

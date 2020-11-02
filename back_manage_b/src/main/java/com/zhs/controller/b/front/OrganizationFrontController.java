@@ -11,6 +11,7 @@ import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.dto.OrganizationDTO;
 import com.zhs.model.vo.OrganizationFrontVO;
 import com.zhs.model.vo.OrganizationInformationVO;
+import com.zhs.model.vo.OrganizationRegionDataVO;
 import com.zhs.model.vo.OrganizationVO;
 import com.zhs.service.OrganizationService;
 import com.zhs.service.OrganizationTagService;
@@ -96,6 +97,13 @@ public class OrganizationFrontController {
         OrganizationInformationVO organizationInformationVO = organizationService.queryInformationById(id);
         return Result.success(organizationInformationVO);
     }
+    @PostMapping("query/by_region_province_city")
+    @ApiOperation(value = "根据地区查询机构信息",tags = "查询")
+    public Result<List<OrganizationRegionDataVO>> queryByRegionAndProvinceCity(Integer regionId, Integer provinceId, Integer cityId){
+        List<OrganizationRegionDataVO> result = organizationService.listByRegionProvinceCityId(regionId,provinceId,cityId);
+        return Result.success(null);
+    }
+
 
 }
 

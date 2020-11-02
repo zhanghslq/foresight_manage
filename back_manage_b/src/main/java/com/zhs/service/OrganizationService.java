@@ -6,6 +6,7 @@ import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.bo.OrganizationTagBO;
 import com.zhs.model.vo.OrganizationFrontVO;
 import com.zhs.model.vo.OrganizationInformationVO;
+import com.zhs.model.vo.OrganizationRegionDataVO;
 import com.zhs.model.vo.OrganizationVO;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,4 +37,6 @@ public interface OrganizationService extends IService<Organization> {
     OrganizationFrontVO queryFrontByOrganizationType(Long organizationTypeId, Long areaId);
 
     OrganizationFrontVO queryFrontByParentId(Long id);
+
+    List<OrganizationRegionDataVO> listByRegionProvinceCityId(Integer regionId, Integer provinceId, Integer cityId);
 }

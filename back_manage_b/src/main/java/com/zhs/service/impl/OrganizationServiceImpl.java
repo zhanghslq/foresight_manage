@@ -12,6 +12,7 @@ import com.zhs.model.bo.*;
 import com.zhs.model.dto.OrganizationImportConvertDTO;
 import com.zhs.model.vo.OrganizationFrontVO;
 import com.zhs.model.vo.OrganizationInformationVO;
+import com.zhs.model.vo.OrganizationRegionDataVO;
 import com.zhs.model.vo.OrganizationVO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.service.*;
@@ -429,6 +430,14 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         OrganizationFrontVO organizationFrontVO = new OrganizationFrontVO();
         dealOrganizationFront(organizationFrontVO,organization);
         return organizationFrontVO;
+    }
+
+    @Override
+    public List<OrganizationRegionDataVO> listByRegionProvinceCityId(Integer regionId, Integer provinceId, Integer cityId) {
+        // 根据地区，省市，城市查机构
+
+
+        return Collections.emptyList();
     }
 
     private void dealOrganizationFront(OrganizationFrontVO organizationFrontVO, Organization organization) {

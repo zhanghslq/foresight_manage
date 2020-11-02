@@ -99,7 +99,7 @@ public class OrganizationFrontController {
     }
     @PostMapping("query/by_region_province_city")
     @ApiOperation(value = "根据地区查询机构信息",tags = "查询")
-    public Result<List<OrganizationRegionDataVO>> queryByRegionAndProvinceCity(Integer regionId, Integer provinceId, Integer cityId){
+    public Result<List<OrganizationRegionDataVO>> queryByRegionAndProvinceCity(Long regionId, Long provinceId, Long cityId){
         List<OrganizationRegionDataVO> result = organizationService.listByRegionProvinceCityId(regionId,provinceId,cityId);
         return Result.success(result);
     }

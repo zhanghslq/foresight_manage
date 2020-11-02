@@ -77,6 +77,12 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
     @Autowired
     private AdminOperationLogService adminOperationLogService;
 
+    @Autowired
+    private RegionProvinceService regionProvinceService;
+
+    @Autowired
+    private RegionService regionService;
+
     @Override
     public OrganizationVO queryByOrganizationType(Long organizationTypeId, Long areaId) {
         List<Long> organizationTypeIds = new ArrayList<>();
@@ -433,11 +439,73 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
     }
 
     @Override
-    public List<OrganizationRegionDataVO> listByRegionProvinceCityId(Integer regionId, Integer provinceId, Integer cityId) {
-        // 根据地区，省市，城市查机构
+    public List<OrganizationRegionDataVO> listByRegionProvinceCityId(Long regionId, Long provinceId, Long cityId) {
+        List<Long> areaIdList = getAreaIdList(regionId, provinceId, cityId);
+
+        QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
+        if(areaIdList.size()==0){
+            // 查全部
+            organizationQueryWrapper.isNotNull("area_id");
+        }else {
+            // 根据areaId查
+            organizationQueryWrapper.in("area_id",areaIdList);
+        }
+        List<Organization> organizationList = list(organizationQueryWrapper);
+        Map<Long, List<Organization>> areaMap = organizationList.stream().filter(organization -> Objects.nonNull(organization.getAreaId())).collect(Collectors.groupingBy(Organization::getAreaId));
+
+        List<Long> areaIds = organizationList.stream().map(Organization::getAreaId).distinct().collect(Collectors.toList());
+        if(areaIds.size()>0){
+            List<Area> areaList = areaService.listByIds(areaIds);
+            // 地区对应的省份
 
 
+        }
         return Collections.emptyList();
+    }
+
+    /**
+     * 获取的地区id，包括省和市
+     * @param regionId 地区id
+     * @param provinceId 省份id
+     * @param cityId 城市id
+     * @return 地区和城市id
+     */
+    private List<Long> getAreaIdList(Long regionId, Long provinceId, Long cityId) {
+        List<Long> areaIdList = new ArrayList<>();
+        // 根据地区，省市，城市查机构
+        if(Objects.isNull(cityId)){
+            // 城市id为空的话，去查省
+            if(Objects.isNull(provinceId)){
+                // 省份id，为空的话去查地区
+                if(Objects.nonNull(regionId)){
+                    // 根据地区查
+                    List<Area> areaList = regionProvinceService.listByRegionId(regionId.intValue());
+                    List<Long> cityIdList = areaList.stream().map(Area::getId).collect(Collectors.toList());
+                    areaIdList.addAll(cityIdList);
+
+                    QueryWrapper<RegionProvince> regionProvinceQueryWrapper = new QueryWrapper<>();
+                    regionProvinceQueryWrapper.eq("region_id",regionId);
+                    List<RegionProvince> regionProvinceList = regionProvinceService.list(regionProvinceQueryWrapper);
+                    List<Integer> provinceIds = regionProvinceList.stream().map(RegionProvince::getProvinceId).collect(Collectors.toList());
+                    for (Integer id : provinceIds) {
+                        areaIdList.add(id.longValue());
+                    }
+                }
+            }else {
+                // 省份有数据，根据省份查询
+
+                QueryWrapper<Area> areaQueryWrapper = new QueryWrapper<>();
+                areaQueryWrapper.eq("parent_id",provinceId);
+                List<Area> list = areaService.list(areaQueryWrapper);
+                List<Long> cityIds = list.stream().map(Area::getId).collect(Collectors.toList());
+                areaIdList.add(provinceId);
+                areaIdList.addAll(cityIds);
+            }
+        }else {
+            // 根据城市查询
+            areaIdList.add(cityId);
+        }
+        return areaIdList;
     }
 
     private void dealOrganizationFront(OrganizationFrontVO organizationFrontVO, Organization organization) {

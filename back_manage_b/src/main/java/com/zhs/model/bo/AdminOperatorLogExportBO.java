@@ -16,24 +16,24 @@ import java.util.Date;
 @Data
 public class AdminOperatorLogExportBO {
 
-    @ExcelProperty(index = 0)
+    @ExcelProperty(value = "操作类型",index = 0)
     @ApiModelProperty(value = "操作类型")
     private String operatorType;
 
-    @ExcelProperty(index = 1)
+    @ExcelProperty(value = "管理员id",index = 1)
     @ApiModelProperty(value = "管理员id")
     private Long adminId;
 
-    @ExcelProperty(index = 2)
+    @ExcelProperty(value = "管理员名称",index = 2)
     @ApiModelProperty(value = "管理员名称")
     private String adminName;
 
-    @ExcelProperty(index = 3)
+    @ExcelProperty(value = "接口描述",index = 3)
     @ApiModelProperty(value = "接口描述")
     private String interfaceDesc;
 
-    @ExcelProperty(index = 4)
+    @ExcelProperty(value = "接口描述",index = 4)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
-    @ApiModelProperty(value = "操作时间")
+    @ApiModelProperty(value = "接口描述")
     private Date createTime;
 }

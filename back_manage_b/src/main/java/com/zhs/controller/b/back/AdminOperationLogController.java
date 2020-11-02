@@ -10,6 +10,7 @@ import com.zhs.model.vo.AdminOperationLogVO;
 import com.zhs.service.AdminOperationLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -60,7 +61,7 @@ public class AdminOperationLogController {
     }
     @ApiOperation(value = "导出操作历史",tags = "查询")
     @PostMapping("export/admin_operator_log")
-    public void export(@RequestParam Long adminId,@RequestParam Date startTime,@RequestParam Date endTime, HttpServletResponse response){
+    public void export(@RequestParam Long adminId, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startTime, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endTime, HttpServletResponse response){
         adminOperationLogService.export(adminId,startTime,endTime,response);
     }
 

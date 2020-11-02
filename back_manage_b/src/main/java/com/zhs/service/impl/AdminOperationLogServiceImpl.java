@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,6 +62,11 @@ public class AdminOperationLogServiceImpl extends ServiceImpl<AdminOperationLogM
             }
             adminOperatorLogExportBOS.add(adminOperatorLogExportBO);
         }
+        response.setCharacterEncoding("utf-8");
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename="
+                + new String(("操作记录"+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))).getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1)
+                + ".xlsx");
         ServletOutputStream outputStream;
         try {
             outputStream = response.getOutputStream();

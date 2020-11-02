@@ -36,8 +36,8 @@ public class AdminOperatorLogExportBO implements Serializable {
     @ApiModelProperty(value = "接口描述")
     private String interfaceDesc;
 
-    @ExcelProperty(value = "接口描述",index = 4)
+    @ExcelProperty(value = "操作时间",index = 4)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
-    @ApiModelProperty(value = "接口描述")
+    @ApiModelProperty(value = "操作时间")
     private Date createTime;
 }

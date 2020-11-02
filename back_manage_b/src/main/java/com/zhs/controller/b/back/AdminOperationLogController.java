@@ -59,7 +59,7 @@ public class AdminOperationLogController {
         adminOperationLogVOPage.setRecords(result);
         return Result.success(adminOperationLogVOPage);
     }
-    @ApiOperation(value = "导出操作历史",tags = "查询")
+    @ApiOperation(value = "导出操作历史",tags = "查询",produces="application/octet-stream")
     @PostMapping("export/admin_operator_log")
     public void export(@RequestParam Long adminId, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startTime, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endTime, HttpServletResponse response){
         adminOperationLogService.export(adminId,startTime,endTime,response);

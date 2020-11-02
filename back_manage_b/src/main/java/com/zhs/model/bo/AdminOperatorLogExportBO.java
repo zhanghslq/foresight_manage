@@ -18,6 +18,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class AdminOperatorLogExportBO implements Serializable {
+    private static final long serialVersionUID=1L;
 
     @ExcelProperty(value = "操作类型",index = 0)
     @ApiModelProperty(value = "操作类型")

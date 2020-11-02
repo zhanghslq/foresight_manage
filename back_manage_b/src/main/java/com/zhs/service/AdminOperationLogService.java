@@ -16,6 +16,13 @@ import java.util.Date;
  */
 public interface AdminOperationLogService extends IService<AdminOperationLog> {
 
+    /**
+     * 导出操作记录
+     * @param adminId 管理员id
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @param response 响应
+     */
     void export(Long adminId, Date startTime, Date endTime, HttpServletResponse response);
 
 }

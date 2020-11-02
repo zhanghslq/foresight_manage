@@ -101,7 +101,7 @@ public class OrganizationFrontController {
     @ApiOperation(value = "根据地区查询机构信息",tags = "查询")
     public Result<List<OrganizationRegionDataVO>> queryByRegionAndProvinceCity(Integer regionId, Integer provinceId, Integer cityId){
         List<OrganizationRegionDataVO> result = organizationService.listByRegionProvinceCityId(regionId,provinceId,cityId);
-        return Result.success(null);
+        return Result.success(result);
     }
 
 

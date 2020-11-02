@@ -76,10 +76,12 @@ public class ConcatRecord implements Serializable {
     @ApiModelProperty(value = "联系次数")
     private Integer concatCount;
 
+    @ExcelProperty(value = "联系日期",index = 8)
     @ApiModelProperty(value = "联系日期")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate contactDate;
 
+    @ExcelProperty(value = "沟通简报",index = 9)
     @ApiModelProperty(value = "沟通简报")
     private String briefing;
 

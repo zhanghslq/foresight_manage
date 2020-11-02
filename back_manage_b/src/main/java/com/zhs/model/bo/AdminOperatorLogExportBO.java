@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -14,7 +16,8 @@ import java.util.Date;
  * @since: 2020/11/2 10:35
  */
 @Data
-public class AdminOperatorLogExportBO {
+@EqualsAndHashCode(callSuper = false)
+public class AdminOperatorLogExportBO implements Serializable {
 
     @ExcelProperty(value = "操作类型",index = 0)
     @ApiModelProperty(value = "操作类型")

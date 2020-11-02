@@ -1,5 +1,6 @@
 package com.zhs.model.bo;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -9,7 +10,12 @@ import lombok.Data;
  */
 @Data
 public class OrganizationCityDataBO {
+    @ApiModelProperty("城市id")
+    private Integer areaId;
+    @ApiModelProperty("城市名")
     private String cityName;
+    @ApiModelProperty("联系人数量")
     private Integer contactCount;
+    @ApiModelProperty("领导人数量")
     private Integer leaderCount;
 }

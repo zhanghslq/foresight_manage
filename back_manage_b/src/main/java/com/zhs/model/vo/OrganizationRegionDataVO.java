@@ -14,6 +14,8 @@ import java.util.List;
  */
 @Data
 public class OrganizationRegionDataVO {
+    @ApiModelProperty("地区id")
+    private Integer regionId;
     @ApiModelProperty("地区名称")
     private String regionName;
 

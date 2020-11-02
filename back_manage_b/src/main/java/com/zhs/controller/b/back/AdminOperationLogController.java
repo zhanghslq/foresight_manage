@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -55,6 +57,11 @@ public class AdminOperationLogController {
         }
         adminOperationLogVOPage.setRecords(result);
         return Result.success(adminOperationLogVOPage);
+    }
+    @ApiOperation(value = "导出操作历史",tags = "查询")
+    @PostMapping("export/admin_operator_log")
+    public void export(@RequestParam Long adminId,@RequestParam Date startTime,@RequestParam Date endTime, HttpServletResponse response){
+        adminOperationLogService.export(adminId,startTime,endTime,response);
     }
 
 }

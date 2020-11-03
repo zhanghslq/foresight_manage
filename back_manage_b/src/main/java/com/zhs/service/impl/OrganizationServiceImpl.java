@@ -457,8 +457,6 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         // 地区的集合
         List<Region> regionList = regionService.list();
 
-        // 地区的id获取地区的map
-        Map<Integer, Region> regionMap = regionList.stream().collect(Collectors.toMap(Region::getId, region -> region, (k1, k2) -> k1));
 
         // 地区和省份的关系集合
         List<RegionProvince> regionProvinceList = regionProvinceService.list();
@@ -491,7 +489,11 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             result.add(organizationRegionDataVO);
         }
 
+        // 地区，对应的省份，
+        Map<Integer, List<OrganizationCityDataBO>> provinceCountMap = new HashMap<>();
+        // 省份，对应的城市
         Map<Integer, List<OrganizationCityDataBO>> cityCountMap = new HashMap<>();
+
 
         if(areaIds.size()>0){
             List<Area> areaList = areaService.listByIds(areaIds);
@@ -514,12 +516,13 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
                 Integer curRegionId = provinceRegionMap.get(areaId.intValue());
                 if(Objects.nonNull(curRegionId)){
-                    dealMap(cityCountMap, organizationCityDataBO, curRegionId);
+                    // 证明是省
+                    dealMap(provinceCountMap, organizationCityDataBO, curRegionId);
                 }else{
+                    // 区或者市
                     Long parentId = area.getParentId();
-                    Integer thisRegionId = provinceRegionMap.get(parentId.intValue());
-                    if(Objects.nonNull(thisRegionId)){
-                        dealMap(cityCountMap, organizationCityDataBO, thisRegionId);
+                    if(Objects.nonNull(parentId)&&parentId!=0){
+                        dealMap(cityCountMap, organizationCityDataBO, parentId.intValue());
                     }
 
                 }
@@ -528,8 +531,13 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         }
         for (OrganizationRegionDataVO organizationRegionDataVO : result) {
             Integer regionId1 = organizationRegionDataVO.getRegionId();
-            List<OrganizationCityDataBO> organizationCityDataBOS = cityCountMap.get(regionId1);
+            List<OrganizationCityDataBO> organizationCityDataBOS = provinceCountMap.get(regionId1);
             if(Objects.nonNull(organizationCityDataBOS)){
+                for (OrganizationCityDataBO organizationCityDataBO : organizationCityDataBOS) {
+                    Integer areaId = organizationCityDataBO.getAreaId();
+                    List<OrganizationCityDataBO> organizationCityDataBOS1 = cityCountMap.get(areaId);
+                    organizationCityDataBO.setCityList(organizationCityDataBOS1);
+                }
                 organizationRegionDataVO.setCityDataBOList(organizationCityDataBOS);
             }
         }

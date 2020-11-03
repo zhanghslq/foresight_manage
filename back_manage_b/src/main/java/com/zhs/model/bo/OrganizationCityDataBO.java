@@ -3,6 +3,8 @@ package com.zhs.model.bo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 地区的简单数据
  * @author: zhs
@@ -18,4 +20,7 @@ public class OrganizationCityDataBO {
     private Integer contactCount;
     @ApiModelProperty("领导人数量")
     private Integer leaderCount;
+
+    @ApiModelProperty("下面的区级列表，如果已经是区级，此为空")
+    private List<OrganizationCityDataBO> cityList;
 }

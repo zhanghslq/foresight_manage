@@ -4,12 +4,14 @@ package com.zhs.controller.b.front;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.common.Result;
 import com.zhs.entity.Area;
+import com.zhs.entity.RegionProvince;
 import com.zhs.service.AreaService;
 import com.zhs.service.RegionProvinceService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -45,5 +47,21 @@ public class RegionProvinceController {
         areaQueryWrapper.eq(Objects.nonNull(provinceId),"parent_id",provinceId);
         return Result.success(areaService.list(areaQueryWrapper));
     }
+    @ApiOperation(value = "根据地区获取城市集合",tags = "查询")
+    @PostMapping("list_city/by_region_id")
+    public Result<List<Area>> listCityByRegionId(Integer regionId){
+        return Result.success(regionProvinceService.listCityByRegionId(regionId));
+    }
+    /*@ApiOperation(value = "根据省份数组获取城市集合,多个id逗号相隔",tags = "查询")
+    @PostMapping("list_city/by_region_id")
+    public Result<List<Area>> listCityByProvinceIds(List<Integer> provinceIds){
+        if(provinceIds.size()>0){
+            QueryWrapper<Area> areaQueryWrapper = new QueryWrapper<>();
+            areaQueryWrapper.in("parent_id",provinceIds);
+            List<Area> areaList = areaService.list(areaQueryWrapper);
+        }
+        return Result.success(regionProvinceService.listCityByRegionId());
+    }*/
+
 }
 

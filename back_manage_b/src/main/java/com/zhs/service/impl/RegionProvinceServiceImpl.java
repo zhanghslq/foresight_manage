@@ -41,4 +41,19 @@ public class RegionProvinceServiceImpl extends ServiceImpl<RegionProvinceMapper,
         }
         return Collections.emptyList();
     }
+
+    @Override
+    public List<Area> listCityByRegionId(Integer regionId) {
+        QueryWrapper<RegionProvince> regionProvinceQueryWrapper = new QueryWrapper<>();
+        regionProvinceQueryWrapper.eq(Objects.nonNull(regionId),"region_id",regionId);
+        List<RegionProvince> regionProvinceList = list(regionProvinceQueryWrapper);
+        List<Integer> provinceIds = regionProvinceList.stream().map(RegionProvince::getProvinceId).collect(Collectors.toList());
+        if(provinceIds.size()>0){
+            QueryWrapper<Area> areaQueryWrapper = new QueryWrapper<>();
+            areaQueryWrapper.in("parent_id",provinceIds);
+            List<Area> areaList = areaService.list(areaQueryWrapper);
+            return areaList;
+        }
+        return Collections.emptyList();
+    }
 }

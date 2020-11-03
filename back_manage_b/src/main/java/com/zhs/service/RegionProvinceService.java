@@ -17,4 +17,6 @@ import java.util.List;
 public interface RegionProvinceService extends IService<RegionProvince> {
 
     List<Area> listByRegionId(Integer regionId);
+
+    List<Area> listCityByRegionId(Integer regionId);
 }

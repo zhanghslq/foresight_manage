@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.crypto.interfaces.PBEKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -102,6 +103,15 @@ public class OrganizationFrontController {
     public Result<List<OrganizationRegionDataVO>> queryByRegionAndProvinceCity(Long regionId, Long provinceId, Long cityId){
         List<OrganizationRegionDataVO> result = organizationService.listByRegionProvinceCityId(regionId,provinceId,cityId);
         return Result.success(result);
+    }
+    @PostMapping("list/by_area_id")
+    @ApiOperation(value = "根据地区id查各个机构类型下最顶级机构",tags = "查询")
+    public Result<List<Organization>> listByAreaId(@RequestParam Integer areaId){
+        QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
+        organizationQueryWrapper.eq("area_id",areaId);
+        organizationQueryWrapper.eq("parent_id",0);
+        List<Organization> list = organizationService.list(organizationQueryWrapper);
+        return Result.success(list);
     }
 
 

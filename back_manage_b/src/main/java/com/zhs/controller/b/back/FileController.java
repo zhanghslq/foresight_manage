@@ -1,15 +1,22 @@
 package com.zhs.controller.b.back;
 
+import cn.hutool.core.util.StrUtil;
 import com.zhs.common.Result;
+import com.zhs.entity.Admin;
+import com.zhs.entity.AdminOperationLog;
+import com.zhs.service.AdminOperationLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -26,6 +33,9 @@ import java.time.format.DateTimeFormatter;
 @Api(tags = "文件管理")
 public class FileController {
     private  String prefix = "/data/file/";
+
+    @Resource
+    private AdminOperationLogService adminOperationLogService;
 
     @GetMapping("getFile")
     @ApiOperation(value = "下载文件",tags = "查询")
@@ -105,6 +115,20 @@ public class FileController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        AdminOperationLog adminOperationLog = new AdminOperationLog();
+        Subject subject = SecurityUtils.getSubject();
+        if(subject.isAuthenticated()){
+            try {
+                Object principal = subject.getPrincipal();
+                Long adminId = Long.valueOf(principal.toString());
+                adminOperationLog.setAdminId(adminId);
+                adminOperationLog.setOperatorType("上传");
+                adminOperationLog.setInterfaceDesc("上传文件:"+ StrUtil.blankToDefault(filePath,""));
+            } catch (NumberFormatException e) {
+                adminOperationLog.setAdminId(0L);
+            }
+        }
+        adminOperationLogService.save(adminOperationLog);
         return Result.success(filePath);
     }
 }

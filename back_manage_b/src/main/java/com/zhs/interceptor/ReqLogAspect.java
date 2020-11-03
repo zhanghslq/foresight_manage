@@ -113,6 +113,7 @@ public class ReqLogAspect {
                 !"com.zhs.controller.b.back.OrganizationController".equals(adminOperationLog.getDeclaringName())
                 &&!"com.zhs.controller.b.back.OrganizationController".equals(adminOperationLog.getDeclaringName())
                 &&!"com.zhs.controller.b.back.OrganizationModuleController".equals(adminOperationLog.getDeclaringName())
+                &&!"com.zhs.controller.b.back.FileController".equals(adminOperationLog.getDeclaringName())
         ){
             adminOperationLogService.save(adminOperationLog);
             logId.set(adminOperationLog.getId());

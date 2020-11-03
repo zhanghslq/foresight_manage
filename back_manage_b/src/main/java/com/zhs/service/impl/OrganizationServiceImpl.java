@@ -3,6 +3,7 @@ package com.zhs.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import com.zhs.common.constant.*;
@@ -445,6 +446,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         List<Long> areaIdList = getAreaIdList(regionId, provinceId, cityId);
 
         QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
+        organizationQueryWrapper.isNotNull("organization_type_id");
         if(areaIdList.size()==0){
             // 查全部
             organizationQueryWrapper.isNotNull("area_id");
@@ -467,18 +469,120 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         // 查到的机构列表
         List<Organization> organizationList = list(organizationQueryWrapper);
 
+        List<Long> typeIdList = organizationList.stream().map(Organization::getOrganizationTypeId).collect(Collectors.toList());
+
+        if(typeIdList.size()>0){
+            List<OrganizationType> organizationTypes = organizationTypeService.listByIds(typeIdList);
+            List<Long> noLocationList = organizationTypes.stream().filter(organizationType -> Objects.isNull(organizationType.getHasLocation()) || organizationType.getHasLocation() == 0)
+                    .map(OrganizationType::getId).collect(Collectors.toList());
+            organizationList.removeIf(organization -> noLocationList.contains(organization.getOrganizationTypeId()));
+        }
+
         // 根据地区分组
-        Map<Long, List<Organization>> areaMap = organizationList.stream().filter(organization -> Objects.nonNull(organization.getAreaId())).collect(Collectors.groupingBy(Organization::getAreaId));
+        Map<Long, List<Organization>> areaOrganizationMap = organizationList.stream().filter(organization -> Objects.nonNull(organization.getAreaId())).collect(Collectors.groupingBy(Organization::getAreaId));
 
         List<Long> areaIds = organizationList.stream().map(Organization::getAreaId).distinct().collect(Collectors.toList());
+
+        // 先把地区的放进去
+        for (Region region : regionList) {
+            OrganizationRegionDataVO organizationRegionDataVO = new OrganizationRegionDataVO();
+            organizationRegionDataVO.setRegionId(region.getId());
+            organizationRegionDataVO.setRegionName(region.getName());
+            result.add(organizationRegionDataVO);
+        }
+
+        Map<Integer, List<OrganizationCityDataBO>> cityCountMap = new HashMap<>();
+
         if(areaIds.size()>0){
             List<Area> areaList = areaService.listByIds(areaIds);
-            // 地区对应的省份
+            Map<Long, Area> areaMap = areaList.stream().collect(Collectors.toMap(Area::getId, area -> area, (k1, k2) -> k1));
 
+            Set<Long> areaIdSet = areaOrganizationMap.keySet();
+            for (Long areaId : areaIdSet) {
+                List<Organization> organizations = areaOrganizationMap.get(areaId);
+                // 获取机构的领导人数量和联系人数量
+                Area area = areaMap.get(areaId);
+                OrganizationCityDataBO organizationCityDataBO = new OrganizationCityDataBO();
+                organizationCityDataBO.setAreaId(areaId.intValue());
+                if(Objects.nonNull(area)){
+                    organizationCityDataBO.setCityName(area.getName());
+                }else {
+                    continue;
+                }
+                // 联系人 和领导人数量
+                dealLeaderAndContactCount(organizations,organizationCityDataBO);
 
+                Integer curRegionId = provinceRegionMap.get(areaId.intValue());
+                if(Objects.nonNull(curRegionId)){
+                    dealMap(cityCountMap, organizationCityDataBO, curRegionId);
+                }else{
+                    Long parentId = area.getParentId();
+                    Integer thisRegionId = provinceRegionMap.get(parentId.intValue());
+                    if(Objects.nonNull(thisRegionId)){
+                        dealMap(cityCountMap, organizationCityDataBO, thisRegionId);
+                    }
 
+                }
+
+            }
+        }
+        for (OrganizationRegionDataVO organizationRegionDataVO : result) {
+            Integer regionId1 = organizationRegionDataVO.getRegionId();
+            List<OrganizationCityDataBO> organizationCityDataBOS = cityCountMap.get(regionId1);
+            if(Objects.nonNull(organizationCityDataBOS)){
+                organizationRegionDataVO.setCityDataBOList(organizationCityDataBOS);
+            }
         }
         return result;
+    }
+
+    private void dealMap(Map<Integer, List<OrganizationCityDataBO>> cityCountMap, OrganizationCityDataBO organizationCityDataBO, Integer thisRegionId) {
+        List<OrganizationCityDataBO> organizationCityDataBOS = cityCountMap.get(thisRegionId);
+        if(Objects.isNull(organizationCityDataBOS)){
+            organizationCityDataBOS = new ArrayList<>();
+            cityCountMap.put(thisRegionId,organizationCityDataBOS);
+        }
+        organizationCityDataBOS.add(organizationCityDataBO);
+    }
+
+    private void dealLeaderAndContactCount(List<Organization> organizations, OrganizationCityDataBO organizationCityDataBO) {
+        // 获取机构的联系人和领导人，然后放到后面这个类
+        if(organizations.size()>0){
+            // 获取机构的模块
+            List<Long> organizationIdList = organizations.stream().map(Organization::getId).collect(Collectors.toList());
+            QueryWrapper<OrganizationModule> organizationModuleQueryWrapper = new QueryWrapper<>();
+            organizationModuleQueryWrapper.in("organization_id",organizationIdList);
+            organizationModuleQueryWrapper.in("type",ModuleTypeEnum.LEADER.getId(),ModuleTypeEnum.CONTACTS.getId());
+            // 查到所有的联系人和领导模块
+            List<OrganizationModule> organizationModules = organizationModuleService.list(organizationModuleQueryWrapper);
+            List<OrganizationModule> leaderModuleList = organizationModules.stream().filter(organizationModule -> ModuleTypeEnum.LEADER.getId().equals(organizationModule.getType()))
+                    .collect(Collectors.toList());
+
+            List<OrganizationModule> contactModuleList = organizationModules.stream().filter(organizationModule -> ModuleTypeEnum.CONTACTS.getId().equals(organizationModule.getType()))
+                    .collect(Collectors.toList());
+
+            if(leaderModuleList.size()>0){
+                List<Long> moduleIdList = leaderModuleList.stream().map(OrganizationModule::getId).collect(Collectors.toList());
+                QueryWrapper<Leader> leaderQueryWrapper = new QueryWrapper<>();
+                leaderQueryWrapper.in("module_id",moduleIdList);
+                int count = leaderService.count(leaderQueryWrapper);
+                organizationCityDataBO.setLeaderCount(count);
+            }else {
+                organizationCityDataBO.setLeaderCount(0);
+            }
+
+            if(contactModuleList.size()>0){
+                List<Long> moduleIdList = contactModuleList.stream().map(OrganizationModule::getId).collect(Collectors.toList());
+                QueryWrapper<ModuleContacts> moduleContactsQueryWrapper = new QueryWrapper<>();
+                moduleContactsQueryWrapper.in("module_id",moduleIdList);
+                int count = moduleContactsService.count(moduleContactsQueryWrapper);
+                organizationCityDataBO.setContactCount(count);
+            }else {
+                organizationCityDataBO.setContactCount(0);
+            }
+
+        }
+
     }
 
     /**

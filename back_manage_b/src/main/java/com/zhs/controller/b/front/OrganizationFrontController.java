@@ -115,6 +115,7 @@ public class OrganizationFrontController {
         QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
         organizationQueryWrapper.eq("area_id",areaId);
         organizationQueryWrapper.eq("parent_id",0);
+        organizationQueryWrapper.isNotNull("organization_type_id");
         List<Organization> list = organizationService.list(organizationQueryWrapper);
         List<Long> organizationTypeIdList = list.stream().filter(organization -> Objects.nonNull(organization.getOrganizationTypeId()))
                 .map(Organization::getOrganizationTypeId).collect(Collectors.toList());

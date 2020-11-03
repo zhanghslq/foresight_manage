@@ -450,7 +450,22 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             // 根据areaId查
             organizationQueryWrapper.in("area_id",areaIdList);
         }
+        // 地区的集合
+        List<Region> regionList = regionService.list();
+
+        // 地区的id获取地区的map
+        Map<Integer, Region> regionMap = regionList.stream().collect(Collectors.toMap(Region::getId, region -> region, (k1, k2) -> k1));
+
+        // 地区和省份的关系集合
+        List<RegionProvince> regionProvinceList = regionProvinceService.list();
+
+        // 省份对应的地区
+        Map<Integer, Integer> provinceRegionMap = regionProvinceList.stream().collect(Collectors.toMap(RegionProvince::getProvinceId, RegionProvince::getRegionId, (k1, k2) -> k1));
+
+        // 查到的机构列表
         List<Organization> organizationList = list(organizationQueryWrapper);
+
+        // 根据地区分组
         Map<Long, List<Organization>> areaMap = organizationList.stream().filter(organization -> Objects.nonNull(organization.getAreaId())).collect(Collectors.groupingBy(Organization::getAreaId));
 
         List<Long> areaIds = organizationList.stream().map(Organization::getAreaId).distinct().collect(Collectors.toList());
@@ -459,6 +474,9 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             // 地区对应的省份
 
 
+
+        }else {
+            // 查全部的
         }
         return Collections.emptyList();
     }

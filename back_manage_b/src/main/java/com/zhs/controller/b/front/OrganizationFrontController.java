@@ -7,6 +7,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.common.Result;
 import com.zhs.entity.Organization;
 import com.zhs.entity.OrganizationTag;
+import com.zhs.entity.OrganizationType;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.dto.OrganizationDTO;
 import com.zhs.model.vo.OrganizationFrontVO;
@@ -15,6 +16,7 @@ import com.zhs.model.vo.OrganizationRegionDataVO;
 import com.zhs.model.vo.OrganizationVO;
 import com.zhs.service.OrganizationService;
 import com.zhs.service.OrganizationTagService;
+import com.zhs.service.OrganizationTypeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -28,6 +30,7 @@ import javax.crypto.interfaces.PBEKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -46,6 +49,8 @@ public class OrganizationFrontController {
     private OrganizationService organizationService;
     @Resource
     private OrganizationTagService organizationTagService;
+    @Resource
+    private OrganizationTypeService organizationTypeService;
 
 
     @ApiOperation(value = "根据类型获取组织列表（军，政，法等）",tags = "查询")
@@ -111,6 +116,15 @@ public class OrganizationFrontController {
         organizationQueryWrapper.eq("area_id",areaId);
         organizationQueryWrapper.eq("parent_id",0);
         List<Organization> list = organizationService.list(organizationQueryWrapper);
+        List<Long> organizationTypeIdList = list.stream().filter(organization -> Objects.nonNull(organization.getOrganizationTypeId()))
+                .map(Organization::getOrganizationTypeId).collect(Collectors.toList());
+        List<OrganizationType> organizationTypes = new ArrayList<>();
+        if(organizationTypeIdList.size()>0){
+            organizationTypes = organizationTypeService.listByIds(organizationTypeIdList);
+        }
+        List<Long> hasLocationTypeIdList = organizationTypes.stream().filter(organizationType -> Objects.nonNull(organizationType.getHasLocation()) && organizationType.getHasLocation() == 1)
+                .map(OrganizationType::getId).collect(Collectors.toList());
+        list.removeIf(organization -> !hasLocationTypeIdList.contains(organization.getId()));
         return Result.success(list);
     }
 

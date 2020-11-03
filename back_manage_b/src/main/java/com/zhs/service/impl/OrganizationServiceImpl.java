@@ -440,6 +440,8 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
     @Override
     public List<OrganizationRegionDataVO> listByRegionProvinceCityId(Long regionId, Long provinceId, Long cityId) {
+        List<OrganizationRegionDataVO> result = new ArrayList<>();
+
         List<Long> areaIdList = getAreaIdList(regionId, provinceId, cityId);
 
         QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
@@ -475,8 +477,6 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
 
 
-        }else {
-            // 查全部的
         }
         return Collections.emptyList();
     }

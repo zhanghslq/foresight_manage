@@ -124,7 +124,7 @@ public class OrganizationFrontController {
         }
         List<Long> hasLocationTypeIdList = organizationTypes.stream().filter(organizationType -> Objects.nonNull(organizationType.getHasLocation()) && organizationType.getHasLocation() == 1)
                 .map(OrganizationType::getId).collect(Collectors.toList());
-        list.removeIf(organization -> !hasLocationTypeIdList.contains(organization.getId()));
+        list.removeIf(organization -> !hasLocationTypeIdList.contains(organization.getOrganizationTypeId()));
         return Result.success(list);
     }
 

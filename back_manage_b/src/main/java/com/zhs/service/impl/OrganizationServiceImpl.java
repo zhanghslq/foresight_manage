@@ -478,7 +478,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
 
         }
-        return Collections.emptyList();
+        return result;
     }
 
     /**

@@ -588,7 +588,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                 }
             }
         }
-        for (int i=1;i<=15;i++){
+        for (int i=5;i<=15;i++){
             List<ResumeAgeLevelBO> resumeAgeLevelBOList1 = map.get(i);
             Map<Long, List<ResumeAgeLevelBO>> levelMap = new HashMap<>();
             if(Objects.nonNull(resumeAgeLevelBOList1)){

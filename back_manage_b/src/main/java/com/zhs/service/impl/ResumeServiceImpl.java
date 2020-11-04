@@ -556,9 +556,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         List<ResumeAgeLevelVO> result = new ArrayList<>();
         List<ResumeAgeLevelBO> resumeAgeLevelBOList =  resumeMapper.ageLevelList();
 
-        List<Long> levelIdList = resumeAgeLevelBOList.stream().map(ResumeAgeLevelBO::getLevelId).collect(Collectors.toList());
         List<DownBoxData> downBoxDataList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.ORGANIZATION_LEVEL.getId(),ScopeEnum.RESUME.getId());
-        Map<Integer, DownBoxData> dataMap = downBoxDataList.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData -> downBoxData, (k1, k2) -> k1));
         int year = LocalDate.now().getYear();
         Map<Integer, List<ResumeAgeLevelBO>> map = new HashMap<>();
         for (ResumeAgeLevelBO resumeAgeLevelBO : resumeAgeLevelBOList) {

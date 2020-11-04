@@ -93,6 +93,12 @@ public class Contacts implements Serializable {
     @ApiModelProperty(value = "是否与机构关联，默认0未关联，1关联")
     private Integer associatedWithOrganization;
 
+    @ApiModelProperty("是否有微信，0无，1有")
+    private Integer hasWechat;
+
+    @ApiModelProperty("微信号")
+    private String wechatNumber;
+
     @JsonIgnore
     @ApiModelProperty(value = "删除标志")
     @TableLogic

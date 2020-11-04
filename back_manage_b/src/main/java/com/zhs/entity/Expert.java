@@ -95,6 +95,12 @@ public class Expert implements Serializable {
     @ApiModelProperty(value = "细分领域")
     private String subdivisionArea;
 
+    @ApiModelProperty("是否有微信")
+    private Integer hasWechat;
+
+    @ApiModelProperty("微信号")
+    private String wechatNumber;
+
     @ApiModelProperty("管理员id")
     private Long adminId;
 

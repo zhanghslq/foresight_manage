@@ -16,10 +16,14 @@ import com.zhs.entity.*;
 import com.zhs.mapper.ResumeMapper;
 import com.zhs.model.bo.CommonCountBO;
 import com.zhs.model.bo.OrganizationConvertBO;
+import com.zhs.model.bo.ResumeAgeLevelBO;
+import com.zhs.model.bo.ResumeSexLevelBO;
 import com.zhs.model.dto.ExpierenceRecordConvertDTO;
 import com.zhs.model.dto.ResumeConvertDTO;
 import com.zhs.model.dto.ResumeDTO;
 import com.zhs.model.vo.InputStatisticsVO;
+import com.zhs.model.vo.ResumeAgeLevelVO;
+import com.zhs.model.vo.ResumeSexLevelVO;
 import com.zhs.model.vo.ResumeVO;
 import com.zhs.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -27,6 +31,7 @@ import com.zhs.util.AsposeWordUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.omg.CORBA.OBJECT_NOT_EXIST;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -37,6 +42,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -492,6 +498,125 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             inputStatisticsVO.setCount(map.get(commonData.getId().longValue()));
             result.add(inputStatisticsVO);
         }
+        return result;
+    }
+
+    @Override
+    public List<ResumeSexLevelVO> genderRate() {
+        List<ResumeSexLevelVO> result = new ArrayList<>();
+        List<ResumeSexLevelBO> resumeSexLevelBOList = resumeMapper.genderRate();
+        // 性别是处理返回
+        Map<Long, List<ResumeSexLevelBO>> levelMap = resumeSexLevelBOList.stream().collect(Collectors.groupingBy(ResumeSexLevelBO::getLevelId));
+
+        List<DownBoxData> downBoxDataList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.ORGANIZATION_LEVEL.getId(),ScopeEnum.RESUME.getId());
+
+        for (DownBoxData downBoxData : downBoxDataList) {
+            List<ResumeSexLevelBO> resumeSexLevelBOS = levelMap.get(downBoxData.getId().longValue());
+            ResumeSexLevelVO resumeSexLevelVO = new ResumeSexLevelVO();
+            resumeSexLevelVO.setSex("男");
+            resumeSexLevelVO.setName(downBoxData.getName());
+
+            result.add(resumeSexLevelVO);
+
+            ResumeSexLevelVO resumeSexLevelVOWoman = new ResumeSexLevelVO();
+            resumeSexLevelVOWoman.setSex("女");
+            resumeSexLevelVOWoman.setName(downBoxData.getName());
+
+            result.add(resumeSexLevelVOWoman);
+
+            if(Objects.nonNull(resumeSexLevelBOS)){
+                Map<Integer, Integer> map = resumeSexLevelBOS.stream().collect(Collectors.toMap(ResumeSexLevelBO::getSex, ResumeSexLevelBO::getValue, (k1, k2) -> k1));
+                Integer integer = map.get(1);
+                if(Objects.nonNull(integer)){
+                    resumeSexLevelVO.setValue(integer);
+                }else {
+                    resumeSexLevelVO.setValue(0);
+                }
+                Integer integer1 = map.get(0);
+                if(Objects.nonNull(integer1)){
+                    resumeSexLevelVOWoman.setValue(integer1);
+                }else {
+                    resumeSexLevelVOWoman.setValue(0);
+                }
+
+            }else {
+                resumeSexLevelVO.setValue(0);
+                resumeSexLevelVOWoman.setValue(0);
+            }
+
+        }
+
+
+
+        return result;
+    }
+
+    @Override
+    public List<ResumeAgeLevelVO> ageLevelList() {
+        List<ResumeAgeLevelVO> result = new ArrayList<>();
+        List<ResumeAgeLevelBO> resumeAgeLevelBOList =  resumeMapper.ageLevelList();
+
+        List<Long> levelIdList = resumeAgeLevelBOList.stream().map(ResumeAgeLevelBO::getLevelId).collect(Collectors.toList());
+        List<DownBoxData> downBoxDataList = downBoxDataService.listNoTreeByDownBoxTypeAndScope(DownBoxTypeEnum.ORGANIZATION_LEVEL.getId(),ScopeEnum.RESUME.getId());
+        Map<Integer, DownBoxData> dataMap = downBoxDataList.stream().collect(Collectors.toMap(DownBoxData::getId, downBoxData -> downBoxData, (k1, k2) -> k1));
+        int year = LocalDate.now().getYear();
+        Map<Integer, List<ResumeAgeLevelBO>> map = new HashMap<>();
+        for (ResumeAgeLevelBO resumeAgeLevelBO : resumeAgeLevelBOList) {
+            Integer birthYear = resumeAgeLevelBO.getBirthYear();
+            int age = year-birthYear;
+            resumeAgeLevelBO.setAge(age);
+            if(age>=25 && age<75) {
+                int key = age/5;
+                List<ResumeAgeLevelBO> valueList = map.get(key);
+                if(Objects.isNull(valueList)){
+                    valueList = new ArrayList<>();
+                    valueList.add(resumeAgeLevelBO);
+                    map.put(key,valueList);
+                }else {
+                    valueList.add(resumeAgeLevelBO);
+                }
+            }else if(age>75){
+                //大于75岁
+                int key = 15;
+                List<ResumeAgeLevelBO> valueList = map.get(key);
+                if(Objects.isNull(valueList)){
+                    valueList = new ArrayList<>();
+                    valueList.add(resumeAgeLevelBO);
+                    map.put(key,valueList);
+                }else {
+                    valueList.add(resumeAgeLevelBO);
+                }
+            }
+        }
+        for (int i=1;i<=15;i++){
+            List<ResumeAgeLevelBO> resumeAgeLevelBOList1 = map.get(i);
+            Map<Long, List<ResumeAgeLevelBO>> levelMap = new HashMap<>();
+            if(Objects.nonNull(resumeAgeLevelBOList1)){
+                //
+                levelMap = resumeAgeLevelBOList1.stream().collect(Collectors.groupingBy(ResumeAgeLevelBO::getLevelId));
+            }
+
+            for (DownBoxData downBoxData : downBoxDataList) {
+                ResumeAgeLevelVO resumeAgeLevelVO = new ResumeAgeLevelVO();
+                resumeAgeLevelVO.setLevel(downBoxData.getName());
+                int age = i*5;
+                resumeAgeLevelVO.setAge(String.format("%s岁",age));
+                if(Objects.nonNull(resumeAgeLevelBOList1)){
+                    List<ResumeAgeLevelBO> resumeAgeLevelBOList2 = levelMap.get(downBoxData.getId().longValue());
+                    if(Objects.nonNull(resumeAgeLevelBOList2)){
+                        int sum = resumeAgeLevelBOList2.stream().mapToInt(ResumeAgeLevelBO::getValue).sum();
+                        resumeAgeLevelVO.setValue(sum);
+                    }else {
+                        // 此年龄，此级别为空
+                        resumeAgeLevelVO.setValue(0);
+                    }
+                }else {
+                    resumeAgeLevelVO.setValue(0);
+                }
+                result.add(resumeAgeLevelVO);
+            }
+        }
+        
         return result;
     }
 }

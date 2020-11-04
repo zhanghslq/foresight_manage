@@ -3,6 +3,9 @@ package com.zhs.mapper;
 import com.zhs.entity.Resume;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zhs.model.bo.CommonCountBO;
+import com.zhs.model.bo.ResumeAgeLevelBO;
+import com.zhs.model.bo.ResumeSexLevelBO;
+import com.zhs.model.vo.ResumeSexLevelVO;
 
 import java.util.List;
 
@@ -17,5 +20,9 @@ import java.util.List;
 public interface ResumeMapper extends BaseMapper<Resume> {
 
     List<CommonCountBO> countByCurrentStatusId();
+
+    List<ResumeSexLevelBO> genderRate();
+
+    List<ResumeAgeLevelBO> ageLevelList();
 
 }

@@ -15,6 +15,8 @@ import com.zhs.entity.ResumeCompany;
 import com.zhs.model.dto.ResumeDTO;
 import com.zhs.model.dto.ResumeDetailDTO;
 import com.zhs.model.vo.InputStatisticsVO;
+import com.zhs.model.vo.ResumeAgeLevelVO;
+import com.zhs.model.vo.ResumeSexLevelVO;
 import com.zhs.model.vo.ResumeVO;
 import com.zhs.service.DownBoxDataService;
 import com.zhs.service.ExperienceRecordService;
@@ -172,9 +174,9 @@ public class ResumeFrontController {
     }
     @PostMapping("list/gender_and_level")
     @ApiOperation(value = "人事级别性别对比")
-    public Result<Object> genderRate(){
-
-        return Result.success("");
+    public Result<List<ResumeSexLevelVO>> genderRate(){
+        List<ResumeSexLevelVO> resumeSexLevelVO = resumeService.genderRate();
+        return Result.success(resumeSexLevelVO);
     }
     @PostMapping("list/personnel_changes")
     @ApiOperation(value = "人事变化",tags = "查询")
@@ -182,6 +184,12 @@ public class ResumeFrontController {
         // 最近多久的数据
 
         return Result.success("");
+    }
+    @PostMapping("list/age_and_level")
+    @ApiOperation(value = "年龄级别区间",tags = "查询")
+    public Result<List<ResumeAgeLevelVO>> ageLevelList(){
+        List<ResumeAgeLevelVO> resumeAgeLevelVOList = resumeService.ageLevelList();
+        return Result.success(resumeAgeLevelVOList);
     }
 }
 

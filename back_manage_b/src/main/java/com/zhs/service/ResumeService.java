@@ -5,6 +5,8 @@ import com.zhs.entity.Resume;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhs.model.dto.ResumeDTO;
 import com.zhs.model.vo.InputStatisticsVO;
+import com.zhs.model.vo.ResumeAgeLevelVO;
+import com.zhs.model.vo.ResumeSexLevelVO;
 import com.zhs.model.vo.ResumeVO;
 
 import java.util.Date;
@@ -27,4 +29,15 @@ public interface ResumeService extends IService<Resume> {
     List<InputStatisticsVO> expertInputStatistics();
 
 
+    /**
+     * 性别级别分布
+     * @return
+     */
+    List<ResumeSexLevelVO> genderRate();
+
+    /**
+     * 年龄级别分布
+     * @return
+     */
+    List<ResumeAgeLevelVO> ageLevelList();
 }

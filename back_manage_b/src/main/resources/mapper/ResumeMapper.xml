@@ -7,4 +7,15 @@
         where deleted=0
         group by current_status_id
     </select>
+    <select id="genderRate" resultType="com.zhs.model.bo.ResumeSexLevelBO">
+        select sex,level_id as levelId,count(1) as value from resume
+        where sex is not null and level_id is not null
+        group by sex,level_id
+    </select>
+    <select id="ageLevelList" resultType="com.zhs.model.bo.ResumeAgeLevelBO">
+        select DATE_FORMAT(birthday,'%Y') AS birthYear,level_id as levelId,count(1) as value
+        from resume
+        where birthday is not null and level_id is not null
+        group by level_id,DATE_FORMAT(birthday,'%Y')
+    </select>
 </mapper>

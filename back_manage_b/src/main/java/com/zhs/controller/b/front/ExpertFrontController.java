@@ -177,5 +177,12 @@ public class ExpertFrontController {
         List<InputStatisticsVO> inputStatisticsVO = expertService.expertInputStatistics();
         return Result.success(inputStatisticsVO);
     }
+
+    @PostMapping("update")
+    @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
+    @ApiOperation(value = "更新专家方法",tags = "修改")
+    public Result<Boolean> update(@RequestBody Expert expert){
+        return Result.success(expertService.updateById(expert));
+    }
 }
 

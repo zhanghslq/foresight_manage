@@ -149,6 +149,14 @@ public class ContactsFrontController {
         return Result.success(contacts);
     }
 
+    @PostMapping("update")
+    @ApiOperationSupport(ignoreParameters = {"deleted","createTime","updateTime"})
+    @ApiOperation(value = "修改联系人",tags = "修改")
+    public Result<Boolean> update(@RequestBody Contacts contacts){
+        // 这样更改会显得属性有点多，后面可以针对性的进行精简
+        return Result.success(contactsService.updateById(contacts));
+    }
+
 
 }
 

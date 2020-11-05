@@ -71,6 +71,8 @@ public class ResumeRelationshipFrontController {
                 }
                 if(Objects.isNull(resumeRelationshipVO.getRelationship())){
                     resumeRelationshipVO.setRelationship(resumeRelationship.getRelationship());
+                    resumeRelationshipVO.setRelationshipId(resumeRelationship.getRelationshipId());
+                    resumeRelationshipVO.setId(resumeRelationship.getId());
                 }
                 resumeList.add(resume);
             }

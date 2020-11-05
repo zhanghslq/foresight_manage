@@ -23,5 +23,7 @@ public class ResumeRelationshipVO {
     @ApiModelProperty(value = "关系名称")
     private String relationship;
 
+    private Resume resume;
+
     private List<Resume> resumeList;
 }

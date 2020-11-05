@@ -38,7 +38,7 @@ public interface ResumeService extends IService<Resume> {
      */
     List<ResumeAgeLevelVO> ageLevelList();
 
-    List<ResumeLevelAreaVO> listByProvince(Long areaId, Long levelId);
+    List<ResumeLevelAreaVO> listByArea(Long areaId, Long levelId);
 
     List<Resume> listByIdsSelf(List<Long> resumeIds);
 }

@@ -9,7 +9,7 @@ import org.aspectj.lang.annotation.DeclareAnnotation;
  */
 @Data
 public class ResumeLevelAreaVO {
-    private Integer areaId;
+    private Long areaId;
     private String areaName;
     private Integer resumeCount;
 }

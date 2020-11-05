@@ -616,7 +616,8 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
     }
 
     @Override
-    public List<ResumeLevelAreaVO> listByProvince(Long areaId, Long levelId) {
+    public List<ResumeLevelAreaVO> listByArea(Long areaId, Long levelId) {
+        List<ResumeLevelAreaVO> result = new ArrayList<>();
         Assert.notNull(areaId,"地区id不能为空");
         List<Area> areaList = areaService.list();
         List<Area> list = areaList.stream().filter(area -> area.getParentId().equals(areaId)).collect(Collectors.toList());
@@ -625,11 +626,31 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         }
         List<IntegerBO> resumeAreaList = resumeMapper.countByAreaId(levelId);
         for (Area area : list) {
-
+            Long id = area.getId();
+            // 需要处理这个地区下的地区做个集合
+            List<Long> areaIds = new ArrayList<>();
+            areaIds.add(id);
+            dealAreaArray(areaIds,areaList);
+            long count = resumeAreaList.stream().filter(integerBO -> areaIds.contains(integerBO.getId().longValue())).count();
+            if(count!=0){
+                ResumeLevelAreaVO resumeLevelAreaVO = new ResumeLevelAreaVO();
+                resumeLevelAreaVO.setAreaId(area.getId());
+                resumeLevelAreaVO.setAreaName(area.getName());
+                resumeLevelAreaVO.setResumeCount((int) count);
+                result.add(resumeLevelAreaVO);
+            }
         }
-
-
-        return null;
+        List<ResumeLevelAreaVO> sortedResult = result.stream().sorted(Comparator.comparingInt(ResumeLevelAreaVO::getResumeCount).reversed()).collect(Collectors.toList());
+        return sortedResult;
+    }
+    private void dealAreaArray(List<Long> areaIds,List<Area> areaList) {
+        List<Area> sonAreaList = areaList.stream().filter(area -> areaIds.contains(area.getParentId())&&!areaIds.contains(area.getId())).collect(Collectors.toList());
+        if(sonAreaList.size()==0){
+            return;
+        }
+        List<Long> sonAreaIdList = sonAreaList.stream().map(Area::getId).collect(Collectors.toList());
+        areaIds.addAll(sonAreaIdList);
+        dealAreaArray(areaIds,areaList);
     }
 
     @Override

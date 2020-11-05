@@ -188,10 +188,14 @@ public class ResumeFrontController {
         List<ResumeAgeLevelVO> resumeAgeLevelVOList = resumeService.ageLevelList();
         return Result.success(resumeAgeLevelVOList);
     }
-    @PostMapping("list/by_province")
+    @PostMapping("list/by_area")
     @ApiOperation(value = "根据省份为单位的简历级别统计",tags = "查询")
-    public Result<List<ResumeLevelAreaVO>> listByProvince(@RequestParam(required = false,defaultValue = "0")Long areaId,@RequestParam Long levelId){
-        List<ResumeLevelAreaVO> result = resumeService.listByProvince(areaId,levelId);
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "areaId",value = "地区id，默认为0，不传查省份为单位的"),
+            @ApiImplicitParam(name = "levelId",value = "级别id",required = true)
+    })
+    public Result<List<ResumeLevelAreaVO>> listByArea(@RequestParam(required = false,defaultValue = "0")Long areaId,@RequestParam Long levelId){
+        List<ResumeLevelAreaVO> result = resumeService.listByArea(areaId,levelId);
         return Result.success(result);
     }
 

@@ -64,6 +64,13 @@ public class ResumeRelationshipFrontController {
                 //不为空的时候
                 Long relationshipId = resumeRelationship.getId();
                 ResumeRelationshipVO resumeRelationshipVO = relationshipVOHashMap.get(relationshipId);
+                if(Objects.isNull(resumeRelationshipVO)){
+                    resumeRelationshipVO = new ResumeRelationshipVO();
+                    resumeRelationshipVO.setRelationship(resumeRelationship.getRelationship());
+                    resumeRelationshipVO.setRelationshipId(resumeRelationship.getRelationshipId());
+                    resumeRelationshipVO.setId(resumeRelationship.getId());
+                    relationshipVOHashMap.put(relationshipId,resumeRelationshipVO);
+                }
                 List<Resume> resumeList = resumeRelationshipVO.getResumeList();
                 if(Objects.isNull(resumeList)){
                     resumeList = new ArrayList<>();
@@ -77,6 +84,7 @@ public class ResumeRelationshipFrontController {
                 resumeList.add(resume);
             }
         }
+        result = new ArrayList<>(relationshipVOHashMap.values());
         return Result.success(result);
 
     }

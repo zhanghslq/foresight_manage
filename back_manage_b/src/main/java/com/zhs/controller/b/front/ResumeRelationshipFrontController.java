@@ -16,10 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -50,27 +47,35 @@ public class ResumeRelationshipFrontController {
 
         resumeRelationshipQueryWrapper.eq("source_resume_id",sourceResumeId);
         List<ResumeRelationship> list = resumeRelationshipService.list(resumeRelationshipQueryWrapper);
-        List<ResumeRelationshipVO> resumeVOS = new ArrayList<>();
+        List<ResumeRelationshipVO> result = new ArrayList<>();
         if(list.size()==0){
-            return Result.success(resumeVOS);
+            return Result.success(result);
         }
         List<Long> resumeIds = list.stream().map(ResumeRelationship::getTargetResumeId).collect(Collectors.toList());
         List<Resume> resumes = resumeService.listByIds(resumeIds);
 
+        // 关系id对应的简历
+        Map<Long, ResumeRelationshipVO> relationshipVOHashMap = new HashMap<>();
         Map<Long, ResumeRelationship> map = list.stream().collect(Collectors.toMap(ResumeRelationship::getTargetResumeId, resumeRelationship -> resumeRelationship, (k1, k2) -> k1));
         for (Resume resume : resumes) {
-            ResumeRelationshipVO resumeRelationshipVO = new ResumeRelationshipVO();
+
             ResumeRelationship resumeRelationship = map.get(resume.getId());
-            if(!Objects.isNull(resumeRelationship)){
+            if(Objects.nonNull(resumeRelationship)){
                 //不为空的时候
-                BeanUtil.copyProperties(resumeRelationship,resumeRelationshipVO);
-                resumeRelationshipVO.setResume(resume);
-                resumeVOS.add(resumeRelationshipVO);
+                Long relationshipId = resumeRelationship.getId();
+                ResumeRelationshipVO resumeRelationshipVO = relationshipVOHashMap.get(relationshipId);
+                List<Resume> resumeList = resumeRelationshipVO.getResumeList();
+                if(Objects.isNull(resumeList)){
+                    resumeList = new ArrayList<>();
+                    resumeRelationshipVO.setResumeList(resumeList);
+                }
+                if(Objects.isNull(resumeRelationshipVO.getRelationship())){
+                    resumeRelationshipVO.setRelationship(resumeRelationship.getRelationship());
+                }
+                resumeList.add(resume);
             }
-
         }
-
-        return Result.success(resumeVOS);
+        return Result.success(result);
 
     }
 

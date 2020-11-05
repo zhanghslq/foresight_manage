@@ -4,6 +4,9 @@ import com.zhs.entity.Resume;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
+
 /**
  * @author: zhs
  * @date: 2020/8/18 8:53
@@ -20,5 +23,5 @@ public class ResumeRelationshipVO {
     @ApiModelProperty(value = "关系名称")
     private String relationship;
 
-    private Resume resume;
+    private List<Resume> resumeList;
 }

@@ -646,7 +646,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             Date birthday = resume.getBirthday();
             if(Objects.nonNull(birthday)){
                 int i = DateUtil.ageOfNow(birthday);
-
+                resume.setAge(i);
             }
         }
         return resumes;

@@ -14,10 +14,7 @@ import com.zhs.entity.Resume;
 import com.zhs.entity.ResumeCompany;
 import com.zhs.model.dto.ResumeDTO;
 import com.zhs.model.dto.ResumeDetailDTO;
-import com.zhs.model.vo.InputStatisticsVO;
-import com.zhs.model.vo.ResumeAgeLevelVO;
-import com.zhs.model.vo.ResumeSexLevelVO;
-import com.zhs.model.vo.ResumeVO;
+import com.zhs.model.vo.*;
 import com.zhs.service.DownBoxDataService;
 import com.zhs.service.ExperienceRecordService;
 import com.zhs.service.ResumeCompanyService;
@@ -191,5 +188,12 @@ public class ResumeFrontController {
         List<ResumeAgeLevelVO> resumeAgeLevelVOList = resumeService.ageLevelList();
         return Result.success(resumeAgeLevelVOList);
     }
+    @PostMapping("list/by_province")
+    @ApiOperation(value = "根据省份为单位的简历级别统计",tags = "查询")
+    public Result<List<ResumeLevelAreaVO>> listByProvince(@RequestParam(required = false,defaultValue = "0")Long areaId,@RequestParam Long levelId){
+        List<ResumeLevelAreaVO> result = resumeService.listByProvince(areaId,levelId);
+        return Result.success(result);
+    }
+
 }
 

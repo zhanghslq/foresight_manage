@@ -9,13 +9,19 @@
     </select>
     <select id="genderRate" resultType="com.zhs.model.bo.ResumeSexLevelBO">
         select sex,level_id as levelId,count(1) as value from resume
-        where sex is not null and level_id is not null
+        where sex is not null and level_id is not null and deleted=0
         group by sex,level_id
     </select>
     <select id="ageLevelList" resultType="com.zhs.model.bo.ResumeAgeLevelBO">
         select DATE_FORMAT(birthday,'%Y') AS birthYear,level_id as levelId,count(1) as value
         from resume
-        where birthday is not null and level_id is not null
+        where birthday is not null and level_id is not null and deleted=0
         group by level_id,DATE_FORMAT(birthday,'%Y')
+    </select>
+    <select id="countByAreaId" resultType="com.zhs.model.bo.IntegerBO">
+        select area_id as id,count(1) as value from  resume
+        where level_id=#{levelId,jdbcType=BIGINT} and deleted=0
+        and area_id is not null
+        group by area_id
     </select>
 </mapper>

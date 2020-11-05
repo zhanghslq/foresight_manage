@@ -52,7 +52,7 @@ public class ResumeRelationshipFrontController {
             return Result.success(result);
         }
         List<Long> resumeIds = list.stream().map(ResumeRelationship::getTargetResumeId).collect(Collectors.toList());
-        List<Resume> resumes = resumeService.listByIds(resumeIds);
+        List<Resume> resumes = resumeService.listByIdsSelf(resumeIds);
 
         // 关系id对应的简历
         Map<Long, ResumeRelationshipVO> relationshipVOHashMap = new HashMap<>();

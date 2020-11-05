@@ -134,5 +134,9 @@ public class Resume implements Serializable {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
+    @ApiModelProperty("年龄，指定需要才会有，一般不存在")
+    @TableField(exist = false)
+    private Integer age;
+
 
 }

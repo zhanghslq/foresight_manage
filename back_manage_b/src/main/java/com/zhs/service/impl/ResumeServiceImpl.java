@@ -13,18 +13,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zhs.common.constant.DownBoxTypeEnum;
 import com.zhs.common.constant.ScopeEnum;
 import com.zhs.entity.*;
+import com.zhs.exception.MyException;
 import com.zhs.mapper.ResumeMapper;
-import com.zhs.model.bo.CommonCountBO;
-import com.zhs.model.bo.OrganizationConvertBO;
-import com.zhs.model.bo.ResumeAgeLevelBO;
-import com.zhs.model.bo.ResumeSexLevelBO;
+import com.zhs.model.bo.*;
 import com.zhs.model.dto.ExpierenceRecordConvertDTO;
 import com.zhs.model.dto.ResumeConvertDTO;
 import com.zhs.model.dto.ResumeDTO;
-import com.zhs.model.vo.InputStatisticsVO;
-import com.zhs.model.vo.ResumeAgeLevelVO;
-import com.zhs.model.vo.ResumeSexLevelVO;
-import com.zhs.model.vo.ResumeVO;
+import com.zhs.model.vo.*;
 import com.zhs.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.util.AsposeWordUtil;
@@ -58,6 +53,8 @@ import java.util.stream.Collectors;
 @Service
 public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> implements ResumeService {
 
+    @Autowired
+    private AreaService areaService;
 
     @Autowired
     private ExperienceRecordService experienceRecordService;
@@ -616,5 +613,42 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         }
         
         return result;
+    }
+
+    @Override
+    public List<ResumeLevelAreaVO> listByProvince(Long areaId, Long levelId) {
+        Assert.notNull(areaId,"地区id不能为空");
+        List<Area> areaList = areaService.list();
+        List<Area> list = areaList.stream().filter(area -> area.getParentId().equals(areaId)).collect(Collectors.toList());
+        if(list.size()==0){
+            throw new MyException("所选地区下没有地区");
+        }
+        List<IntegerBO> resumeAreaList = resumeMapper.countByAreaId(levelId);
+        for (Area area : list) {
+
+        }
+
+
+        return null;
+    }
+
+    @Override
+    public List<Resume> listByIdsSelf(List<Long> resumeIds) {
+        List<Resume> resumes = listByIds(resumeIds);
+        for (Resume resume : resumes) {
+            Long levelId = resume.getLevelId();
+            if(Objects.nonNull(levelId)){
+                DownBoxData byId = downBoxDataService.getById(levelId);
+                if(Objects.nonNull(byId)){
+                    resume.setLevelName(byId.getName());
+                }
+            }
+            Date birthday = resume.getBirthday();
+            if(Objects.nonNull(birthday)){
+                int i = DateUtil.ageOfNow(birthday);
+
+            }
+        }
+        return resumes;
     }
 }

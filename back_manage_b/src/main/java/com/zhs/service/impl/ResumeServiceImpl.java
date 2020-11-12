@@ -739,14 +739,12 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                     System.out.println(fileSon.getAbsolutePath());
                     FileUtil.copy(absolutePath,prefix+filePath,true);
                     // 拷贝之后需要分析
-                    dealWord(filePath,259L,true,false);
+                    dealWord(filePath,16L,true,false);
                 } catch (IORuntimeException e) {
                     log.error("简历分析失败",e);
                     // 分析出错的放到一个文件夹
                     FileUtil.copy(absolutePath,errorPrefix+filePath,true);
                 }
-
-
             }
         }
     }

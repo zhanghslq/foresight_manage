@@ -166,7 +166,9 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             resumeVO.setResumeCompanyList(resumeCompanyMap.get(record.getId()));
             resumeVO.setPoliticsResumeCompanyList(politicsResumeCompanyMap.get(record.getId()));
             // 行政级别
-            resumeVO.setLevelName(map.get(resumeVO.getLevelId().intValue()));
+            if(Objects.nonNull(resumeVO.getLevelId())){
+                resumeVO.setLevelName(map.get(resumeVO.getLevelId().intValue()));
+            }
             Date birthday = record.getBirthday();
             if(!Objects.isNull(birthday)){
                 int age =DateUtil.ageOfNow(birthday);
@@ -740,8 +742,8 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                         FileUtil.copy(absolutePath,prefix+filePath,true);
                         // 拷贝之后需要分析
                         dealWord(filePath,16L,true,false);
-                    } catch (IORuntimeException e) {
-                        log.error("简历分析失败",e);
+                    } catch (Exception e) {
+                        log.error("简历分析失败{}",fileSon.getName(),e);
                         // 分析出错的放到一个文件夹
                         FileUtil.copy(absolutePath,errorPrefix+filePath,true);
                     }

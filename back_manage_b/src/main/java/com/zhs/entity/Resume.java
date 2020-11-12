@@ -138,5 +138,8 @@ public class Resume implements Serializable {
     @TableField(exist = false)
     private Integer age;
 
+    @ApiModelProperty(value = "简历来源，0普通添加，1直接分析入库")
+    private Integer source;
+
 
 }

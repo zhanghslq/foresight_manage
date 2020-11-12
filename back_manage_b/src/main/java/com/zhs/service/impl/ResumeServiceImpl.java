@@ -4,6 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IORuntimeException;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -26,7 +28,6 @@ import com.zhs.util.AsposeWordUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.omg.CORBA.OBJECT_NOT_EXIST;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -37,7 +38,10 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -189,7 +193,7 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
     }
 
     @Override
-    public ResumeDTO dealWord(String filename, Long currentStatusId) {
+    public ResumeDTO dealWord(String filename, Long currentStatusId, boolean isPushData,boolean isAbsolutePath) {
         String prefix;
         if(System.getProperty("os.name").toLowerCase().startsWith("win")){
             prefix = "c://data/file/";
@@ -200,12 +204,22 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         DownBoxData byId = downBoxDataService.getById(currentStatusId);
         Assert.notNull(byId,"状态不存在");
         ResumeDTO resumeDTO = new ResumeDTO();
-
-        String text = AsposeWordUtil.getText(filename);
+        String text;
+        if(isAbsolutePath){
+            text = AsposeWordUtil.getText(filename);
+        }else {
+            text = AsposeWordUtil.getText(prefix+filename);
+        }
         // 拿到text到php进行请求，获取结果
         try {
 
-            List<String> imageFromWordFile = AsposeWordUtil.exportImageFromWordFile(prefix+filename, prefix);
+            List<String> imageFromWordFile;
+            if(isAbsolutePath){
+                imageFromWordFile = AsposeWordUtil.exportImageFromWordFile(filename, prefix);
+
+            }else {
+                imageFromWordFile = AsposeWordUtil.exportImageFromWordFile(prefix+filename, prefix);
+            }
             if(imageFromWordFile.size()>0){
                 resume.setPhotoUrl(imageFromWordFile.get(0));
             }
@@ -348,7 +362,11 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             });
 
             resume.setWordContent(jsonArray.get(2).toString());
-            //save(resume);
+            if(isPushData){
+                // 自动分析入库的标志
+                resume.setSource(1);
+                save(resume);
+            }
 
             String position = resumeConvertDTO.getPosition();
             // 当前职务
@@ -372,8 +390,10 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                     }
                     resume.setCompany(stringBuilderCompany.toString());
                     resume.setJob(stringBuilderJob.toString());
-                    // updateById(resume);
-                    // resumeCompanyService.saveBatch(resumeCompanies);
+                    if(isPushData){
+                         updateById(resume);
+                         resumeCompanyService.saveBatch(resumeCompanies);
+                    }
                     resumeDTO.setResumeCompanyList(resumeCompanies);
                 }
             }
@@ -397,8 +417,10 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                 }
                 resume.setOrganization(stringBuilderCompany.toString());
                 resume.setOrganizationJob(stringBuilderJob.toString());
-                // updateById(resume);
-                // resumeCompanyService.saveBatch(politicsResumeCompanies);
+                if(isPushData){
+                    updateById(resume);
+                    resumeCompanyService.saveBatch(politicsResumeCompanies);
+                }
                 resumeDTO.setPoliticsResumeCompanyList(politicsResumeCompanies);
             }
 
@@ -432,9 +454,11 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
                     experienceRecord.setJob(expierenceRecordConvertDTO.getPosition());
                     experienceRecords.add(experienceRecord);
                 }
-                /*if(experienceRecords.size()>0){
-                    experienceRecordService.saveBatch(experienceRecords);
-                }*/
+                if(isPushData){
+                    if(experienceRecords.size()>0){
+                        experienceRecordService.saveBatch(experienceRecords);
+                    }
+                }
                 resumeDTO.setExperienceRecordList(experienceRecords);
             }
             resumeDTO.setResume(resume);
@@ -671,5 +695,59 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
             }
         }
         return resumes;
+    }
+
+    @Override
+    public void dealDirectoryResume(String directory) {
+        File file = new File(directory);
+        dealDirectory(file);
+    }
+
+    public void dealDirectory(File file){
+        String prefix;
+        if(System.getProperty("os.name").toLowerCase().startsWith("win")){
+            prefix = "c://data/file/";
+        }else {
+            prefix = "/data/file/";
+        }
+        String errorPrefix;
+        if(System.getProperty("os.name").toLowerCase().startsWith("win")){
+            errorPrefix = "c://home/error/";
+        }else {
+            errorPrefix = "/home/error/";
+        }
+        if(!file.exists()){
+            throw new MyException("文件夹不存在");
+        }
+        if(!file.isDirectory()){
+            return;
+        }
+        File[] files = file.listFiles();
+        LocalDate now = LocalDate.now();
+        String today = now.format(DateTimeFormatter.ofPattern("yyyy-M-d"));
+        for (File fileSon : files) {
+            if(fileSon.isDirectory()){
+                dealDirectory(fileSon);
+            }else {
+                String absolutePath = fileSon.getAbsolutePath();
+                // 把文件夹
+                StringBuilder sb = new StringBuilder();
+                String fileName = fileSon.getName();
+                long currentTimeMillis = System.currentTimeMillis();
+                String filePath = today + "/" + currentTimeMillis + "/" + fileName;
+                try {
+                    System.out.println(fileSon.getAbsolutePath());
+                    FileUtil.copy(absolutePath,prefix+filePath,true);
+                    // 拷贝之后需要分析
+                    dealWord(filePath,259L,true,false);
+                } catch (IORuntimeException e) {
+                    log.error("简历分析失败",e);
+                    // 分析出错的放到一个文件夹
+                    FileUtil.copy(absolutePath,errorPrefix+filePath,true);
+                }
+
+
+            }
+        }
     }
 }

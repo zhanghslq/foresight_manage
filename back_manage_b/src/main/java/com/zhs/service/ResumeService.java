@@ -21,7 +21,14 @@ public interface ResumeService extends IService<Resume> {
 
     Page<ResumeVO> pageSelf(Resume resume, Page<Resume> resumePage, Date createTimeBegin, Date createTimeEnd);
 
-    ResumeDTO dealWord(String filename, Long currentStatusId);
+    /**
+     * @param filename 文件名
+     * @param currentStatusId 类型id
+     * @param isPushData 是否直接入数据库
+     * @param isAbsolutePath 是否是绝对路径
+     * @return
+     */
+    ResumeDTO dealWord(String filename, Long currentStatusId, boolean isPushData,boolean isAbsolutePath);
 
     List<InputStatisticsVO> expertInputStatistics();
 
@@ -41,4 +48,6 @@ public interface ResumeService extends IService<Resume> {
     List<ResumeLevelAreaVO> listByArea(Long areaId, Long levelId);
 
     List<Resume> listByIdsSelf(List<Long> resumeIds);
+
+    void dealDirectoryResume(String directory);
 }

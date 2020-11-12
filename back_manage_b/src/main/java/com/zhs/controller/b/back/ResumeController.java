@@ -22,6 +22,7 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.jsf.FacesContextUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -251,9 +252,15 @@ public class ResumeController {
             @ApiImplicitParam(name = "currentStatusId",value = "状态id，来源与系统配置",required = true)
     })
     public Result<ResumeDTO> getText(@RequestParam String filename,@RequestParam Long currentStatusId){
-        ResumeDTO resumeDTO = resumeService.dealWord(filename,currentStatusId);
+        ResumeDTO resumeDTO = resumeService.dealWord(filename,currentStatusId,false, false);
         return Result.success(resumeDTO);
 
+    }
+    @ApiOperation(value = "批量分析简历并且入库",tags = "查询")
+    @PostMapping("batch/insert_by_directory")
+    public Result<Boolean> dealDirectoryResume(@RequestParam String directory){
+        resumeService.dealDirectoryResume(directory);
+        return Result.success(true);
     }
 
 

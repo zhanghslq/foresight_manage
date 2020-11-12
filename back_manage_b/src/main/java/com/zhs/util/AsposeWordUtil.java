@@ -15,19 +15,13 @@ import java.util.List;
  */
 public class AsposeWordUtil {
     public static String getText(String fileName){
-        String prefix;
-        if(System.getProperty("os.name").toLowerCase().startsWith("win")){
-            prefix = "c://data/file/";
-        }else {
-            prefix = "/data/file/";
-        }
-        File file = new File(prefix + fileName);
+        File file = new File(fileName);
         if(!file.exists()){
             throw new MyException("文件不存在");
         }
         Document nodes;
         try {
-            nodes = new Document(prefix + fileName);
+            nodes = new Document(fileName);
         } catch (Exception e) {
             throw new MyException("word文件解析失败");
         }

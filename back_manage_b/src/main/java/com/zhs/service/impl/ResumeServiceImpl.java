@@ -725,25 +725,26 @@ public class ResumeServiceImpl extends ServiceImpl<ResumeMapper, Resume> impleme
         File[] files = file.listFiles();
         LocalDate now = LocalDate.now();
         String today = now.format(DateTimeFormatter.ofPattern("yyyy-M-d"));
-        for (File fileSon : files) {
-            if(fileSon.isDirectory()){
-                dealDirectory(fileSon);
-            }else {
-                String absolutePath = fileSon.getAbsolutePath();
-                // 把文件夹
-                StringBuilder sb = new StringBuilder();
-                String fileName = fileSon.getName();
-                long currentTimeMillis = System.currentTimeMillis();
-                String filePath = today + "/" + currentTimeMillis + "/" + fileName;
-                try {
-                    System.out.println(fileSon.getAbsolutePath());
-                    FileUtil.copy(absolutePath,prefix+filePath,true);
-                    // 拷贝之后需要分析
-                    dealWord(filePath,16L,true,false);
-                } catch (IORuntimeException e) {
-                    log.error("简历分析失败",e);
-                    // 分析出错的放到一个文件夹
-                    FileUtil.copy(absolutePath,errorPrefix+filePath,true);
+        if(Objects.nonNull(files)){
+            for (File fileSon : files) {
+                if(fileSon.isDirectory()){
+                    dealDirectory(fileSon);
+                }else {
+                    String absolutePath = fileSon.getAbsolutePath();
+                    // 把文件夹
+                    StringBuilder sb = new StringBuilder();
+                    String fileName = fileSon.getName();
+                    long currentTimeMillis = System.currentTimeMillis();
+                    String filePath = today + "/" + currentTimeMillis + "/" + fileName;
+                    try {
+                        FileUtil.copy(absolutePath,prefix+filePath,true);
+                        // 拷贝之后需要分析
+                        dealWord(filePath,16L,true,false);
+                    } catch (IORuntimeException e) {
+                        log.error("简历分析失败",e);
+                        // 分析出错的放到一个文件夹
+                        FileUtil.copy(absolutePath,errorPrefix+filePath,true);
+                    }
                 }
             }
         }

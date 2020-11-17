@@ -726,6 +726,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
         for (Leader leader : leaderList) {
             LeaderBO leaderBO = new LeaderBO();
+            leaderBO.setId(leader.getId());
             leaderBO.setName(leader.getRealName());
             Long resumeId = leader.getResumeId();
             if(Objects.nonNull(resumeId)){

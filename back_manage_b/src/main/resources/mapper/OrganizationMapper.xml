@@ -9,4 +9,15 @@
     <select id="listParentById" resultMap="baseMap">
         select id,name,parent_id from organization where id=#{organizationId,jdbcType=BIGINT}
     </select>
+    <select id="countByAdminId" resultType="com.zhs.model.bo.AdminCountBO">
+        select admin_id,count(1) as value from organization where admin_id in
+        <foreach collection="adminIdList" open="(" close=")" separator="," item="adminId">
+            #{adminId,jdbcType=BIGINT}
+        </foreach>
+        <if test="beginOfToday!=null ">
+            and create_time>#{beginOfToday}
+        </if>
+        and deleted=0
+        group by admin_id
+    </select>
 </mapper>

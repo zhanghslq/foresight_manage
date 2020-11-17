@@ -1,11 +1,9 @@
 package com.zhs.mapper;
 
+import cn.hutool.core.date.DateTime;
 import com.zhs.entity.Resume;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.zhs.model.bo.CommonCountBO;
-import com.zhs.model.bo.IntegerBO;
-import com.zhs.model.bo.ResumeAgeLevelBO;
-import com.zhs.model.bo.ResumeSexLevelBO;
+import com.zhs.model.bo.*;
 import com.zhs.model.vo.ResumeSexLevelVO;
 import org.apache.ibatis.annotations.Param;
 
@@ -28,4 +26,7 @@ public interface ResumeMapper extends BaseMapper<Resume> {
     List<ResumeAgeLevelBO> ageLevelList();
 
     List<IntegerBO> countByAreaId(@Param("levelId") Long levelId);
+
+    List<AdminCountBO> countByAdminId(@Param("adminIdList") List<Long> adminIdList, @Param("beginOfToday") DateTime beginOfToday);
+
 }

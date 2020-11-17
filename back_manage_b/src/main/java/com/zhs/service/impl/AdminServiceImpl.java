@@ -10,6 +10,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.entity.*;
 import com.zhs.exception.MyException;
 import com.zhs.mapper.AdminMapper;
+import com.zhs.mapper.OrganizationMapper;
+import com.zhs.mapper.ResumeMapper;
+import com.zhs.model.bo.AdminCountBO;
 import com.zhs.model.dto.AdminVO;
 import com.zhs.model.vo.AdminAddDataVO;
 import com.zhs.service.*;
@@ -63,6 +66,12 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
 
     @Autowired
     private AdminMapper adminMapper;
+
+    @Autowired
+    private OrganizationMapper organizationMapper;
+
+    @Autowired
+    private ResumeMapper resumeMapper;
 
 
 
@@ -291,30 +300,27 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         if(result.size()>0){
             DateTime beginOfToday = DateUtil.beginOfDay(new Date());
             List<Long> adminIdList = result.stream().map(AdminVO::getId).collect(Collectors.toList());
-            QueryWrapper<Resume> resumeQueryWrapper = new QueryWrapper<>();
-            resumeQueryWrapper.in("admin_id",adminIdList);
-            List<Resume> resumeList = resumeService.list(resumeQueryWrapper);
-            Map<Long, List<Resume>> adminResumeTodayMap = resumeList.stream().filter(resume -> Objects.nonNull(resume.getAdminId()) && Objects.nonNull(resume.getCreateTime()) && resume.getCreateTime().after(beginOfToday))
-                    .collect(Collectors.groupingBy(Resume::getAdminId));
 
-            Map<Long, List<Resume>> adminResumeMap = resumeList.stream().filter(resume -> Objects.nonNull(resume.getAdminId()))
-                    .collect(Collectors.groupingBy(Resume::getAdminId));
+            // 按照admin——id分组
+            List<AdminCountBO> adminCountBOAll = organizationMapper.countByAdminId(adminIdList, null);
+            Map<Long, Integer> adminOrganizationMap = adminCountBOAll.stream().collect(Collectors.toMap(AdminCountBO::getAdminId, AdminCountBO::getValue));
 
-            QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
-            organizationQueryWrapper.in("admin_id",adminIdList);
-            List<Organization> organizationList = organizationService.list(organizationQueryWrapper);
-            Map<Long, List<Organization>> adminOrganizationTodayMap = organizationList.stream().filter(resume -> Objects.nonNull(resume.getAdminId()) && Objects.nonNull(resume.getCreateTime()) && resume.getCreateTime().after(beginOfToday))
-                    .collect(Collectors.groupingBy(Organization::getAdminId));
+            List<AdminCountBO> adminCountBOToday = organizationMapper.countByAdminId(adminIdList, beginOfToday);
+            Map<Long, Integer> adminOrganizationTodayMap = adminCountBOToday.stream().collect(Collectors.toMap(AdminCountBO::getAdminId, AdminCountBO::getValue));
 
-            Map<Long, List<Organization>> adminOrganizationMap = organizationList.stream().filter(resume -> Objects.nonNull(resume.getAdminId()))
-                    .collect(Collectors.groupingBy(Organization::getAdminId));
+
+            List<AdminCountBO> adminCountResumeBOToday = resumeMapper.countByAdminId(adminIdList, beginOfToday);
+            Map<Long, Integer> adminResumeTodayMap = adminCountResumeBOToday.stream().collect(Collectors.toMap(AdminCountBO::getAdminId, AdminCountBO::getValue));
+
+            List<AdminCountBO> adminCountResumeBOAll = resumeMapper.countByAdminId(adminIdList, null);
+            Map<Long, Integer> adminResumeMap = adminCountResumeBOAll.stream().collect(Collectors.toMap(AdminCountBO::getAdminId, AdminCountBO::getValue));
 
             for (AdminVO adminVO : result) {
                 Long id = adminVO.getId();
-                adminVO.setOrganizationTodayCount(Objects.nonNull(adminOrganizationTodayMap.get(id))?adminOrganizationTodayMap.get(id).size():0);
-                adminVO.setOrganizationTotalCount(Objects.nonNull(adminOrganizationMap.get(id))?adminOrganizationMap.get(id).size():0);
-                adminVO.setResumeTodayCount(Objects.nonNull(adminResumeTodayMap.get(id))?adminResumeTodayMap.get(id).size():0);
-                adminVO.setResumetTotalCount(Objects.nonNull(adminResumeMap.get(id))?adminResumeMap.get(id).size():0);
+                adminVO.setOrganizationTodayCount(Objects.nonNull(adminOrganizationTodayMap.get(id))?adminOrganizationTodayMap.get(id):0);
+                adminVO.setOrganizationTotalCount(Objects.nonNull(adminOrganizationMap.get(id))?adminOrganizationMap.get(id):0);
+                adminVO.setResumeTodayCount(Objects.nonNull(adminResumeTodayMap.get(id))?adminResumeTodayMap.get(id):0);
+                adminVO.setResumetTotalCount(Objects.nonNull(adminResumeMap.get(id))?adminResumeMap.get(id):0);
             }
 
         }

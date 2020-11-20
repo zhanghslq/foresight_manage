@@ -9,6 +9,7 @@ import com.zhs.common.Result;
 import com.zhs.common.constant.DownBoxTypeEnum;
 import com.zhs.entity.Contacts;
 import com.zhs.entity.DownBoxData;
+import com.zhs.entity.Expert;
 import com.zhs.model.vo.ContactsVO;
 import com.zhs.service.ContactsService;
 import com.zhs.service.DownBoxDataService;
@@ -155,6 +156,21 @@ public class ContactsFrontController {
     public Result<Boolean> update(@RequestBody Contacts contacts){
         // 这样更改会显得属性有点多，后面可以针对性的进行精简
         return Result.success(contactsService.updateById(contacts));
+    }
+
+
+    @PostMapping("list/concat_contacts")
+    @ApiOperation(value = "获取联系过的联系人",tags = "查询")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "adminId",value = "自己的id",required = true),
+                    @ApiImplicitParam(name = "current",value = "页码，从0开始,默认0"),
+                    @ApiImplicitParam(name = "size",value = "每页的个数，默认20")
+            }
+    )
+    public Result<Page<Contacts>> listContactContacts(@RequestParam Long adminId, @RequestParam(required = false,defaultValue = "0") Integer current, @RequestParam(required = false,defaultValue = "20") Integer size){
+        Page<Contacts> page = contactsService.listContactExpert(adminId,current,size);
+        return Result.success(page);
     }
 
 

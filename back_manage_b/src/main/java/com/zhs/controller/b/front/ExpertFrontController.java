@@ -184,5 +184,19 @@ public class ExpertFrontController {
     public Result<Boolean> update(@RequestBody Expert expert){
         return Result.success(expertService.updateById(expert));
     }
+
+    @PostMapping("list/concat_expert")
+    @ApiOperation(value = "获取联系过的专家",tags = "查询")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "adminId",value = "自己的id",required = true),
+                    @ApiImplicitParam(name = "current",value = "页码，从0开始,默认0"),
+                    @ApiImplicitParam(name = "size",value = "每页的个数，默认20")
+            }
+    )
+    public Result<Page<Expert>> listContactExpert(@RequestParam Long adminId,@RequestParam(required = false,defaultValue = "0") Integer current,@RequestParam(required = false,defaultValue = "20") Integer size){
+        Page<Expert> page = expertService.listContactExpert(adminId,current,size);
+        return Result.success(page);
+    }
 }
 

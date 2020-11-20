@@ -55,6 +55,9 @@ public class ConcatRecord implements Serializable {
     @ApiModelProperty(value = "被联系人姓名")
     private String concatPersonName;
 
+    @ApiModelProperty(value = "联系人类型,0联系人，1专家")
+    private Integer personType;
+
 
     @ExcelIgnore
     @ApiModelProperty(value = "单位(关联组织）")

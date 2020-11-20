@@ -1,14 +1,14 @@
 package com.zhs.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zhs.common.constant.DownBoxTypeEnum;
 import com.zhs.common.constant.DropDownBoxTypeEnum;
 import com.zhs.common.constant.ScopeEnum;
-import com.zhs.entity.CommonData;
-import com.zhs.entity.Contacts;
-import com.zhs.entity.DownBoxData;
+import com.zhs.entity.*;
 import com.zhs.mapper.ContactsMapper;
 import com.zhs.service.CommonDataService;
+import com.zhs.service.ConcatRecordService;
 import com.zhs.service.ContactsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.service.DownBoxDataService;
@@ -36,6 +36,9 @@ public class ContactsServiceImpl extends ServiceImpl<ContactsMapper, Contacts> i
 
     @Autowired
     private DownBoxDataService downBoxDataService;
+
+    @Autowired
+    private ConcatRecordService concatRecordService;
 
     @Override
     public void saveBatchSelf(List<Contacts> readBooks) {
@@ -75,6 +78,29 @@ public class ContactsServiceImpl extends ServiceImpl<ContactsMapper, Contacts> i
             // 组织
 
         }
+
+    }
+
+    @Override
+    public Page<Contacts> listContactExpert(Long adminId, Integer current, Integer size) {
+        Page<Contacts> result = new Page<>();
+        QueryWrapper<ConcatRecord> concatRecordQueryWrapper = new QueryWrapper<>();
+        concatRecordQueryWrapper.eq("operator_id",adminId);
+        concatRecordQueryWrapper.eq("person_type",0);
+        Page<ConcatRecord> concatRecordPage = new Page<>(current,size);
+        Page<ConcatRecord> page = concatRecordService.page(concatRecordPage, concatRecordQueryWrapper);
+        List<ConcatRecord> records = page.getRecords();
+
+        result.setCurrent(page.getCurrent());
+        result.setSize(page.getSize());
+        result.setTotal(page.getTotal());
+
+        if(records.size()>0){
+            List<Long> expertIdList = records.stream().map(ConcatRecord::getConcatPersonId).collect(Collectors.toList());
+            List<Contacts> expertList = listByIds(expertIdList);
+            result.setRecords(expertList);
+        }
+        return result;
 
     }
 }

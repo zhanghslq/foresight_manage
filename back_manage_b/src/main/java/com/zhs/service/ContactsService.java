@@ -1,5 +1,6 @@
 package com.zhs.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zhs.entity.Contacts;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -18,4 +19,6 @@ public interface ContactsService extends IService<Contacts> {
     void saveBatchSelf(List<Contacts> readBooks);
 
     void bindingOrganization(Integer isCompany, Long organizationId, List<Long> contactIds);
+
+    Page<Contacts> listContactExpert(Long adminId, Integer current, Integer size);
 }

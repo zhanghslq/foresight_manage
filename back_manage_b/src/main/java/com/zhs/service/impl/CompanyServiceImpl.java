@@ -303,6 +303,23 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
         return list(companyQueryWrapper);
     }
 
+    @Override
+    public List<Company> listByType(Long typeId) {
+        // 查一下类别的子类别
+        QueryWrapper<OrganizationType> organizationTypeQueryWrapper = new QueryWrapper<>();
+        organizationTypeQueryWrapper.eq("parent_id",typeId);
+
+        List<OrganizationType> typeList = organizationTypeService.list(organizationTypeQueryWrapper);
+        List<Long> typeIdList = typeList.stream().map(OrganizationType::getId).collect(Collectors.toList());
+        typeIdList.add(typeId);
+
+        QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();
+        companyQueryWrapper.in("organization_type_id",typeIdList);
+        List<Company> companyList = list(companyQueryWrapper);
+
+        return companyList;
+    }
+
     private void getContactAndLeader(CompanyVO companyVO, Long organizationId) {
         QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();
         companyQueryWrapper.eq("parent_id",organizationId);

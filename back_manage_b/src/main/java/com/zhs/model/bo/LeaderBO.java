@@ -13,4 +13,5 @@ public class LeaderBO {
     private Long id;
     private String name;
     private Date startTime;
+    private Long resumeId;
 }

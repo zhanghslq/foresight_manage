@@ -67,5 +67,13 @@ public class CompanyFrontController {
         return Result.success(organizationHasParentBO);
     }
 
+    @ApiOperation(value = "根据类别查询下面的企业(包括子类别下的)",tags = "查询")
+    @PostMapping("list/by_type")
+    public Result<List<Company>> listByType(@RequestParam Long typeId){
+
+        List<Company> companyList = companyService.listByType(typeId);
+        return Result.success(companyList);
+    }
+
 }
 

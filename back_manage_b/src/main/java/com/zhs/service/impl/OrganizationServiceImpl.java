@@ -728,6 +728,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             LeaderBO leaderBO = new LeaderBO();
             leaderBO.setId(leader.getId());
             leaderBO.setName(leader.getRealName());
+            leaderBO.setResumeId(leader.getResumeId());
             Long resumeId = leader.getResumeId();
             if(Objects.nonNull(resumeId)){
                 ExperienceRecord experienceRecord = map.get(resumeId);

@@ -319,6 +319,31 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
 
         return companyList;
     }
+    public Integer countByType(Long typeId) {
+        // 查一下类别的子类别
+        QueryWrapper<OrganizationType> organizationTypeQueryWrapper = new QueryWrapper<>();
+        organizationTypeQueryWrapper.eq("parent_id",typeId);
+        List<OrganizationType> typeList = organizationTypeService.list(organizationTypeQueryWrapper);
+        List<Long> typeIdList = typeList.stream().map(OrganizationType::getId).collect(Collectors.toList());
+        typeIdList.add(typeId);
+
+        QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();
+        companyQueryWrapper.in("organization_type_id",typeIdList);
+        int count = count(companyQueryWrapper);
+        return count;
+    }
+    @Override
+    public List<OrganizationType> listTopOrganizationType() {
+        QueryWrapper<OrganizationType> organizationTypeQueryWrapper = new QueryWrapper<>();
+        organizationTypeQueryWrapper.eq("parent_id",0);
+        organizationTypeQueryWrapper.eq("type",RootTypeEnum.COMPANY.getId());
+        List<OrganizationType> list = organizationTypeService.list(organizationTypeQueryWrapper);
+        for (OrganizationType organizationType : list) {
+            Integer count = countByType(organizationType.getId());
+            organizationType.setCompanyCount(count);
+        }
+        return list;
+    }
 
     private void getContactAndLeader(CompanyVO companyVO, Long organizationId) {
         QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();

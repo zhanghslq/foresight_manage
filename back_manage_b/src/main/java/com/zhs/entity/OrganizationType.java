@@ -66,5 +66,7 @@ public class OrganizationType implements Serializable {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
-
+    @ApiModelProperty(value = "下属企业数量")
+    @TableField(exist = false)
+    private Integer companyCount;
 }

@@ -2,6 +2,7 @@ package com.zhs.service;
 
 import com.zhs.entity.Company;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zhs.entity.OrganizationType;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.bo.OrganizationTagBO;
 import com.zhs.model.vo.CompanyVO;
@@ -33,4 +34,8 @@ public interface CompanyService extends IService<Company> {
     List<Company> listByOrganizationType(Long organizationTypeId, Long areaId);
 
     List<Company> listByType(Long typeId);
+
+    List<OrganizationType> listTopOrganizationType();
+
+
 }

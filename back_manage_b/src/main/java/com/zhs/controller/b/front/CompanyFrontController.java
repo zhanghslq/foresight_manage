@@ -5,6 +5,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.common.Result;
 import com.zhs.entity.Company;
 import com.zhs.entity.OrganizationTag;
+import com.zhs.entity.OrganizationType;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.dto.CompanyDTO;
 import com.zhs.model.vo.CompanyVO;
@@ -73,6 +74,13 @@ public class CompanyFrontController {
 
         List<Company> companyList = companyService.listByType(typeId);
         return Result.success(companyList);
+    }
+
+    @ApiOperation(value = "企业的顶级类别",tags = "查询")
+    @PostMapping("list/top_type")
+    public Result<List<OrganizationType>> listTopOrganizationType(){
+        List<OrganizationType> list = companyService.listTopOrganizationType();
+        return Result.success(list);
     }
 
 }

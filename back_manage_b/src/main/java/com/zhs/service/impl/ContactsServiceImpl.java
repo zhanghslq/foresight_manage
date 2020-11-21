@@ -15,9 +15,7 @@ import com.zhs.service.DownBoxDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -97,7 +95,17 @@ public class ContactsServiceImpl extends ServiceImpl<ContactsMapper, Contacts> i
 
         if(records.size()>0){
             List<Long> expertIdList = records.stream().map(ConcatRecord::getConcatPersonId).collect(Collectors.toList());
+            Map<Long, List<ConcatRecord>> map = records.stream().filter(concatRecord -> Objects.nonNull(concatRecord.getConcatPersonId())).collect(Collectors.groupingBy(ConcatRecord::getConcatPersonId));
             List<Contacts> expertList = listByIds(expertIdList);
+            for (Contacts contacts : expertList) {
+                List<ConcatRecord> concatRecords = map.get(contacts.getId());
+                if(Objects.nonNull(concatRecords)){
+                    List<Date> collect = concatRecords.stream().map(ConcatRecord::getCreateTime).collect(Collectors.toList());
+                    Date max = Collections.max(collect);
+                    contacts.setContactTime(max);
+                }
+            }
+
             result.setRecords(expertList);
         }
         return result;

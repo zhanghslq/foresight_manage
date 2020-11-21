@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zhs.common.constant.DownBoxTypeEnum;
 import com.zhs.common.constant.ScopeEnum;
 import com.zhs.entity.ConcatRecord;
+import com.zhs.entity.Contacts;
 import com.zhs.entity.DownBoxData;
 import com.zhs.entity.Expert;
 import com.zhs.exception.MyException;
@@ -127,7 +128,16 @@ public class ExpertServiceImpl extends ServiceImpl<ExpertMapper, Expert> impleme
 
         if(records.size()>0){
             List<Long> expertIdList = records.stream().map(ConcatRecord::getConcatPersonId).collect(Collectors.toList());
+            Map<Long, List<ConcatRecord>> map = records.stream().filter(concatRecord -> Objects.nonNull(concatRecord.getConcatPersonId())).collect(Collectors.groupingBy(ConcatRecord::getConcatPersonId));
             List<Expert> expertList = listByIds(expertIdList);
+            for (Expert expert : expertList) {
+                List<ConcatRecord> concatRecords = map.get(expert.getId());
+                if(Objects.nonNull(concatRecords)){
+                    List<Date> collect = concatRecords.stream().map(ConcatRecord::getCreateTime).collect(Collectors.toList());
+                    Date max = Collections.max(collect);
+                    expert.setContactTime(max);
+                }
+            }
             result.setRecords(expertList);
         }
         return result;

@@ -121,4 +121,8 @@ public class Expert implements Serializable {
     private Date updateTime;
 
 
+    @TableField(exist = false)
+    private Date contactTime;
+
+
 }

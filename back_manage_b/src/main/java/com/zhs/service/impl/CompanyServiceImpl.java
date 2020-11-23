@@ -15,6 +15,7 @@ import com.zhs.model.bo.ContactsBO;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.bo.OrganizationTagBO;
 import com.zhs.model.dto.CompanyImportConvertDTO;
+import com.zhs.model.vo.CompanyDetailVO;
 import com.zhs.model.vo.CompanyTypeVO;
 import com.zhs.model.vo.CompanyVO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -306,6 +307,8 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
 
     @Override
     public List<CompanyTypeVO> listByType(Long typeId) {
+        List<CompanyTypeVO> companyList = new ArrayList<>();
+
         OrganizationType byId = organizationTypeService.getById(typeId);
         if(Objects.isNull(byId)){
             throw new MyException("类别不存在");
@@ -316,15 +319,14 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
         organizationTypeQueryWrapper.eq("parent_id",typeId);
 
         List<OrganizationType> typeList = organizationTypeService.list(organizationTypeQueryWrapper);
-        typeList.add(byId);
+
         List<Long> typeIdList = typeList.stream().map(OrganizationType::getId).collect(Collectors.toList());
-        typeIdList.add(typeId);
-
-
+        if(typeIdList.size()==0){
+            return companyList;
+        }
 
         QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();
         companyQueryWrapper.in("organization_type_id",typeIdList);
-        List<CompanyTypeVO> companyList = new ArrayList<>();
         List<Company> list = list(companyQueryWrapper);
         Map<Long, List<Company>> map = list.stream().collect(Collectors.groupingBy(Company::getOrganizationTypeId));
 
@@ -365,6 +367,58 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
             organizationType.setCompanyCount(count);
         }
         return list;
+    }
+
+    @Override
+    public CompanyDetailVO getDetailById(Long companyId) {
+        CompanyDetailVO companyDetailVO = new CompanyDetailVO();
+        Company company = getById(companyId);
+        Assert.notNull(company,"企业不存在");
+        companyDetailVO.setId(companyId);
+        companyDetailVO.setAddress(company.getAddressDetail());
+        companyDetailVO.setName(company.getName());
+        Long companyLevelId = company.getCompanyLevelId();
+        if(Objects.nonNull(companyLevelId)){
+            DownBoxData byId = downBoxDataService.getById(companyLevelId);
+            if(Objects.nonNull(byId)){
+                companyDetailVO.setLevelName(byId.getName());
+            }
+        }
+        Long organizationTypeId = company.getOrganizationTypeId();
+        if(Objects.nonNull(organizationTypeId)){
+            DownBoxData byId = downBoxDataService.getById(organizationTypeId);
+            if(Objects.nonNull(byId)){
+                companyDetailVO.setTypeName(byId.getName());
+            }
+        }
+        // 查所有的下属企业模块，里面的企业，然后按照上级类型分组
+        QueryWrapper<OrganizationModule> organizationModuleQueryWrapper = new QueryWrapper<>();
+        organizationModuleQueryWrapper.eq("organization_id",companyId);
+        organizationModuleQueryWrapper.eq("is_company",1);
+        organizationModuleQueryWrapper.eq("type",ModuleTypeEnum.COMPANY_CHILDREN.getId());
+        List<OrganizationModule> organizationModuleList = organizationModuleService.list(organizationModuleQueryWrapper);
+        // 查出来下属企业模块
+        if(organizationModuleList.size()>0){
+            List<Long> moduleIdList = organizationModuleList.stream().map(OrganizationModule::getId).collect(Collectors.toList());
+            QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();
+            companyQueryWrapper.in("module_id",moduleIdList);
+            List<Company> companyList = list(companyQueryWrapper);
+            //然后根据上级关系类型进行分组
+            if(companyList.size()>0){
+                List<Long> relationshipIdList = companyList.stream().filter(company1 -> Objects.nonNull(company1.getRelationshipTypeId())).map(Company::getRelationshipTypeId).collect(Collectors.toList());
+                if(relationshipIdList.size()>0){
+                    List<DownBoxData> downBoxDataList = downBoxDataService.listByIds(relationshipIdList);
+                    Map<Long, List<Company>> relationshipCompanyMap = companyList.stream().filter(company1 -> Objects.nonNull(company1.getRelationshipTypeId())).collect(Collectors.groupingBy(Company::getRelationshipTypeId));
+                    for (DownBoxData downBoxData : downBoxDataList) {
+                        // 数量，然后添加到结果里面
+                    }
+                }
+            }
+
+        }
+
+
+        return companyDetailVO;
     }
 
     private void getContactAndLeader(CompanyVO companyVO, Long organizationId) {

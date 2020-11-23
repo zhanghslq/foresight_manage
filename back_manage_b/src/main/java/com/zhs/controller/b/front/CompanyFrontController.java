@@ -8,6 +8,7 @@ import com.zhs.entity.OrganizationTag;
 import com.zhs.entity.OrganizationType;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.dto.CompanyDTO;
+import com.zhs.model.vo.CompanyDetailVO;
 import com.zhs.model.vo.CompanyTypeVO;
 import com.zhs.model.vo.CompanyVO;
 import com.zhs.service.CompanyService;
@@ -69,7 +70,7 @@ public class CompanyFrontController {
         return Result.success(organizationHasParentBO);
     }
 
-    @ApiOperation(value = "根据类别查询下面的企业(包括子类别下的)",tags = "查询")
+    @ApiOperation(value = "根据类别查询下面子类别下的企业",tags = "查询")
     @PostMapping("list/by_type")
     public Result<List<CompanyTypeVO>> listByType(@RequestParam Long typeId){
 
@@ -84,6 +85,12 @@ public class CompanyFrontController {
         return Result.success(list);
     }
 
+    @ApiOperation(value = "根据企业id查询详细信息（右边栏）",tags = "查询")
+    @PostMapping("get/by_id")
+    public Result<CompanyDetailVO> getDetailById(@RequestParam Long companyId){
+        CompanyDetailVO companyDetailVO = companyService.getDetailById(companyId);
+        return Result.success(companyDetailVO);
+    }
 
 
 

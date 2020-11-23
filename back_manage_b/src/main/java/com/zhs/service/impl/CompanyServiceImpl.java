@@ -15,6 +15,7 @@ import com.zhs.model.bo.ContactsBO;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.bo.OrganizationTagBO;
 import com.zhs.model.dto.CompanyImportConvertDTO;
+import com.zhs.model.vo.CompanyTypeVO;
 import com.zhs.model.vo.CompanyVO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.service.*;
@@ -304,18 +305,39 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
     }
 
     @Override
-    public List<Company> listByType(Long typeId) {
+    public List<CompanyTypeVO> listByType(Long typeId) {
+        OrganizationType byId = organizationTypeService.getById(typeId);
+        if(Objects.isNull(byId)){
+            throw new MyException("类别不存在");
+        }
+
         // 查一下类别的子类别
         QueryWrapper<OrganizationType> organizationTypeQueryWrapper = new QueryWrapper<>();
         organizationTypeQueryWrapper.eq("parent_id",typeId);
 
         List<OrganizationType> typeList = organizationTypeService.list(organizationTypeQueryWrapper);
+        typeList.add(byId);
         List<Long> typeIdList = typeList.stream().map(OrganizationType::getId).collect(Collectors.toList());
         typeIdList.add(typeId);
 
+
+
         QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();
         companyQueryWrapper.in("organization_type_id",typeIdList);
-        List<Company> companyList = list(companyQueryWrapper);
+        List<CompanyTypeVO> companyList = new ArrayList<>();
+        List<Company> list = list(companyQueryWrapper);
+        Map<Long, List<Company>> map = list.stream().collect(Collectors.groupingBy(Company::getOrganizationTypeId));
+
+        for (OrganizationType organizationType : typeList) {
+            CompanyTypeVO companyTypeVO = new CompanyTypeVO();
+            Long id = organizationType.getId();
+            List<Company> companyList1 = map.get(id);
+            companyTypeVO.setCompanyList(companyList1);
+            companyTypeVO.setCompanyTypeId(id);
+            companyTypeVO.setCompanyTypeName(organizationType.getName());
+            companyList.add(companyTypeVO);
+
+        }
 
         return companyList;
     }

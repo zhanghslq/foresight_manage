@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhs.entity.OrganizationType;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.bo.OrganizationTagBO;
+import com.zhs.model.vo.CompanyTypeVO;
 import com.zhs.model.vo.CompanyVO;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,7 +34,7 @@ public interface CompanyService extends IService<Company> {
 
     List<Company> listByOrganizationType(Long organizationTypeId, Long areaId);
 
-    List<Company> listByType(Long typeId);
+    List<CompanyTypeVO> listByType(Long typeId);
 
     List<OrganizationType> listTopOrganizationType();
 

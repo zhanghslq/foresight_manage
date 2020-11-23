@@ -4,6 +4,7 @@ package com.zhs.controller.b.front;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.zhs.common.Result;
+import com.zhs.common.constant.RootTypeEnum;
 import com.zhs.entity.Organization;
 import com.zhs.entity.OrganizationType;
 import com.zhs.model.bo.OrganizationTypeBO;
@@ -99,6 +100,28 @@ public class OrganizationTypeFrontController {
     public Result<List<Organization>> listSonOrganization(@RequestParam Long organizationTypeId){
         List<Organization> result = organizationTypeService.listSonOrganization(organizationTypeId);
         return Result.success(result);
+    }
+
+    @PostMapping("list/company_organization_type")
+    @ApiOperation(value = "企业的类别查询",tags = "查询")
+    @ApiImplicitParam(name = "hasLocation",value = "是否是地方的，0中央，1地方",required = true)
+    public Result<List<OrganizationType>> listCompanyTypeByLocationId(@RequestParam Integer hasLocation){
+        QueryWrapper<OrganizationType> organizationTypeQueryWrapper = new QueryWrapper<>();
+        organizationTypeQueryWrapper.eq("type", RootTypeEnum.COMPANY.getId());
+        organizationTypeQueryWrapper.eq("has_location",hasLocation);
+        List<OrganizationType> list = organizationTypeService.list(organizationTypeQueryWrapper);
+        return Result.success(list);
+    }
+
+    @PostMapping("list/organization_type")
+    @ApiOperation(value = "组织结构的类别查询",tags = "查询")
+    @ApiImplicitParam(name = "hasLocation",value = "是否是地方的，0中央，1地方",required = true)
+    public Result<List<OrganizationType>> listTypeByLocationId(@RequestParam Integer hasLocation){
+        QueryWrapper<OrganizationType> organizationTypeQueryWrapper = new QueryWrapper<>();
+        organizationTypeQueryWrapper.notIn("type", RootTypeEnum.COMPANY.getId());
+        organizationTypeQueryWrapper.eq("has_location",hasLocation);
+        List<OrganizationType> list = organizationTypeService.list(organizationTypeQueryWrapper);
+        return Result.success(list);
     }
 
 }

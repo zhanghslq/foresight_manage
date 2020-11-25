@@ -600,7 +600,8 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
      * @param cityId 城市id
      * @return 地区和城市id
      */
-    private List<Long> getAreaIdList(Long regionId, Long provinceId, Long cityId) {
+    @Override
+    public List<Long> getAreaIdList(Long regionId, Long provinceId, Long cityId) {
         List<Long> areaIdList = new ArrayList<>();
         // 根据地区，省市，城市查机构
         if(Objects.isNull(cityId)){

@@ -89,6 +89,11 @@ public class AdminFrontController {
         return Result.success(adminService.listPageByAdminId(adminId));
     }
 
-
+    @PostMapping("add/online_time")
+    @ApiOperation(value = "增加在线时长",tags = "查询")
+    public Result<Boolean> addOnlineTime(@RequestParam Long adminId){
+        adminService.addOnLineTime(adminId);
+        return Result.success(true);
+    }
 
 }

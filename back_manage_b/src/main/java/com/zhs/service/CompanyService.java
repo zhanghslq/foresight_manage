@@ -6,6 +6,7 @@ import com.zhs.entity.OrganizationType;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.bo.OrganizationTagBO;
 import com.zhs.model.vo.CompanyDetailVO;
+import com.zhs.model.vo.CompanyModuleVO;
 import com.zhs.model.vo.CompanyTypeVO;
 import com.zhs.model.vo.CompanyVO;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,4 +42,6 @@ public interface CompanyService extends IService<Company> {
 
 
     CompanyDetailVO getDetailById(Long companyId);
+
+    List<CompanyModuleVO> listByRegionProvinceCityId(Long regionId, Long provinceId, Long cityId);
 }

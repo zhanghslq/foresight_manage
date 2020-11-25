@@ -9,6 +9,7 @@ import com.zhs.entity.OrganizationType;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.dto.CompanyDTO;
 import com.zhs.model.vo.CompanyDetailVO;
+import com.zhs.model.vo.CompanyModuleVO;
 import com.zhs.model.vo.CompanyTypeVO;
 import com.zhs.model.vo.CompanyVO;
 import com.zhs.service.CompanyService;
@@ -92,6 +93,12 @@ public class CompanyFrontController {
         return Result.success(companyDetailVO);
     }
 
+    @ApiOperation(value = "地区国企检索",tags = "查询")
+    @PostMapping("list/by_area")
+    public Result<Object> listByArea(Long regionId, Long provinceId, Long cityId){
+        List<CompanyModuleVO> list = companyService.listByRegionProvinceCityId(regionId,provinceId,cityId);
+        return Result.success(list);
+    }
 
 
 }

@@ -16,6 +16,7 @@ import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.bo.OrganizationTagBO;
 import com.zhs.model.dto.CompanyImportConvertDTO;
 import com.zhs.model.vo.CompanyDetailVO;
+import com.zhs.model.vo.CompanyModuleVO;
 import com.zhs.model.vo.CompanyTypeVO;
 import com.zhs.model.vo.CompanyVO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -72,10 +73,17 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
     @Autowired
     private AreaService areaService;
 
+    @Autowired
+    private RegionService regionService;
 
+    @Autowired
+    private RegionProvinceService regionProvinceService;
 
     @Autowired
     private DownBoxDataService downBoxDataService;
+
+    @Autowired
+    private OrganizationService organizationService;
 
     @Override
     public CompanyVO queryByOrganizationType(Long organizationTypeId, Long areaId) {
@@ -419,6 +427,61 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
 
 
         return companyDetailVO;
+    }
+
+    @Override
+    public List<CompanyModuleVO> listByRegionProvinceCityId(Long regionId, Long provinceId, Long cityId) {
+
+        List<CompanyModuleVO> result = new ArrayList<>();
+
+        List<Long> areaIdList = organizationService.getAreaIdList(regionId, provinceId, cityId);
+
+        QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();
+        companyQueryWrapper.isNotNull("organization_type_id");
+        if(areaIdList.size()==0){
+            // 查全部
+            companyQueryWrapper.isNotNull("area_id");
+        }else {
+            // 根据areaId查
+            companyQueryWrapper.in("area_id",areaIdList);
+        }
+        // 地区的集合
+        List<Region> regionList = regionService.list();
+        // 地区和省份的关系集合
+        List<RegionProvince> regionProvinceList = regionProvinceService.list();
+
+        // 省份对应的地区
+        Map<Integer, Integer> provinceRegionMap = regionProvinceList.stream().collect(Collectors.toMap(RegionProvince::getProvinceId, RegionProvince::getRegionId, (k1, k2) -> k1));
+
+        List<Company> companyList = list(companyQueryWrapper);
+        if(companyList.size()>0){
+            // 查询这些企业的下属企业模板，然后对应的下属企业
+            List<Long> companyIdList = companyList.stream().map(Company::getId).collect(Collectors.toList());
+            QueryWrapper<OrganizationModule> organizationModuleQueryWrapper = new QueryWrapper<>();
+            organizationModuleQueryWrapper.eq("is_company",1);
+            organizationModuleQueryWrapper.eq("type",ModuleTypeEnum.COMPANY_CHILDREN.getId());
+            organizationModuleQueryWrapper.in("organization_id",companyIdList);
+            List<OrganizationModule> moduleList = organizationModuleService.list(organizationModuleQueryWrapper);
+            if(moduleList.size()>0){
+                List<Long> moduleIdList = moduleList.stream().map(OrganizationModule::getId).collect(Collectors.toList());
+                // 子企业
+                QueryWrapper<Company> companySonQueryWrapper = new QueryWrapper<>();
+                companySonQueryWrapper.in("module_id",moduleIdList);
+                List<Company> list = list(companySonQueryWrapper);
+                Map<Long, List<Company>> companyMap = list.stream().collect(Collectors.groupingBy(Company::getModuleId));
+                for (OrganizationModule organizationModule : moduleList) {
+                    CompanyModuleVO companyModuleVO = new CompanyModuleVO();
+                    Long id = organizationModule.getId();
+                    String name = organizationModule.getName();
+                    companyModuleVO.setModuleId(id);
+                    companyModuleVO.setModuleName(name);
+                    List<Company> companyListThis = companyMap.get(id);
+                    companyModuleVO.setCompanyList(companyListThis);
+                    result.add(companyModuleVO);
+                }
+            }
+        }
+        return result;
     }
 
     private void getContactAndLeader(CompanyVO companyVO, Long organizationId) {

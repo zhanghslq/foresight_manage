@@ -39,4 +39,6 @@ public interface OrganizationService extends IService<Organization> {
     OrganizationFrontVO queryFrontByParentId(Long id);
 
     List<OrganizationRegionDataVO> listByRegionProvinceCityId(Long regionId, Long provinceId, Long cityId);
+
+    public List<Long> getAreaIdList(Long regionId, Long provinceId, Long cityId);
 }

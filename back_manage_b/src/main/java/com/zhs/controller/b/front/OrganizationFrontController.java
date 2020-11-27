@@ -129,6 +129,14 @@ public class OrganizationFrontController {
         return Result.success(list);
     }
 
+    @ApiOperation(value = "根据标签查询机构",tags = "查询")
+    @PostMapping("list/by_tag")
+    public Result<Object> listByTag(List<Long> tagIds){
+
+
+
+        return Result.success(null);
+    }
 
 }
 

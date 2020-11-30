@@ -131,12 +131,12 @@ public class OrganizationFrontController {
     @ApiOperation(value = "根据标签查询机构",tags = "查询")
     @PostMapping("list/by_tag")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "tagIds",value = "标签id，多个逗号相隔",required = true),
+            @ApiImplicitParam(name = "tagName",value = "标签名称"),
             @ApiImplicitParam(name = "areaId",value = "地区id")
     })
-    public Result<List<OrganizationSearchVO>> listByTag(String tagName,@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")Date createTimeBegin,
+    public Result<List<OrganizationSearchVO>> listByTag(String tagName,String organizationName,@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")Date createTimeBegin,
                                     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date createTimeEnd,@DateTimeFormat(pattern = "yyyy-MM-dd")Date updateTime,Long areaId){
-        List<OrganizationSearchVO> result = organizationService.listByTag(tagName,createTimeBegin,createTimeEnd,updateTime,areaId);
+        List<OrganizationSearchVO> result = organizationService.listByTag(tagName,organizationName,createTimeBegin,createTimeEnd,updateTime,areaId);
         return Result.success(result);
     }
 

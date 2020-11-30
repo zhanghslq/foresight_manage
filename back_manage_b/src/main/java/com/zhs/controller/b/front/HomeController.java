@@ -1,4 +1,4 @@
-package com.zhs.controller.b.back;
+package com.zhs.controller.b.front;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.common.Result;
@@ -23,7 +23,7 @@ import javax.annotation.Resource;
  */
 @RequestMapping("/home")
 @RestController
-@Api(tags = "首页")
+@Api(tags = "首页数据")
 public class HomeController {
 
     @Resource

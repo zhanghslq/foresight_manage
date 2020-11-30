@@ -3,6 +3,7 @@ package com.zhs.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zhs.entity.Contacts;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zhs.model.bo.LongBO;
 
 import java.util.List;
 
@@ -21,4 +22,7 @@ public interface ContactsService extends IService<Contacts> {
     void bindingOrganization(Integer isCompany, Long organizationId, List<Long> contactIds);
 
     Page<Contacts> listContactExpert(Long adminId, Integer current, Integer size);
+
+    List<LongBO> countByOrganizationId(List<Long> organizationIdList);
+
 }

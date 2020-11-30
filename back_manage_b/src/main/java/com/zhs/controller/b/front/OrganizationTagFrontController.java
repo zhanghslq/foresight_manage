@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -31,9 +32,10 @@ public class OrganizationTagFrontController {
 
     @ApiOperation(value = "查询所有的标签",tags = "查询")
     @PostMapping("list")
-    public Result<Object> listTags(){
+    public Result<List<String>> listTags(){
         List<OrganizationTag> list = organizationTagService.list();
-        return Result.success(list);
+        List<String> collect = list.stream().map(OrganizationTag::getName).distinct().collect(Collectors.toList());
+        return Result.success(collect);
     }
 }
 

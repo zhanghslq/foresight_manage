@@ -2,6 +2,10 @@ package com.zhs.mapper;
 
 import com.zhs.entity.Contacts;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zhs.model.bo.LongBO;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +16,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2020-07-11
  */
 public interface ContactsMapper extends BaseMapper<Contacts> {
+
+    List<LongBO> countByOrganizationId(@Param("organizationIdList") List<Long> organizationIdList);
 
 }

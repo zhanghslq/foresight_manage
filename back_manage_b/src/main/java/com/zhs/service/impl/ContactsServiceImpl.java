@@ -7,6 +7,7 @@ import com.zhs.common.constant.DropDownBoxTypeEnum;
 import com.zhs.common.constant.ScopeEnum;
 import com.zhs.entity.*;
 import com.zhs.mapper.ContactsMapper;
+import com.zhs.model.bo.LongBO;
 import com.zhs.service.CommonDataService;
 import com.zhs.service.ConcatRecordService;
 import com.zhs.service.ContactsService;
@@ -110,5 +111,11 @@ public class ContactsServiceImpl extends ServiceImpl<ContactsMapper, Contacts> i
         }
         return result;
 
+    }
+
+    @Override
+    public List<LongBO> countByOrganizationId(List<Long> organizationIdList) {
+
+        return contactsMapper.countByOrganizationId(organizationIdList);
     }
 }

@@ -4,12 +4,10 @@ import com.zhs.entity.Organization;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.bo.OrganizationTagBO;
-import com.zhs.model.vo.OrganizationFrontVO;
-import com.zhs.model.vo.OrganizationInformationVO;
-import com.zhs.model.vo.OrganizationRegionDataVO;
-import com.zhs.model.vo.OrganizationVO;
+import com.zhs.model.vo.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,4 +39,6 @@ public interface OrganizationService extends IService<Organization> {
     List<OrganizationRegionDataVO> listByRegionProvinceCityId(Long regionId, Long provinceId, Long cityId);
 
     public List<Long> getAreaIdList(Long regionId, Long provinceId, Long cityId);
+
+    List<OrganizationSearchVO> listByTag(String tagName, Date createTimeBegin, Date createTimeEnd, Date updateTime, Long areaId);
 }

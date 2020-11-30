@@ -10,10 +10,7 @@ import com.zhs.entity.OrganizationTag;
 import com.zhs.entity.OrganizationType;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.dto.OrganizationDTO;
-import com.zhs.model.vo.OrganizationFrontVO;
-import com.zhs.model.vo.OrganizationInformationVO;
-import com.zhs.model.vo.OrganizationRegionDataVO;
-import com.zhs.model.vo.OrganizationVO;
+import com.zhs.model.vo.*;
 import com.zhs.service.OrganizationService;
 import com.zhs.service.OrganizationTagService;
 import com.zhs.service.OrganizationTypeService;
@@ -22,12 +19,14 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.crypto.interfaces.PBEKey;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -131,11 +130,14 @@ public class OrganizationFrontController {
 
     @ApiOperation(value = "根据标签查询机构",tags = "查询")
     @PostMapping("list/by_tag")
-    public Result<Object> listByTag(List<Long> tagIds){
-
-
-
-        return Result.success(null);
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tagIds",value = "标签id，多个逗号相隔",required = true),
+            @ApiImplicitParam(name = "areaId",value = "地区id")
+    })
+    public Result<List<OrganizationSearchVO>> listByTag(String tagName,@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")Date createTimeBegin,
+                                    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date createTimeEnd,@DateTimeFormat(pattern = "yyyy-MM-dd")Date updateTime,Long areaId){
+        List<OrganizationSearchVO> result = organizationService.listByTag(tagName,createTimeBegin,createTimeEnd,updateTime,areaId);
+        return Result.success(result);
     }
 
 }

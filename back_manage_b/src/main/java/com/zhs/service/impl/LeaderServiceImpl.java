@@ -8,6 +8,7 @@ import com.zhs.common.constant.RootTypeEnum;
 import com.zhs.common.constant.ScopeEnum;
 import com.zhs.exception.MyException;
 import com.zhs.mapper.LeaderMapper;
+import com.zhs.model.bo.LongBO;
 import com.zhs.model.dto.LeaderImportConvertDTO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.service.*;
@@ -52,6 +53,8 @@ public class LeaderServiceImpl extends ServiceImpl<LeaderMapper, Leader> impleme
 
     @Autowired
     private DownBoxDataService downBoxDataService;
+    @Autowired
+    private LeaderMapper leaderMapper;
 
     @Override
     public void listUpload(Long moduleId, MultipartFile file) {
@@ -151,5 +154,11 @@ public class LeaderServiceImpl extends ServiceImpl<LeaderMapper, Leader> impleme
         if(result.size()>0){
             saveBatch(result);
         }
+    }
+
+    @Override
+    public List<LongBO> countByOrganizationId(List<Long> organizationIdList) {
+
+        return leaderMapper.countByOrganizationId(organizationIdList);
     }
 }

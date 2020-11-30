@@ -1,20 +1,16 @@
 package com.zhs.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import com.zhs.common.constant.*;
 import com.zhs.exception.MyException;
 import com.zhs.mapper.OrganizationMapper;
 import com.zhs.model.bo.*;
 import com.zhs.model.dto.OrganizationImportConvertDTO;
-import com.zhs.model.vo.OrganizationFrontVO;
-import com.zhs.model.vo.OrganizationInformationVO;
-import com.zhs.model.vo.OrganizationRegionDataVO;
-import com.zhs.model.vo.OrganizationVO;
+import com.zhs.model.vo.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.service.*;
 import com.zhs.util.EasyExcelUtil;
@@ -637,6 +633,63 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             areaIdList.add(cityId);
         }
         return areaIdList;
+    }
+
+    @Override
+    public List<OrganizationSearchVO> listByTag(String tagName, Date createTimeBegin, Date createTimeEnd, Date updateTime, Long areaId) {
+        List<OrganizationSearchVO> result = new ArrayList<>();
+        if(Objects.isNull(tagName)){
+            return result;
+        }
+        QueryWrapper<OrganizationType> organizationTypeQueryWrapper = new QueryWrapper<>();
+        organizationTypeQueryWrapper.in("name", tagName);
+        organizationTypeQueryWrapper.in("is_company", 0);
+        List<OrganizationTag> organizationTagList = organizationTagService.list();
+        List<Long> organizationIdList = organizationTagList.stream().map(OrganizationTag::getOrganizationId).collect(Collectors.toList());
+        if(organizationIdList.size()==0){
+            return result;
+        }
+
+
+        QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
+        organizationQueryWrapper.in("id",organizationIdList);
+        organizationQueryWrapper.ge(Objects.nonNull(createTimeBegin),"create_time",createTimeBegin);
+        organizationQueryWrapper.le(Objects.nonNull(createTimeEnd),"create_time",createTimeEnd);
+        organizationQueryWrapper.ge(Objects.nonNull(updateTime),"update_time", DateUtil.beginOfDay(updateTime));
+        organizationQueryWrapper.le(Objects.nonNull(updateTime),"update_time", DateUtil.endOfDay(updateTime));
+        organizationQueryWrapper.eq(Objects.nonNull(areaId),"area_id", areaId);
+        List<Organization> organizations = list(organizationQueryWrapper);
+
+        if(organizations.size()==0){
+            return result;
+        }
+
+
+        // 查组织机构的领导人和联系人记录
+        List<LongBO> leaderCountList =leaderService.countByOrganizationId(organizationIdList);
+
+        Map<Long, Integer> leaderMap = leaderCountList.stream().collect(Collectors.toMap(LongBO::getId, LongBO::getCount));
+
+
+        // 联系人的话，需要先找组织机构的联系人模块，然后根据模块获取联系人id
+        List<LongBO> contactsCountList =contactsService.countByOrganizationId(organizationIdList);
+        Map<Long, Integer> contactsMap = contactsCountList.stream().collect(Collectors.toMap(LongBO::getId, LongBO::getCount));
+
+        for (Organization organization : organizations) {
+            Long id = organization.getId();
+            OrganizationSearchVO organizationSearchVO = new OrganizationSearchVO();
+            organizationSearchVO.setId(organization.getId());
+            organizationSearchVO.setName(organization.getName());
+            Integer type = organization.getType();
+            String nameById = RootTypeEnum.getNameById(type);
+            organizationSearchVO.setTypeName(nameById);
+            Integer leaderCount = leaderMap.get(id);
+            organizationSearchVO.setLeaderCount(leaderCount);
+            organizationSearchVO.setContactsCount(contactsMap.get(id));
+            result.add(organizationSearchVO);
+        }
+
+        return result;
     }
 
     private void dealOrganizationFront(OrganizationFrontVO organizationFrontVO, Organization organization) {

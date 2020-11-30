@@ -1,6 +1,10 @@
 package com.zhs.controller.b.back;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhs.common.Result;
+import com.zhs.entity.ConcatRecord;
+import com.zhs.model.vo.HomeVO;
+import com.zhs.service.ConcatRecordService;
 import com.zhs.service.ContactsService;
 import com.zhs.service.ExpertService;
 import com.zhs.service.LeaderService;
@@ -28,15 +32,35 @@ public class HomeController {
     private ContactsService contactsService;
     @Resource
     private ExpertService expertService;
+    @Resource
+    private ConcatRecordService concatRecordService;
 
 
 
     @PostMapping("get/base_count")
     @ApiOperation(value = "首页的统计数据",tags = "查询")
-    public Result<Object> get(){
+    public Result<HomeVO> get(Long adminId){
+        HomeVO homeVO = new HomeVO();
+        int expertCount = expertService.count();
+        int leaderCount = leaderService.count();
+        int contactsCount = contactsService.count();
 
+        QueryWrapper<ConcatRecord> concatRecordQueryWrapper = new QueryWrapper<>();
+        concatRecordQueryWrapper.eq("operator_id",adminId);
+        concatRecordQueryWrapper.eq("person_type",0);
+        int myContactsCount = concatRecordService.count(concatRecordQueryWrapper);
 
-        return Result.success(null);
+        QueryWrapper<ConcatRecord> leaderConcatRecordQueryWrapper = new QueryWrapper<>();
+        leaderConcatRecordQueryWrapper.eq("operator_id",adminId);
+        leaderConcatRecordQueryWrapper.eq("person_type",1);
+        int myExpertCount = concatRecordService.count(leaderConcatRecordQueryWrapper);
+
+        homeVO.setTotalContactsCount(contactsCount);
+        homeVO.setTotalExpertCount(expertCount);
+        homeVO.setTotalLeaderCount(leaderCount);
+        homeVO.setMyContactsCount(myContactsCount);
+        homeVO.setMyExpertCount(myExpertCount);
+        return Result.success(homeVO);
     }
 
 

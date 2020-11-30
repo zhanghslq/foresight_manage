@@ -2,4 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zhs.mapper.ContactsMapper">
 
+    <select id="countByOrganizationId" resultType="com.zhs.model.bo.LongBO">
+        select om.organization_id as id,count(distinct c.id) as count from organization_module om left join module_contacts mc on om.id=mc.module_id
+        left join contacts c on mc.contact_id = c.id
+
+        where om.organization_id in
+        <foreach collection="organizationIdList" open="(" close=")" separator="," item="organizationId">
+            #{organizationId,jdbcType=BIGINT}
+        </foreach>
+        <!-- 下属联系人-->
+        and om.type = 3 and om.is_company=0
+        and om.deleted=0 and mc.deleted=0 and c.deleted=0
+        group by om.organization_id
+    </select>
 </mapper>

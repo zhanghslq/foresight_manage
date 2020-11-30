@@ -2,7 +2,10 @@ package com.zhs.service;
 
 import com.zhs.entity.Leader;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zhs.model.bo.LongBO;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * <p>
@@ -15,4 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface LeaderService extends IService<Leader> {
 
     void listUpload(Long moduleId, MultipartFile file);
+
+    List<LongBO> countByOrganizationId(List<Long> organizationIdList);
+
 }

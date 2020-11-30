@@ -644,7 +644,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
         if(!StringUtils.isEmpty(tagName)){
             QueryWrapper<OrganizationType> organizationTypeQueryWrapper = new QueryWrapper<>();
-            organizationTypeQueryWrapper.in(Objects.nonNull(tagName),"name", tagName);
+            organizationTypeQueryWrapper.in("name", tagName);
             organizationTypeQueryWrapper.in("is_company", 0);
             List<OrganizationTag> organizationTagList = organizationTagService.list();
             organizationIdList = organizationTagList.stream().map(OrganizationTag::getOrganizationId).collect(Collectors.toList());
@@ -659,8 +659,11 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         }
         organizationQueryWrapper.ge(Objects.nonNull(createTimeBegin),"create_time",createTimeBegin);
         organizationQueryWrapper.le(Objects.nonNull(createTimeEnd),"create_time",createTimeEnd);
-        organizationQueryWrapper.ge(Objects.nonNull(updateTime),"update_time", DateUtil.beginOfDay(updateTime));
-        organizationQueryWrapper.le(Objects.nonNull(updateTime),"update_time", DateUtil.endOfDay(updateTime));
+        if(Objects.nonNull(updateTime)){
+            organizationQueryWrapper.ge("update_time", DateUtil.beginOfDay(updateTime));
+            organizationQueryWrapper.le("update_time", DateUtil.endOfDay(updateTime));
+        }
+
         organizationQueryWrapper.eq(Objects.nonNull(areaId),"area_id", areaId);
         organizationQueryWrapper.eq(Objects.nonNull(organizationName),"name", organizationName);
         List<Organization> organizations = list(organizationQueryWrapper);

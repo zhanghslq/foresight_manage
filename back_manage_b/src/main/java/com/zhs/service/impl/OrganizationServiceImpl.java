@@ -637,19 +637,26 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
     @Override
     public List<OrganizationSearchVO> listByTag(String tagName, String organizationName, Date createTimeBegin, Date createTimeEnd, Date updateTime, Long areaId) {
+
+
         List<OrganizationSearchVO> result = new ArrayList<>();
-        QueryWrapper<OrganizationType> organizationTypeQueryWrapper = new QueryWrapper<>();
-        organizationTypeQueryWrapper.in(Objects.nonNull(tagName),"name", tagName);
-        organizationTypeQueryWrapper.in("is_company", 0);
-        List<OrganizationTag> organizationTagList = organizationTagService.list();
-        List<Long> organizationIdList = organizationTagList.stream().map(OrganizationTag::getOrganizationId).collect(Collectors.toList());
-        if(organizationIdList.size()==0){
-            return result;
+        List<Long> organizationIdList = new ArrayList<>();
+
+        if(!StringUtils.isEmpty(tagName)){
+            QueryWrapper<OrganizationType> organizationTypeQueryWrapper = new QueryWrapper<>();
+            organizationTypeQueryWrapper.in(Objects.nonNull(tagName),"name", tagName);
+            organizationTypeQueryWrapper.in("is_company", 0);
+            List<OrganizationTag> organizationTagList = organizationTagService.list();
+            organizationIdList = organizationTagList.stream().map(OrganizationTag::getOrganizationId).collect(Collectors.toList());
+            if(organizationIdList.size()==0){
+                return result;
+            }
         }
 
-
         QueryWrapper<Organization> organizationQueryWrapper = new QueryWrapper<>();
-        organizationQueryWrapper.in("id",organizationIdList);
+        if(organizationIdList.size()>0){
+            organizationQueryWrapper.in("id",organizationIdList);
+        }
         organizationQueryWrapper.ge(Objects.nonNull(createTimeBegin),"create_time",createTimeBegin);
         organizationQueryWrapper.le(Objects.nonNull(createTimeEnd),"create_time",createTimeEnd);
         organizationQueryWrapper.ge(Objects.nonNull(updateTime),"update_time", DateUtil.beginOfDay(updateTime));

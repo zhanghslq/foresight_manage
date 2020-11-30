@@ -3,7 +3,7 @@
 <mapper namespace="com.zhs.mapper.LeaderMapper">
 
     <select id="countByOrganizationId" resultType="com.zhs.model.bo.LongBO">
-        select id,count(1) as count from leader where organization_id in
+        select organization_id as id,count(1) as count from leader where organization_id in
         <foreach collection="organizationIdList" item="organizationId" separator="," close=")" open="(" >
             #{organizationId,jdbcType=BIGINT}
         </foreach>

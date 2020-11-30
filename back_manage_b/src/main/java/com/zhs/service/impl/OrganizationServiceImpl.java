@@ -671,7 +671,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         if(organizations.size()==0){
             return result;
         }
-
+        organizationIdList = organizations.stream().map(Organization::getId).collect(Collectors.toList());
 
         // 查组织机构的领导人和联系人记录
         List<LongBO> leaderCountList =leaderService.countByOrganizationId(organizationIdList);

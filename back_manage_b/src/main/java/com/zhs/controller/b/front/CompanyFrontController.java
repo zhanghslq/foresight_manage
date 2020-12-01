@@ -8,10 +8,7 @@ import com.zhs.entity.OrganizationTag;
 import com.zhs.entity.OrganizationType;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.dto.CompanyDTO;
-import com.zhs.model.vo.CompanyDetailVO;
-import com.zhs.model.vo.CompanyModuleVO;
-import com.zhs.model.vo.CompanyTypeVO;
-import com.zhs.model.vo.CompanyVO;
+import com.zhs.model.vo.*;
 import com.zhs.service.CompanyService;
 import com.zhs.service.OrganizationTagService;
 import io.swagger.annotations.Api;
@@ -95,9 +92,16 @@ public class CompanyFrontController {
 
     @ApiOperation(value = "地区国企检索",tags = "查询")
     @PostMapping("list/by_area")
-    public Result<Object> listByArea(Long regionId, Long provinceId, Long cityId){
+    public Result<List<CompanyModuleVO>> listByArea(Long regionId, Long provinceId, Long cityId){
         List<CompanyModuleVO> list = companyService.listByRegionProvinceCityId(regionId,provinceId,cityId);
         return Result.success(list);
+    }
+    @ApiOperation(value = "根据企业id查详情以及子企业树",tags = "查询")
+    @PostMapping("get_tree/by_id")
+    public Result<CompanyTreeVO> getTreeById(@RequestParam Long id){
+
+        CompanyTreeVO companyTreeVO = companyService.getTreeById(id);
+        return Result.success(companyTreeVO);
     }
 
 

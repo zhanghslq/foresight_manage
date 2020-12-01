@@ -134,8 +134,8 @@ public class OrganizationFrontController {
             @ApiImplicitParam(name = "tagName",value = "标签名称"),
             @ApiImplicitParam(name = "areaId",value = "地区id")
     })
-    public Result<List<OrganizationSearchVO>> listByTag(String tagName,String organizationName,@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")Date createTimeBegin,
-                                    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date createTimeEnd,@DateTimeFormat(pattern = "yyyy-MM-dd")Date updateTime,Long areaId){
+    public Result<List<OrganizationSearchVO>> listByTag(String tagName,String organizationName,@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")Date createTimeBegin,
+                                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date createTimeEnd,@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd")Date updateTime,Long areaId){
         List<OrganizationSearchVO> result = organizationService.listByTag(tagName,organizationName,createTimeBegin,createTimeEnd,updateTime,areaId);
         return Result.success(result);
     }

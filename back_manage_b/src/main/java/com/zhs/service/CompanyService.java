@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhs.entity.OrganizationType;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.bo.OrganizationTagBO;
-import com.zhs.model.vo.CompanyDetailVO;
-import com.zhs.model.vo.CompanyModuleVO;
-import com.zhs.model.vo.CompanyTypeVO;
-import com.zhs.model.vo.CompanyVO;
+import com.zhs.model.vo.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -44,4 +41,6 @@ public interface CompanyService extends IService<Company> {
     CompanyDetailVO getDetailById(Long companyId);
 
     List<CompanyModuleVO> listByRegionProvinceCityId(Long regionId, Long provinceId, Long cityId);
+
+    CompanyTreeVO getTreeById(Long id);
 }

@@ -15,10 +15,7 @@ import com.zhs.model.bo.ContactsBO;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.bo.OrganizationTagBO;
 import com.zhs.model.dto.CompanyImportConvertDTO;
-import com.zhs.model.vo.CompanyDetailVO;
-import com.zhs.model.vo.CompanyModuleVO;
-import com.zhs.model.vo.CompanyTypeVO;
-import com.zhs.model.vo.CompanyVO;
+import com.zhs.model.vo.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhs.service.*;
 import com.zhs.util.EasyExcelUtil;
@@ -482,6 +479,31 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
             }
         }
         return result;
+    }
+
+    @Override
+    public CompanyTreeVO getTreeById(Long id) {
+        CompanyTreeVO companyTreeVO = new CompanyTreeVO();
+        Company company = getById(id);
+        Assert.notNull(company,"企业不存在");
+        companyTreeVO.setCompanyId(company.getId());
+        companyTreeVO.setCompanyName(company.getName());
+        dealSonCompany(companyTreeVO);
+        return companyTreeVO;
+    }
+
+    private void dealSonCompany(CompanyTreeVO companyTreeVO) {
+        Long companyId = companyTreeVO.getCompanyId();
+        QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();
+        companyQueryWrapper.eq("parent_id",companyId);
+        List<Company> companyList = list(companyQueryWrapper);
+        if(companyList.size()==0){
+            // 没有下属企业
+            return;
+        }
+        // 有的话
+
+
     }
 
     private void getContactAndLeader(CompanyVO companyVO, Long organizationId) {

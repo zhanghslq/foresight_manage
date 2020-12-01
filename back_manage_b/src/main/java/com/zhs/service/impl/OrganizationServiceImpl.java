@@ -665,7 +665,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         }
 
         organizationQueryWrapper.eq(Objects.nonNull(areaId),"area_id", areaId);
-        organizationQueryWrapper.eq(Objects.nonNull(organizationName),"name", organizationName);
+        organizationQueryWrapper.like(Objects.nonNull(organizationName),"name", organizationName);
         List<Organization> organizations = list(organizationQueryWrapper);
 
         if(organizations.size()==0){

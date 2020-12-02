@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -134,10 +135,10 @@ public class OrganizationFrontController {
             @ApiImplicitParam(name = "tagName",value = "标签名称"),
             @ApiImplicitParam(name = "areaId",value = "地区id")
     })
-    public Result<List<OrganizationSearchVO>> listByTag(String tagName,String organizationName,@RequestParam(required = false,value = "createTimeBegin") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")Date createTimeBegin,
+    public Result<Page<OrganizationSearchVO>> listByTag(String tagName, String organizationName, @RequestParam(required = false,value = "createTimeBegin") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")Date createTimeBegin,
                                                         @RequestParam(value = "createTimeEnd",required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date createTimeEnd,
-                                                        @RequestParam(required = false,value = "updateTime") @DateTimeFormat(pattern = "yyyy-MM-dd")Date updateTime,Long areaId){
-        List<OrganizationSearchVO> result = organizationService.listByTag(tagName,organizationName,createTimeBegin,createTimeEnd,updateTime,areaId);
+                                                        @RequestParam(required = false,value = "updateTime") @DateTimeFormat(pattern = "yyyy-MM-dd")Date updateTime, Long areaId, Pageable pageable){
+        Page<OrganizationSearchVO> result = organizationService.listByTag(tagName,organizationName,createTimeBegin,createTimeEnd,updateTime,areaId,pageable);
         return Result.success(result);
     }
 

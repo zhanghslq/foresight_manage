@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zhs.common.constant.*;
 import com.zhs.exception.MyException;
 import com.zhs.mapper.OrganizationMapper;
@@ -18,6 +19,7 @@ import com.zhs.entity.*;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -636,18 +638,19 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
     }
 
     @Override
-    public List<OrganizationSearchVO> listByTag(String tagName, String organizationName, Date createTimeBegin, Date createTimeEnd, Date updateTime, Long areaId) {
+    public Page<OrganizationSearchVO> listByTag(String tagName, String organizationName, Date createTimeBegin, Date createTimeEnd, Date updateTime, Long areaId, Pageable pageable) {
 
 
-        List<OrganizationSearchVO> result = new ArrayList<>();
+        Page<OrganizationSearchVO> result = new Page<>();
         List<Long> organizationIdList = new ArrayList<>();
 
+        int size =0;
         if(!StringUtils.isEmpty(tagName)){
-            QueryWrapper<OrganizationType> organizationTypeQueryWrapper = new QueryWrapper<>();
+            QueryWrapper<OrganizationTag> organizationTypeQueryWrapper = new QueryWrapper<>();
             organizationTypeQueryWrapper.in("name", tagName);
             organizationTypeQueryWrapper.in("is_company", 0);
-            List<OrganizationTag> organizationTagList = organizationTagService.list();
-            organizationIdList = organizationTagList.stream().map(OrganizationTag::getOrganizationId).collect(Collectors.toList());
+            List<OrganizationTag> organizationTagList = organizationTagService.list(organizationTypeQueryWrapper);
+            organizationIdList = organizationTagList.stream().map(OrganizationTag::getOrganizationId).distinct().collect(Collectors.toList());
             if(organizationIdList.size()==0){
                 return result;
             }
@@ -666,8 +669,9 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
         organizationQueryWrapper.eq(Objects.nonNull(areaId),"area_id", areaId);
         organizationQueryWrapper.like(Objects.nonNull(organizationName),"name", organizationName);
-        List<Organization> organizations = list(organizationQueryWrapper);
-
+        Page<Organization> organizationPage = new Page<>();
+        Page<Organization> page = page(organizationPage, organizationQueryWrapper);
+        List<Organization> organizations = page.getRecords();
         if(organizations.size()==0){
             return result;
         }
@@ -683,6 +687,8 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         List<LongBO> contactsCountList =contactsService.countByOrganizationId(organizationIdList);
         Map<Long, Integer> contactsMap = contactsCountList.stream().collect(Collectors.toMap(LongBO::getId, LongBO::getCount));
 
+        List<OrganizationSearchVO> list = new ArrayList<>();
+
         for (Organization organization : organizations) {
             Long id = organization.getId();
             OrganizationSearchVO organizationSearchVO = new OrganizationSearchVO();
@@ -694,9 +700,14 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             Integer leaderCount = leaderMap.get(id);
             organizationSearchVO.setLeaderCount(leaderCount);
             organizationSearchVO.setContactsCount(contactsMap.get(id));
-            result.add(organizationSearchVO);
+            list.add(organizationSearchVO);
         }
-
+        result.setRecords(list);
+        result.setTotal(page.getTotal());
+        result.setCurrent(page.getCurrent());
+        result.setSize(page.getSize());
+        long pages = page.getPages();
+        result.setPages(pages);
         return result;
     }
 

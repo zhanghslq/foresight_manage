@@ -1,10 +1,12 @@
 package com.zhs.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zhs.entity.Organization;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhs.model.bo.OrganizationHasParentBO;
 import com.zhs.model.bo.OrganizationTagBO;
 import com.zhs.model.vo.*;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
@@ -40,5 +42,5 @@ public interface OrganizationService extends IService<Organization> {
 
     public List<Long> getAreaIdList(Long regionId, Long provinceId, Long cityId);
 
-    List<OrganizationSearchVO> listByTag(String tagName, String organizationName, Date createTimeBegin, Date createTimeEnd, Date updateTime, Long areaId);
+    Page<OrganizationSearchVO> listByTag(String tagName, String organizationName, Date createTimeBegin, Date createTimeEnd, Date updateTime, Long areaId, Pageable pageable);
 }

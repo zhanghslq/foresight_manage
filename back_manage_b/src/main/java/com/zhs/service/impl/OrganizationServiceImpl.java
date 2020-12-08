@@ -669,7 +669,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
         organizationQueryWrapper.eq(Objects.nonNull(areaId),"area_id", areaId);
         organizationQueryWrapper.like(Objects.nonNull(organizationName),"name", organizationName);
-        Page<Organization> organizationPage = new Page<>();
+        Page<Organization> organizationPage = new Page<>(pageable.getPageNumber(),pageable.getPageSize());
         Page<Organization> page = page(organizationPage, organizationQueryWrapper);
         List<Organization> organizations = page.getRecords();
         if(organizations.size()==0){

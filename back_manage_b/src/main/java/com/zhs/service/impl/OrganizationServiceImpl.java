@@ -638,13 +638,12 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
     }
 
     @Override
-    public Page<OrganizationSearchVO> listByTag(String tagName, String organizationName, Date createTimeBegin, Date createTimeEnd, Date updateTime, Long areaId, Pageable pageable) {
+    public Page<OrganizationSearchVO> listByTag(String tagName, String organizationName, Date createTimeBegin, Date createTimeEnd, Date updateTime, Long areaId, int current,int size) {
 
 
         Page<OrganizationSearchVO> result = new Page<>();
         List<Long> organizationIdList = new ArrayList<>();
 
-        int size =0;
         if(!StringUtils.isEmpty(tagName)){
             QueryWrapper<OrganizationTag> organizationTypeQueryWrapper = new QueryWrapper<>();
             organizationTypeQueryWrapper.in("name", tagName);
@@ -669,7 +668,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
         organizationQueryWrapper.eq(Objects.nonNull(areaId),"area_id", areaId);
         organizationQueryWrapper.like(Objects.nonNull(organizationName),"name", organizationName);
-        Page<Organization> organizationPage = new Page<>(pageable.getPageNumber(),pageable.getPageSize());
+        Page<Organization> organizationPage = new Page<>(current,size);
         Page<Organization> page = page(organizationPage, organizationQueryWrapper);
         List<Organization> organizations = page.getRecords();
         if(organizations.size()==0){

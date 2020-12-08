@@ -137,8 +137,8 @@ public class OrganizationFrontController {
     })
     public Result<Page<OrganizationSearchVO>> listByTag(String tagName, String organizationName, @RequestParam(required = false,value = "createTimeBegin") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")Date createTimeBegin,
                                                         @RequestParam(value = "createTimeEnd",required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date createTimeEnd,
-                                                        @RequestParam(required = false,value = "updateTime") @DateTimeFormat(pattern = "yyyy-MM-dd")Date updateTime, Long areaId, Pageable pageable){
-        Page<OrganizationSearchVO> result = organizationService.listByTag(tagName,organizationName,createTimeBegin,createTimeEnd,updateTime,areaId,pageable);
+                                                        @RequestParam(required = false,value = "updateTime") @DateTimeFormat(pattern = "yyyy-MM-dd")Date updateTime, Long areaId,@RequestParam(required = false,defaultValue = "0") int current,@RequestParam(required = false,defaultValue = "20")int size){
+        Page<OrganizationSearchVO> result = organizationService.listByTag(tagName,organizationName,createTimeBegin,createTimeEnd,updateTime,areaId,current,size);
         return Result.success(result);
     }
 

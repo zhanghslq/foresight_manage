@@ -42,5 +42,5 @@ public interface OrganizationService extends IService<Organization> {
 
     public List<Long> getAreaIdList(Long regionId, Long provinceId, Long cityId);
 
-    Page<OrganizationSearchVO> listByTag(String tagName, String organizationName, Date createTimeBegin, Date createTimeEnd, Date updateTime, Long areaId, Pageable pageable);
+    Page<OrganizationSearchVO> listByTag(String tagName, String organizationName, Date createTimeBegin, Date createTimeEnd, Date updateTime, Long areaId, int current,int size);
 }
